@@ -179,6 +179,10 @@ class Customer(models.Model):
 
 class OrderProduct(models.Model):
 
+    class Meta:
+        verbose_name = 'Товар заказа'
+        verbose_name_plural = 'Товары заказа'
+
     order = models.ForeignKey('Order', verbose_name='Корзина', on_delete=models.CASCADE, related_name='related_products')
     product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
     qty = models.PositiveIntegerField(default=1)
