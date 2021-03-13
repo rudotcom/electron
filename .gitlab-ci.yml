@@ -1,0 +1,21 @@
+stages:
+    - test
+    - deploy
+
+test_stage:
+    stage: test
+    
+    tags:
+        - django
+    script:
+       - echo 'No test applied yet'
+
+deployment_stage:
+    stage: deploy
+
+    tags:
+        - django
+
+    script:
+        - chmod +x ./deploy_script.sh
+        - ./deploy_script.sh
