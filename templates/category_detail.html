@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb" class="mt-5">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
+        <li class="breadcrumb-item active">{{ category.name }}</li>
+      </ol>
+    </nav>
+<div class="row">
+          {% for product in category_products %}
+            {% include 'product_card.html' %}
+          {% endfor %}
+</div>
+
+{% endblock content %}

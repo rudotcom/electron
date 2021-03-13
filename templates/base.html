@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ru">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>INTROVERT: {% block title %}web-shop{% endblock %}</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- Custom styles for this template -->
+  <link href="css/shop-homepage.css" rel="stylesheet">
+
+</head>
+<style>
+    body {
+      padding-top: 56px;
+    }
+</style>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'base' %}">INTROVERT</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+<!--          <ul class="navbar-nav">-->
+<!--            {% for category in categories %}-->
+<!--            <li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>-->
+<!--            {% endfor %}-->
+<!--          </ul>-->
+          <ul class="navbar-nav ml-auto">
+          <li>
+            <form class="d-flex mt-3" action="{% url 'search' %}" method="GET">
+              <input class="form-control me-2" name="p" type="search" placeholder="Поиск товара" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Поиск</button>
+            </form>
+          </li>
+            {% if not request.user.is_authenticated %}
+          <li>
+            <a class="nav-link text-white" href="{% url 'login' %}">Войти</a>
+          </li>
+            <li>
+            <a class="nav-link text-white" href="{% url 'registration' %}">Регистрация</a>
+          </li>
+          {% else %}
+              <li class="nav-item">
+                  <span class="navbar-text text-light">{% if request.user.is_authenticated %}<span class="badge badge-danger"><a href="{% url 'profile' %}" style="text-decoration: none; font-size: 14px;">Кабинет: {{ request.user.username }}</a></span>{% else %} гоcть!{% endif %}<a href="{% url 'logout' %}">| Выйти</a></span>
+              </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'cart' %}">Корзина <span class="badge badge-pill badge-danger">{{ order.products.count }}</span></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-lg-3 mt-5">
+        <div class="list-group">
+          {% for category in categories %}
+          <a href="{{ category.get_absolute_url }}" class="list-group-item">{{ category.name }}</a>
+            {% if category.name == category_name %}
+            <div style="padding: 0 6px 0 12px; background-color: azure; ">
+              {% for subcategory in subcategories %}
+                {% if subcategory.name == subcategory_name %}
+                 <a style="margin: 0; padding: 8px; background-color: #dfefef;" href="{{ subcategory.get_absolute_url }}" class="list-group-item">{{ subcategory.name }}</a>
+               {% else %}
+                <a style="margin: 0; padding: 8px; background-color: #fafafa;" href="{{ subcategory.get_absolute_url }}" class="list-group-item">{{ subcategory.name }}</a>
+                {% endif %}
+              {% endfor %}
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <!-- /.col-lg-3 -->
+
+      <div class="col-lg-9">
+        {% block content %}
+        {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            {% endfor %}
+        {% endif %}
+
+            <nav aria-label="breadcrumb" class="mt-5">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
+                <li class="breadcrumb-item active">Популярное:</li>
+              </ol>
+            </nav>
+
+        <div class="row mt-5">
+          {% for product in products %}
+            {% include 'product_card.html' %}
+          {% endfor %}
+        </div>
+        <!-- /.row -->
+      {% endblock content %}
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Introvert 2021
+          +7 (999) 123-1212
+      <a href="#" class="fa fa-facebook"></a>
+        <a href="https://www.instagram.com/introvert_store_/" class="fa fa-instagram"></a>
+        <a href="https://vk.com/introvert.store" class="fa fa-vk"></a>
+      </p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>

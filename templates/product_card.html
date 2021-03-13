@@ -1,0 +1,15 @@
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.image.url }}" alt=""></a>
+              <div class="card-body">
+				  <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+				   {% if product.quantity %}
+                <a href="{% url 'add_to_cart' slug=product.slug %}">
+                  <button class="btn btn-danger">{{ product.price }} &#x20bd; В корзину</button>
+                </a>
+				   {% else %}
+					 <p>Нет в наличии</p>
+				   {% endif %}
+              </div>
+            </div>
+          </div>

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb" class="mt-5">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
+        <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+      </ol>
+    </nav>
+<div class="row">
+    <div class="col-md-4">
+        <img src="{{ product.image.url }}" class="img-fluid" id="main-image">
+       <div class="row">
+            <div class="col-md-4" style="cursor: pointer;">
+                <img src="{{ product.image.url }}" class="img-thumbnail" onclick="javascript:document.getElementById('main-image').src=this.src">
+            </div>
+            {% for product_image in product.productimage_set.all %}
+            <div class="col-md-4">
+                <img src="{{ product_image.image.url }}" class="img-thumbnail" onclick="javascript:document.getElementById('main-image').src=this.src" style="cursor: pointer;">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h3>{{ product.title }}</h3>
+        {% if product.bestseller %}
+        <h6>Хит</h6>
+        {% endif %}
+        {% if product.price_discount %}
+         Цена: <strike>{{ product.price }} &#x20bd;</strike>
+         <p>{{ product.price_discount }} &#x20bd;</p>
+       {% else %}
+         <p>Цена: {{ product.price }} &#x20bd;</p>
+       {% endif %}
+       {% if product.quantity %}
+       <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-danger">В корзину</button></a>
+       {% else %}
+         <p>Нет в наличии</p>
+       {% endif %}
+        {% if product.limited %}
+        <h6>Лимитированный выпуск</h6>
+        {% endif %}
+        <hr>
+       <p>{{ product.description }}</p>
+     <table class="table">
+      <tbody>
+      {% if product.color %}
+        <tr>
+          <td>Цвет</td>
+          <td>{{ product.color }}</td>
+        </tr>
+      {% endif %}
+      {% if product.material %}
+        <tr>
+          <td>Материал</td>
+          <td>{{ product.material }}</td>
+        </tr>
+      {% endif %}
+      {% if product.height %}
+        <tr>
+          <td>Высота</td>
+          <td>{{ product.height }} см</td>
+        </tr>
+      {% endif %}
+      {% if product.width %}
+        <tr>
+          <td>Ширина</td>
+          <td>{{ product.width }} см</td>
+        </tr>
+      {% endif %}
+      {% if product.length %}
+        <tr>
+          <td>Длина</td>
+          <td>{{ product.length }} см</td>
+        </tr>
+      {% endif %}
+      </tbody>
+    </table>
+   </div>
+    {% if product.care %}
+   <p class="mt-4">Инструкции по уходу:</p>
+    <p>{{ product.care }}</p>
+    {% endif %}
+    <table class="table">
+      <tbody>
+      {% for f_name, f_value in product.get_features.items %}
+        <tr>
+          <th scope="row">{{ f_name }}</th>
+          <td>{{ f_value }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+{% endblock content %}
