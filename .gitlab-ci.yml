@@ -19,3 +19,4 @@ deployment_stage:
     script:
         - chmod +x ./deploy_script.sh
         - ./deploy_script.sh
+
