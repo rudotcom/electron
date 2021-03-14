@@ -17,6 +17,7 @@ deployment_stage:
         - django
 
     script:
+        - echo "${CI_PROJECT_NAME} from branch ${CI_COMMIT_REF_SLUG} [ ${CI_COMMIT_SHORT_SHA} ]" >> ~/build.txt
         - chmod +x ./deploy_script.sh
         - ./deploy_script.sh
 
