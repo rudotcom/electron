@@ -2,6 +2,7 @@ from PIL import Image
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import mark_safe
 
 User = get_user_model()
@@ -173,7 +174,7 @@ class Customer(models.Model):
         if self.user:
             name = "{} {}".format(self.user.first_name, self.user.last_name)
         else:
-            name = "Не авторизован"
+            name = f"Аноним {self.session[0:5]}..."
         return name
 
 
@@ -241,15 +242,15 @@ class Order(models.Model):
         (BUYING_TYPE_DELIVERY2, 'Почтовая доставка'),
     )
 
+    # user = models.ForeignKey(User, verbose_name='Автор', related_name='related_orders', on_delete=models.CASCADE)
     owner = models.ForeignKey(Customer, null=True, verbose_name='Покупатель', on_delete=models.CASCADE)
     products = models.ManyToManyField(OrderProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(verbose_name='Товары', default=0)
     final_price = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Общая сумма')
 
-    # user = models.ForeignKey(User, verbose_name='Автор', related_name='related_orders', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255, verbose_name='Имя')
     last_name = models.CharField(max_length=255, verbose_name='Фамилия')
-    phone = models.CharField(max_length=20, verbose_name='Телефон')
+    phone = models.CharField(max_length=20, verbose_name='Телефон', null=True, blank=True)
     postal_code = models.CharField(max_length=30, verbose_name='Индекс', null=True, blank=True)
     address = models.CharField(max_length=1024, verbose_name='Адрес', null=True, blank=True)
     status = models.CharField(
@@ -266,7 +267,8 @@ class Order(models.Model):
         default=None
     )
     comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now=True, verbose_name='Дата заказа')
+    remark = models.CharField(max_length=255, verbose_name='Примечания от магазина', null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='Дата заказа')
     is_paid = models.BooleanField(default=False)  # оплачен ли заказ
     shipped_date = models.DateTimeField(blank=True, null=True)
 

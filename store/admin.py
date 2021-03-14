@@ -126,9 +126,9 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    fields = ['owner', 'created_at', 'buying_type', 'address', 'phone', 'comment', 'status', ]
-    readonly_fields = ['created_at', 'owner', 'buying_type', 'address', 'phone', 'comment']
-    list_display = ('id', 'status', 'final_price', 'total_products', 'buying_type', 'owner', 'created_at')
+    fields = ('owner', 'created_at', 'phone', 'buying_type', 'address', 'comment', 'status', 'remark', )
+    readonly_fields = ['created_at', 'owner', 'buying_type', 'comment']
+    list_display = ('id', 'buying_type', 'status', 'final_price', 'total_products', 'owner', 'created_at')
     ordering = ('-created_at', 'owner', 'status', 'buying_type',)
     list_filter = ('status', 'buying_type', 'created_at', )
     inlines = [OrderItemInline]
@@ -148,4 +148,4 @@ admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductImage, ProductImageAdmin)
 admin.site.register(Order, OrderAdmin)
 
-# admin.site.register(Customer, CustomerAdmin)
+admin.site.register(Customer, CustomerAdmin)

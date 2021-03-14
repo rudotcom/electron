@@ -1,4 +1,6 @@
 import os
+import random
+import string
 from datetime import datetime
 
 from django.contrib import messages
@@ -127,14 +129,23 @@ class ProductSearchView(CartMixin, ListView):
         return object_list
 
 
+def get_random_session():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=36))
+
+
 class AddToCartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        session = request.session['session']
+        session = request.COOKIES.get('customersession') or get_random_session()
+
         customer, created = Customer.objects.get_or_create(session=session)
-        self.order = Order.objects.filter(owner=customer, status='cart').first()
-        if not self.order:
-            self.order = Order.objects.create(owner=customer)
+        user = User.objects.filter(username=request.user).first()
+        if user:
+            customer.user = user
+        customer.save()
+
+        order, created = Order.objects.get_or_create(owner=customer, status='cart')
+        self.order = order
 
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
@@ -145,7 +156,10 @@ class AddToCartView(CartMixin, View):
             self.order.products.add(order_product)
         recalc_order(self.order)
         messages.add_message(request, messages.INFO, "Товар успешно добавлен")
-        return HttpResponseRedirect('/cart/')
+
+        response = HttpResponseRedirect('/cart/')
+        response.set_cookie(key='customersession', value=session)
+        return response
 
 
 class DeleteFromCartView(CartMixin, View):
@@ -205,6 +219,7 @@ class CheckoutView(CartMixin, View):
             'categories': categories,
             'form': form
         }
+
         return render(request, 'checkout.html', context)
 
 
@@ -214,7 +229,9 @@ class MakeOrderView(CartMixin, View):
     def post(self, request, *args, **kwargs):
         form = OrderForm(request.POST or None)
         user = User.objects.get(username=request.user)
-        customer = Customer.objects.get(user=user.id)
+        session = request.COOKIES.get('customersession')
+        print('user, session:', user.id, session)
+        customer = Customer.objects.get(user=user.id, session=session)
         order = Order.objects.get(owner=customer, status='cart')
 
         if form.is_valid():
@@ -233,11 +250,15 @@ class MakeOrderView(CartMixin, View):
             messages.add_message(request, messages.INFO, 'Спасибо за заказ! Менеджер с Вами свяжется')
             # send_telegram('Поступил новый заказ из интернет магазина. http://introvert.com.ru/admin/mainapp/order/')
 
-            html = render_to_string('order_placed.html', {'user': user})
+            html = render_to_string('order_placed.html', {'user': user, 'order': order})
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
                       'Интроверт<noreply@introvert.com.ru>', [user.email], fail_silently=False, html_message=html)
 
-            return HttpResponseRedirect('/profile/')
+            response = HttpResponseRedirect('/profile/')
+            new_session = get_random_session()
+            response.set_cookie(key='customersession', value=new_session)
+            return response
+
         return HttpResponseRedirect('/checkout/')
 
 
@@ -263,12 +284,12 @@ class LoginView(CartMixin, View):
                 username=username, password=password
             )
             if user:
-                customer, created = Customer.objects.get_or_create(user=user)
+                session = request.COOKIES.get('customersession')
+                customer, created = Customer.objects.get_or_create(session=session)
 
-                if customer.session:
-                    request.session['session'] = customer.session
+                customer.user = user
                 customer.save()
-                print(customer.user)
+
                 login(request, user)
                 return HttpResponseRedirect('/cart/')
         categories = Category.objects.all()
@@ -293,6 +314,7 @@ class RegistrationView(CartMixin, View):
         return render(request, 'registration.html', context)
 
     def post(self, request, *args, **kwargs):
+        session = request.COOKIES.get('customersession')
         form = RegistrationForm(request.POST or None)
         if form.is_valid():
             new_user = form.save(commit=False)
@@ -306,7 +328,6 @@ class RegistrationView(CartMixin, View):
                 username=new_user.username, password=form.cleaned_data['password']
             )
             login(request, user)
-            session = request.session['session']
             customer = Customer.objects.get(session=session)
             customer.user = user
             # new_user = form.save(commit=False)
@@ -328,6 +349,7 @@ class ProfileView(CartMixin, View):
     def get(self, request, *args, **kwargs):
         owner = Customer.objects.filter(user=request.user).first()
         orders = Order.objects.filter(~Q(status='cart'), owner=owner).order_by('-created_at')
+        print(Order.objects.all())
 
         categories = Category.objects.all()
         return render(
