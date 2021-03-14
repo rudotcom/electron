@@ -15,7 +15,10 @@ class CartMixin(View):
 
     def dispatch(self, request, *args, **kwargs):
         try:
-            customer = request.user.customer
+            customer = Customer.objects.get(user=request.user)
+            print(customer)
+            if not self.order:
+                self.order = Order.objects.get_or_create(owner=customer)
         except:
             try:
                 session = request.session['session']
@@ -26,8 +29,6 @@ class CartMixin(View):
 
         self.order = Order.objects.filter(owner=customer, status='cart').first()
 
-        if not self.order:
-            self.order = Order.objects.create(owner=customer)
 
         return super().dispatch(request, *args, **kwargs)
 

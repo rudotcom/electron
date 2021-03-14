@@ -159,14 +159,14 @@ class ProductImage(models.Model):
 class Customer(models.Model):
 
     class Meta:
-        verbose_name = 'Клиент'
-        verbose_name_plural = '[ Клиенты ]'
+        verbose_name = 'Сессия'
+        verbose_name_plural = '[ Сессии ]'
 
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20, verbose_name='Номер телефона', null=True, blank=True)
     address = models.CharField(max_length=255, verbose_name='Адрес', null=True, blank=True)
     orders = models.ManyToManyField('Order', verbose_name='Заказы клиента', related_name='related_order')
-    session = models.CharField(max_length=200, null=True, blank=True)
+    session = models.CharField(max_length=200, null=True, blank=True, verbose_name='Сессия клиента')
     created = models.DateTimeField(auto_now=True, verbose_name='Дата подключения клиента')
 
     def __str__(self):

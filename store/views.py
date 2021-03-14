@@ -130,6 +130,12 @@ class ProductSearchView(CartMixin, ListView):
 class AddToCartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
+        session = request.session['session']
+        customer, created = Customer.objects.get_or_create(session=session)
+        self.order = Order.objects.filter(owner=customer, status='cart').first()
+        if not self.order:
+            self.order = Order.objects.create(owner=customer)
+
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
         order_product, created = OrderProduct.objects.get_or_create(
@@ -248,6 +254,7 @@ class LoginView(CartMixin, View):
         return render(request, 'login.html', context)
 
     def post(self, request, *args, **kwargs):
+
         form = LoginForm(request.POST or None)
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -256,9 +263,12 @@ class LoginView(CartMixin, View):
                 username=username, password=password
             )
             if user:
-                session = request.session['session']
-                customer = Customer.objects.get(session=session)
-                customer.user = user
+                customer, created = Customer.objects.get_or_create(user=user)
+
+                if customer.session:
+                    request.session['session'] = customer.session
+                customer.save()
+                print(customer.user)
                 login(request, user)
                 return HttpResponseRedirect('/cart/')
         categories = Category.objects.all()

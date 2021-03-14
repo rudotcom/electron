@@ -9,7 +9,7 @@ from django.contrib import admin
 from django.template.loader import render_to_string
 from django.utils.html import mark_safe
 
-from store.models import Category, SubCategory, Product, ProductImage, Order, OrderProduct, User
+from store.models import Category, SubCategory, Product, ProductImage, Order, OrderProduct, User, Customer
 
 
 class ProductAdminForm(ModelForm):
@@ -126,7 +126,7 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    fields = ['status', 'owner', 'created_at', 'buying_type', 'address', 'phone', 'comment']
+    fields = ['owner', 'created_at', 'buying_type', 'address', 'phone', 'comment', 'status', ]
     readonly_fields = ['created_at', 'owner', 'buying_type', 'address', 'phone', 'comment']
     list_display = ('id', 'status', 'final_price', 'total_products', 'buying_type', 'owner', 'created_at')
     ordering = ('-created_at', 'owner', 'status', 'buying_type',)

@@ -13,8 +13,8 @@
     {% endfor %}
 {% endif %}
 {% if not orders.count %}
-    <div class="col-md-12" style="margin-top: 300px; margin-bottom: 300px">
-        <h3>У вас еще нет заказов. <a href="{% url 'base' %}">Начать делать покупки</a></h3>
+    <div class="col-md-12" style="margin-top: 50px; margin-bottom: 150px">
+        <h5>У вас еще нет заказов. <a href="{% url 'base' %}">Начать делать покупки</a></h5>
     </div>
 {% else %}
 <div class="col-md-12" style="margin-top: 50px; margin-bottom: 150px">
