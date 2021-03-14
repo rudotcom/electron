@@ -135,8 +135,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class ProductImageAdmin(admin.ModelAdmin):
-    fields = ['product', 'image_tag', 'image', ]
-    readonly_fields = ['image_tag']
+    fields = ['product', 'image', ]
     list_display = ('product', 'image_tag',)
     ordering = ('product',)
 
