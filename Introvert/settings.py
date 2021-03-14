@@ -14,6 +14,11 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +28,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0&(26b!h*upn9x5plooblj0vht#uka37a2%e*=613$*q!+i9k5'
 
-# SECRET_KEY = os.getenv('DJANGO_KEY') or sys.exit('DJANGO_KEY environment variable is not set.')
+SECRET_KEY = os.getenv('DJANGO_KEY') or sys.exit('DJANGO_KEY environment variable is not set.')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -90,7 +94,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'introvert',
         'USER': 'introvert',
-        'PASSWORD': 'k4JR^e#s#HR&eY8sKhXn',
+        'PASSWORD': os.getenv('postgres_password'),
         'HOST': '127.0.0.1',
         'PORT': '5433',
     }

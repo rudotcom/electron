@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from django.contrib import messages
@@ -20,7 +21,8 @@ import telepot
 User = get_user_model()
 
 group_id = -543527686
-telegramBot = telepot.Bot('1645429866:AAGS1TyZ8PFKDWFuMC1jRLPUvXC0LMJn41A')  # token
+telegram_token = os.getenv('telegram_token')
+telegramBot = telepot.Bot(telegram_token)  # token
 
 
 def send_telegram(text):
