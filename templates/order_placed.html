@@ -93,7 +93,7 @@
     {% for item in order.products.all %}
         <tr>
           <th scope="row">{{ item.product.title }}</th>
-          <td class="w-25"><img src="http://introvert.com.ru{{ item.product.image.url }}" class="img-thumbnail"></td>
+          <td class="w-25"><img src="http://introvert.com.ru{{ item.product.image.url }}" height="50"></td>
           <td>{{ item.product.price }}&#x20bd;</td>
           <td>{{ item.qty }}</td>
           <td>{{ item.final_price }}&#x20bd;</td>
