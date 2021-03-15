@@ -244,7 +244,8 @@ class MakeOrderView(CartMixin, View):
             order.status = 'new'
             order.save()
 
-            messages.add_message(request, messages.INFO, 'Спасибо за заказ! Менеджер с Вами свяжется')
+            messages.add_message(request, messages.INFO,
+                                 'Спасибо за заказ! Уведомление о заказе Вы получите по электронной почте')
             # send_telegram('Поступил новый заказ из интернет магазина. http://introvert.com.ru/admin/mainapp/order/')
 
             html = render_to_string('order_placed.html', {'user': user, 'order': order})
