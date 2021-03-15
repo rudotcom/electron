@@ -77,7 +77,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;line-height:24px;color:#484848;">
-                                                <p>{{ user.first_name }}&nbsp;{{ user.last_name }}, Ваш заказ в магазине Интроверт оформлен. Статус заказа Вы можете отслеживать <a href="http://introvert.com.ru/profile/">на странице профиля</a>.</p>
+                                                <p>{{ user.first_name }}&nbsp;{{ user.last_name }}, Ваш заказ в магазине Интроверт оформлен. </p>
 
 <table class="table">
   <thead>
@@ -93,17 +93,10 @@
     {% for item in order.products.all %}
         <tr>
           <th scope="row">{{ item.product.title }}</th>
-          <td class="w-25"><img src="{{ item.product.image.url }}" class="img-thumbnail"></td>
+          <td class="w-25"><img src="http://introvert.com.ru{{ item.product.image.url }}" class="img-thumbnail"></td>
           <td>{{ item.product.price }}&#x20bd;</td>
-          <td>
-            <form action="{% url 'change_qty' slug=item.product.slug %}" method="POST">
-              {% csrf_token %}
-              <input type="number" class="form-control" name="qty" style="width: 70px;" min="0" value="{{ item.qty }}" onchange="this.form.submit()">
-<!--              <br>-->
-<!--              <input type="submit" class="btn btn-primary" value="Изменить кол-во">-->
-            </form>
-          </td>
-            <td>{{ item.final_price }}&#x20bd;</td>
+          <td>{{ item.qty }}</td>
+          <td>{{ item.final_price }}&#x20bd;</td>
         </tr>
     {% endfor %}
         <tr>
