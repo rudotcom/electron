@@ -43,7 +43,7 @@
         <h6>Лимитированный выпуск</h6>
         {% endif %}
         <hr>
-       <p>{{ product.description }}</p>
+       <p>{{ product.description|safe }}</p>
      <table class="table">
       <tbody>
       {% if product.color %}

@@ -68,11 +68,6 @@
                                     <table>
                                         <tbody>
                                         <tr>
-                                            <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:24px;line-height:28px;font-weight:bold;color:#484848;">
-                                                Спасибо за Ваш заказ в магазине Интроверт!
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td style="height:10px;"><img height="1" src="http://image.subscribe.gosuslugi.ru/image/gosuslugi/img/px.png" style="display:block;" width="1"></td>
                                         </tr>
                                         <tr>
@@ -92,7 +87,7 @@
   <tbody>
     {% for item in order.products.all %}
         <tr>
-          <th scope="row">{{ item.product.title }}</th>
+          <td scope="row">{{ item.product.title }}</td>
           <td class="w-25"><img src="http://introvert.com.ru{{ item.product.image.url }}" height="50"></td>
           <td>{{ item.product.price }}&#x20bd;</td>
           <td>{{ item.qty }}</td>
@@ -121,7 +116,7 @@
                                         </tr>
                                         <tr style="width: 100%; max-width:680px; background:#e6ecec;">
                                             <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:18px;color:#484848;">
-                                                <p>Вы получили это письмо, потому что сделали заказа в магазине Интроверт</p>
+                                                <p>Вы получили это письмо, потому что сделали заказ в магазине Интроверт</p>
                                                <p><a href="https://introvert.com.ru/help" style="color:#535B63!important;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:22px; text-decoration:underline;" target="_blank"><span style="color:#535B63;">Помощь и поддержка</span></a></p>
 
                                             </td>
