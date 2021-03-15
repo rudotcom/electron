@@ -89,7 +89,6 @@ class SubCategoryDetailView(CartMixin, DetailView):
         context['subcategories'] = self.model.objects.filter(category=category)
         context['subcategory_name'] = subcategory.name
         context['subcategory_products'] = subcategory.product_set.all()
-        print(context)
         return context
 
 
@@ -230,13 +229,12 @@ class MakeOrderView(CartMixin, View):
         form = OrderForm(request.POST or None)
         user = User.objects.get(username=request.user)
         session = request.COOKIES.get('customersession')
-        print('user, session:', user.id, session)
+
         customer = Customer.objects.get(user=user.id, session=session)
         order = Order.objects.get(owner=customer, status='cart')
 
         if form.is_valid():
             new_order = form.save(commit=False)
-            # order.owner = customer
             order.first_name = user.first_name
             order.last_name = user.last_name
             order.phone = customer.phone
@@ -246,7 +244,6 @@ class MakeOrderView(CartMixin, View):
             order.status = 'new'
             order.save()
 
-            # customer.orders.add(new_order)
             messages.add_message(request, messages.INFO, 'Спасибо за заказ! Менеджер с Вами свяжется')
             # send_telegram('Поступил новый заказ из интернет магазина. http://introvert.com.ru/admin/mainapp/order/')
 
@@ -347,9 +344,11 @@ class RegistrationView(CartMixin, View):
 class ProfileView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/login/')
+
         owner = Customer.objects.filter(user=request.user).first()
         orders = Order.objects.filter(~Q(status='cart'), owner=owner).order_by('-created_at')
-        print(Order.objects.all())
 
         categories = Category.objects.all()
         return render(
