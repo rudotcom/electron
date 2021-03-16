@@ -90,9 +90,9 @@ class ProductAdmin(admin.ModelAdmin):
          ),
     ]
     readonly_fields = ['image_tag', 'visits', 'last_visit', 'date_added', ]
-    list_display = ('title', 'image_tag', 'category', 'subcategory', 'price', 'quantity',
-                    'bestseller', 'new', 'display', 'visits')
-    list_filter = ['category', 'subcategory', 'bestseller']
+    list_display = ('title', 'image_tag', 'visits', 'category', 'price', 'price_discount', 'quantity',
+                    'bestseller', 'new', 'display')
+    list_filter = ['bestseller', 'new', 'display', ]
     search_fields = ['title', 'description']
     ordering = ('-date_added', 'title', 'category', 'price', 'new', 'quantity')
     inlines = [ProductImageInline]
