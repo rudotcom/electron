@@ -193,7 +193,8 @@ class OrderProduct(models.Model):
         return self.product.title
 
     def save(self, *args, **kwargs):
-        self.final_price = self.qty * self.product.price
+        price = self.product.price_discount if self.product.price_discount else self.product.price
+        self.final_price = self.qty * price
         super().save(*args, **kwargs)
 
     def image_tag(self):

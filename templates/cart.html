@@ -29,7 +29,14 @@
         <tr>
           <th scope="row">{{ item.product.title }}</th>
           <td class="w-25"><img src="{{ item.product.image.url }}" class="img-thumbnail"></td>
-          <td>{{ item.product.price }}&#x20bd;</td>
+          <td>
+          {%  if item.product.price_discount  %}
+              <strike>{{ item.product.price }}&#x20bd;</strike><br>
+              {{ item.product.price_discount }}&#x20bd;
+          {% else %}
+              {{ item.product.price }}&#x20bd;
+          {% endif %}
+          </td>
           <td>
             <form action="{% url 'change_qty' slug=item.product.slug %}" method="POST">
               {% csrf_token %}
