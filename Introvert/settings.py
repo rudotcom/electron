@@ -31,9 +31,7 @@ SECRET_KEY = os.getenv('DJANGO_KEY') or sys.exit('DJANGO_KEY environment variabl
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    's346123.savps.ru',
-    'introvertb3tadwu.onion',
-    'introvert.com.ru',
+    'localhost',
 ]
 
 
