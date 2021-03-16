@@ -56,6 +56,7 @@ class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
     change_form_template = 'admin.html'
     prepopulated_fields = {"slug": ("title",)}
+    radio_fields = {"gender": admin.HORIZONTAL}
 
     fieldsets = [
         ('Товар',
@@ -91,6 +92,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
     fields = ['category', 'name', 'slug']
     list_display = ('name', 'category')
     list_filter = ['category']
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class CustomerAdmin(admin.ModelAdmin):
@@ -129,6 +131,7 @@ class OrderAdmin(admin.ModelAdmin):
     fields = ('owner', 'created_at', 'phone', 'buying_type', 'address', 'comment', 'status', 'remark', )
     readonly_fields = ['created_at', 'owner', 'buying_type', 'comment']
     list_display = ('id', 'buying_type', 'status', 'final_price', 'total_products', 'owner', 'created_at')
+    list_display_links = ('id', 'buying_type', 'status')
     ordering = ('-created_at', 'owner', 'status', 'buying_type',)
     list_filter = ('status', 'buying_type', 'created_at', )
     inlines = [OrderItemInline]

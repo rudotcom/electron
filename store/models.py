@@ -80,9 +80,9 @@ class Product(models.Model):
     MAX_IMAGE_SIZE = 3145728
 
     GENDER_CHOICES = (
+        ('G', 'Для всех'),
         ('M', 'Для мужчин'),
         ('F', 'Для женщин'),
-        ('G', 'Для всех')
     )
 
     category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
@@ -104,7 +104,7 @@ class Product(models.Model):
     bestseller = models.BooleanField(verbose_name='Хит', default=False)
     new = models.BooleanField(verbose_name='Новинка', default=False)
     gift = models.BooleanField(verbose_name='Подарок', blank=False, null=False, default=False)
-    gender = models.CharField(verbose_name='Пол', max_length=1, blank=True, null=True, choices=GENDER_CHOICES)
+    gender = models.CharField(verbose_name='Пол', max_length=1, blank=False, null=False, default='G', choices=GENDER_CHOICES)
     quantity = models.PositiveIntegerField(verbose_name='Наличие', default=0)
     display = models.BooleanField(verbose_name='Выставлять', default=True,
                                   blank=False, null=False)
@@ -267,7 +267,8 @@ class Order(models.Model):
         default=None
     )
     comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)
-    remark = models.CharField(max_length=255, verbose_name='Примечания от магазина', null=True, blank=True)
+    remark = models.CharField(max_length=255, verbose_name='Примечания от магазина',
+                              null=True, blank=True, help_text='Служебные примечания, клиенту недоступны')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='Дата заказа')
     is_paid = models.BooleanField(default=False)  # оплачен ли заказ
     shipped_date = models.DateTimeField(blank=True, null=True)
