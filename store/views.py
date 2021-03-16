@@ -352,8 +352,8 @@ class ProfileView(CartMixin, View):
         if not request.user.is_authenticated:
             return HttpResponseRedirect('/login/')
 
-        owner = Customer.objects.filter(user=request.user).first()
-        orders = Order.objects.filter(~Q(status='cart'), owner=owner).order_by('-created_at')
+        owners = Customer.objects.filter(user=request.user)
+        orders = Order.objects.filter(~Q(status='cart'), owner__in=owners).order_by('-created_at')
 
         categories = Category.objects.all()
         return render(
