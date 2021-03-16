@@ -142,8 +142,8 @@ class Product(models.Model):
 class ProductImage(models.Model):
 
     class Meta:
-        verbose_name = 'Изображение'
-        verbose_name_plural = '[ 3. Изображения ]'
+        verbose_name = 'Изображение товара'
+        verbose_name_plural = 'Изображения товара'
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = models.ImageField()

@@ -251,7 +251,7 @@ class MakeOrderView(CartMixin, View):
             for item in order.products.all():
                 teleg += f"{item}, {item.qty} шт\n"
 
-            send_telegram(teleg)
+            # send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order})
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
                       'Интроверт<noreply@introvert.com.ru>', [user.email], fail_silently=False, html_message=html)

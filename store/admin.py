@@ -52,6 +52,15 @@ class ProductAdminForm(ModelForm):
         return image
 
 
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    fields = ['product', 'image_tag', 'image', ]
+    readonly_fields = ['product', 'image_tag', ]
+    can_delete = True
+    extra = 0
+    # max_num = 0
+
+
 class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
     change_form_template = 'admin.html'
@@ -86,6 +95,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ['category', 'subcategory', 'bestseller']
     search_fields = ['title', 'description']
     ordering = ('-date_added', 'title', 'category', 'price', 'new', 'quantity')
+    inlines = [ProductImageInline]
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
@@ -136,6 +146,22 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('status', 'buying_type', 'created_at', )
     inlines = [OrderItemInline]
 
+    def formfield_for_choice_field(self, db_field, request, **kwargs):
+        if db_field.name == "status":
+            kwargs['choices'] = (
+                ('new', 'Оформлен'),
+                ('paid', 'Оплачен'),
+                ('in_progress', 'В обработке'),
+                ('is_ready', 'Готов'),
+                ('shipped', 'Отправлен'),
+                ('delivered', 'Доставлен в место выдачи'),
+                ('received', 'Получен'),
+                ('return', 'Возврат'),
+                ('canceled', 'Отменен'),
+            )
+
+        return super().formfield_for_choice_field(db_field, request, **kwargs)
+
 
 class ProductImageAdmin(admin.ModelAdmin):
     fields = ['product', 'image', ]
@@ -148,7 +174,7 @@ admin.site.unregister(Group)
 admin.site.register(Category)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(ProductImage, ProductImageAdmin)
+# admin.site.register(ProductImage, ProductImageAdmin)
 admin.site.register(Order, OrderAdmin)
 
 admin.site.register(Customer, CustomerAdmin)
