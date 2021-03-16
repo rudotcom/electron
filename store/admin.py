@@ -147,21 +147,21 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('status', 'buying_type', 'created_at', )
     inlines = [OrderItemInline]
 
-    def formfield_for_choice_field(self, db_field, request, **kwargs):
-        if db_field.name == "status":
-            kwargs['choices'] = (
-                ('new', 'Оформлен'),
-                ('paid', 'Оплачен'),
-                ('in_progress', 'В обработке'),
-                ('is_ready', 'Готов'),
-                ('shipped', 'Отправлен'),
-                ('delivered', 'Доставлен в место выдачи'),
-                ('received', 'Получен'),
-                ('return', 'Возврат'),
-                ('canceled', 'Отменен'),
-            )
-
-        return super().formfield_for_choice_field(db_field, request, **kwargs)
+    # def formfield_for_choice_field(self, db_field, request, **kwargs):
+    #     if db_field.name == "status":
+    #         kwargs['choices'] = (
+    #             ('new', 'Оформлен'),
+    #             ('paid', 'Оплачен'),
+    #             ('in_progress', 'В обработке'),
+    #             ('is_ready', 'Готов'),
+    #             ('shipped', 'Отправлен'),
+    #             ('delivered', 'Доставлен в место выдачи'),
+    #             ('received', 'Получен'),
+    #             ('return', 'Возврат'),
+    #             ('canceled', 'Отменен'),
+    #         )
+    #
+    #     return super().formfield_for_choice_field(db_field, request, **kwargs)
 
 
 class ProductImageAdmin(admin.ModelAdmin):
