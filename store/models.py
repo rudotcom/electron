@@ -186,7 +186,7 @@ class OrderProduct(models.Model):
 
     order = models.ForeignKey('Order', verbose_name='Корзина', on_delete=models.CASCADE, related_name='related_products')
     product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
-    qty = models.PositiveIntegerField(default=1)
+    qty = models.PositiveIntegerField(default=1, verbose_name='шт')
     final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Общая цена')
 
     def __str__(self):
