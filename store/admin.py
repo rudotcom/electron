@@ -96,6 +96,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description']
     ordering = ('-date_added', 'title', 'category', 'price', 'new', 'quantity')
     inlines = [ProductImageInline]
+    ProductImageInline.verbose_name = 'Изображение'
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
