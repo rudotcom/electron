@@ -203,6 +203,7 @@ class CartView(CartMixin, View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         form = CartForm(request.POST or None)
+        self.order.delivery_type = 'self'
         self.order.save()
 
         context = {

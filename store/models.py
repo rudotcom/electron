@@ -8,6 +8,7 @@ from django.utils.html import mark_safe
 User = get_user_model()
 FREE_DELIVERY = 2500  #
 FREE_GIFT = 800
+CDEK_OUTPOST_COST = 300  # Доставка до ближайшего к Вам пункта выдачи СДЭК (по СПб)
 COURIER_DELIVERY_COST = 450  # Доставка заказа курьером лично в руки, по городу Санкт-Петербургу
 DELIVERY_RU_COST = 300  # В любой другой город России, доставка посредством почты, стоимость доставки 300₽
 DELIVERY_WORLD_COST = 900  # Стоимость доставки заказа авиа почтой по миру: 900₽.
@@ -225,9 +226,9 @@ class Order(models.Model):
     STATUS_RETURN = 'return'
 
     DELIVERY_TYPE_SELF = 'self'
-    DELIVERY_TYPE_DELIVERY_SPB = 'delivery_spb'
-    DELIVERY_TYPE_DELIVERY_RU = 'delivery_ru'
-    DELIVERY_TYPE_DELIVERY_WORLD = 'delivery_world'
+    DELIVERY_TYPE_SPB = 'delivery_spb'
+    DELIVERY_TYPE_RU = 'delivery_ru'
+    DELIVERY_TYPE_WORLD = 'delivery_world'
 
     PAYMENT_TYPE1 = 'bankcard'
     PAYMENT_TYPE2 = 'kiwi'
@@ -247,9 +248,9 @@ class Order(models.Model):
 
     DELIVERY_TYPE_CHOICES = (
         (DELIVERY_TYPE_SELF, 'Самовывоз из мастерской (бесплатно)'),
-        (DELIVERY_TYPE_DELIVERY_SPB, 'Курьерская доставка по СПб'),
-        (DELIVERY_TYPE_DELIVERY_RU, 'Почтовая отправка по России'),
-        (DELIVERY_TYPE_DELIVERY_WORLD, 'Почтовая отправка за рубеж'),
+        (DELIVERY_TYPE_SPB, 'Курьерская доставка по СПб'),
+        (DELIVERY_TYPE_RU, 'Почтовая отправка по России'),
+        (DELIVERY_TYPE_WORLD, 'Почтовая отправка за рубеж'),
     )
 
     PAYMENT_CHOICES = (
@@ -308,17 +309,17 @@ class Order(models.Model):
         if self.delivery_type == self.DELIVERY_TYPE_SELF:
             print(self.delivery_type)
             self.delivery_cost = 0
-        elif self.delivery_type == self.DELIVERY_TYPE_DELIVERY_SPB:  # spb
+        elif self.delivery_type == self.DELIVERY_TYPE_SPB:  # spb
             if self.final_price < FREE_DELIVERY:
                 self.delivery_cost = COURIER_DELIVERY_COST
             else:
                 self.delivery_cost = 0
-        elif self.delivery_type == self.DELIVERY_TYPE_DELIVERY_RU:  # RU
+        elif self.delivery_type == self.DELIVERY_TYPE_RU:  # RU
             if self.final_price < FREE_DELIVERY:
                 self.delivery_cost = DELIVERY_RU_COST
             else:
                 self.delivery_cost = 0
-        elif self.delivery_type == self.DELIVERY_TYPE_DELIVERY_WORLD:  # World
+        elif self.delivery_type == self.DELIVERY_TYPE_WORLD:  # World
             self.delivery_cost = DELIVERY_WORLD_COST
 
         cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
