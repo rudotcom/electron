@@ -139,7 +139,8 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    fields = ('owner', 'created_at', 'phone', 'delivery_type', 'address', 'comment', 'status', 'tracking', 'remark', )
+    fields = (('last_name', 'first_name', 'patronymic'), 'created_at', 'phone', 'delivery_type', 'postal_code',
+              'settlement', 'address', 'comment', 'status', 'tracking', 'remark', )
     readonly_fields = ['created_at', 'owner', 'delivery_type', 'comment']
     list_display = ('id', 'delivery_type', 'status', 'final_price', 'total_products', 'owner', 'created_at')
     list_display_links = ('id', 'delivery_type', 'status')

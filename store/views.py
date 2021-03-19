@@ -263,14 +263,23 @@ class MakeOrderView(CartMixin, View):
         order = Order.objects.get(owner=customer, status='cart')
 
         if form.is_valid():
-            new_order = form.save(commit=False)
-            order.first_name = user.first_name
-            order.last_name = user.last_name
-            order.phone = customer.phone
-            order.address = form.cleaned_data['address']
+            if 'first_name' in form.cleaned_data.keys():
+                order.first_name = form.cleaned_data['first_name']
+            if 'last_name' in form.cleaned_data.keys():
+                order.last_name = form.cleaned_data['last_name']
+            if 'patronymic' in form.cleaned_data.keys():
+                order.patronymic = form.cleaned_data['patronymic']
+            if 'phone' in form.cleaned_data.keys():
+                order.phone = form.cleaned_data['phone']
+            if 'postal_code' in form.cleaned_data.keys():
+                order.postal_code = form.cleaned_data['postal_code']
+            if 'settlement' in form.cleaned_data.keys():
+                order.settlement = form.cleaned_data['settlement']
+            if 'address' in form.cleaned_data.keys():
+                order.address = form.cleaned_data['address']
             order.payment_type = form.cleaned_data['payment_type']
-            order.delivery_type = form.cleaned_data['delivery_type']
-            order.comment = form.cleaned_data['comment']
+            if 'comment' in form.cleaned_data.keys():
+                order.comment = form.cleaned_data['comment']
             order.status = 'new'
             order.save()
 
