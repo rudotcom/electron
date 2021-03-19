@@ -19,7 +19,7 @@ from store.views import (
     RegistrationView,
     ProfileView,
     ProductSearchView,
-    SubCategoryDetailView,
+    SubCategoryDetailView, DeliveryView,
 )
 
 urlpatterns = [
@@ -39,6 +39,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('delivery/', DeliveryView.as_view(), name='delivery'),
 
     path(
         'admin/password_reset/',

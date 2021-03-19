@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <h3 class="text-center mt-5 mb-5">Ваша корзина {% if not order.products.count %}пуста{% endif %}</h3>
@@ -52,20 +53,33 @@
         </tr>
     {% endfor %}
         <tr>
-          <td colspan="2">
-            {% if not request.user.is_authenticated %}
-            <p>Для оформления заказа:
-              <a href="{% url 'login' %}">
-                <button class="btn btn-danger">Войти</button>
-              </a>
-            {% else %}
-            <a href="{% url 'checkout' %}"><button class="btn btn-primary">Перейти к оформлению</button></a>
-            {% endif %}
-          </td>
+          <td colspan="2">&nbsp;</td>
           <td>Итого:</td>
           <td>{{ order.total_products }}</td>
           <td><strong>{{ order.final_price }}&#x20bd;</strong></td>
-          <td></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+            {% if not request.user.is_authenticated %}
+            <td colspan="4"></td>
+            <td colspan="2">
+            <p>Для оформления заказа:
+              <a href="{% url 'login' %}">
+                <button class="btn btn-danger">Войти</button>
+              </a> или <a href="{% url 'registration' %}">Зарегистрироваться</a>
+            </td>
+            {% else %}
+{#           <a href="{% url 'checkout' %}"><button class="btn btn-primary">Перейти к оформлению</button></a>#}
+        <td colspan="3" align="right">
+        <form action="{% url 'checkout' %}" method="POST">
+            {% csrf_token %}
+            {{ form.delivery_type }}
+        </td>
+        <td colspan="4">
+            <input type="submit" class="btn btn-success" value="Оформить заказ">
+        </td>
+        </form>
+            {% endif %}
         </tr>
   </tbody>
 </table>

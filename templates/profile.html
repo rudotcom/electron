@@ -84,7 +84,8 @@
                               <h4 class="text-center">Дополнительная информация</h4>
                               <p>Покупатель: {{ order.first_name }} {{ order.last_name }}</p>
                               {% if order.payment_type %}<p>Способ отплаты: {{ order.get_payment_type_display }}</p>{% endif %}
-                              {% if order.buying_type %}<p>Оформлено: {{ order.get_buying_type_display }}</p>{% endif %}
+                              {% if order.delivery_type %}<p>Оформлено: {{ order.get_delivery_type_display }}</p>{% endif %}
+                              {% if order.tracking %}<p>Трекинг номер: <a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></p>{% endif %}
                               {% if order.customer.phone %}<p>Телефон: {{ order.customer.phone }}</p>{% endif %}
                               {% if order.address %}<p>Адрес: {{ order.address }}</p>{% endif %}
                               <p>{{ order.comment }}</p>

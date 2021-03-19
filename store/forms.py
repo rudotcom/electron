@@ -9,9 +9,17 @@ class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
+
         fields = (
-            'payment_type', 'buying_type', 'address', 'comment'
+            'address', 'comment', 'payment_type'
         )
+
+
+class CartForm(forms.ModelForm):
+
+    class Meta:
+        model = Order
+        fields = ('delivery_type',)
 
 
 class LoginForm(forms.ModelForm):

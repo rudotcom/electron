@@ -139,12 +139,12 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    fields = ('owner', 'created_at', 'phone', 'buying_type', 'address', 'comment', 'status', 'remark', )
-    readonly_fields = ['created_at', 'owner', 'buying_type', 'comment']
-    list_display = ('id', 'buying_type', 'status', 'final_price', 'total_products', 'owner', 'created_at')
-    list_display_links = ('id', 'buying_type', 'status')
-    ordering = ('-created_at', 'owner', 'status', 'buying_type',)
-    list_filter = ('status', 'buying_type', 'created_at', )
+    fields = ('owner', 'created_at', 'phone', 'delivery_type', 'address', 'comment', 'status', 'tracking', 'remark', )
+    readonly_fields = ['created_at', 'owner', 'delivery_type', 'comment']
+    list_display = ('id', 'delivery_type', 'status', 'final_price', 'total_products', 'owner', 'created_at')
+    list_display_links = ('id', 'delivery_type', 'status')
+    ordering = ('-created_at', 'owner', 'status', 'delivery_type',)
+    list_filter = ('status', 'delivery_type', 'created_at', )
     inlines = [OrderItemInline]
 
     # def formfield_for_choice_field(self, db_field, request, **kwargs):

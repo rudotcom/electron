@@ -19,11 +19,15 @@
         <tr>
           <th scope="row">{{ item.product.title }}</th>
           <td class="w-25"><img src="{{ item.product.image.url }}" class="img-fluid"></td>
-          <td>{{ item.product.price }} руб.</td>
+          <td>{{ item.product.price }} &#x20bd;</td>
           <td>{{ item.qty }}</td>
-            <td>{{ item.final_price }} руб.</td>
+          <td>{{ item.final_price }} &#x20bd;</td>
         </tr>
     {% endfor %}
+        <tr>
+            <td colspan="2">{{ order.get_delivery_type_display }}</td>
+            <td colspan="3">{{ order.delivery_cost }} &#x20bd;</td>
+        </tr>
         <tr>
           <td colspan="2"></td>
           <td>Итого:</td>
@@ -34,8 +38,7 @@
 </table>
 <hr>
 {% if request.user.is_authenticated %}
-  {{ request.user.last_name }} {{ request.user.first_name }}
-  <h3 class="text-center mt-5 mb-5">Форма заказа</h3>
+
   <form action="{% url 'make_order' %}" method="POST">
     {% csrf_token %}
     {{ form|crispy }}

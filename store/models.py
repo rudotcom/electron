@@ -6,7 +6,11 @@ from django.utils import timezone
 from django.utils.html import mark_safe
 
 User = get_user_model()
-
+FREE_DELIVERY = 2500  #
+FREE_GIFT = 800
+COURIER_DELIVERY_COST = 450  # Доставка заказа курьером лично в руки, по городу Санкт-Петербургу
+DELIVERY_RU_COST = 300  # В любой другой город России, доставка посредством почты, стоимость доставки 300₽
+DELIVERY_WORLD_COST = 900  # Стоимость доставки заказа авиа почтой по миру: 900₽.
 
 class MinDimentionErrorException(Exception):
     pass
@@ -220,14 +224,13 @@ class Order(models.Model):
     STATUS_CANCELED = 'canceled'
     STATUS_RETURN = 'return'
 
-    BUYING_TYPE_SELF = 'self'
-    BUYING_TYPE_DELIVERY1 = 'deliveryspb'
-    BUYING_TYPE_DELIVERY2 = 'deliveryru'
-    BUYING_TYPE_DELIVERY3 = 'deliveryoutbound'
+    DELIVERY_TYPE_SELF = 'self'
+    DELIVERY_TYPE_DELIVERY_SPB = 'delivery_spb'
+    DELIVERY_TYPE_DELIVERY_RU = 'delivery_ru'
+    DELIVERY_TYPE_DELIVERY_WORLD = 'delivery_world'
 
     PAYMENT_TYPE1 = 'bankcard'
     PAYMENT_TYPE2 = 'kiwi'
-
 
     STATUS_CHOICES = (
         (STATUS_CART, 'Корзина'),
@@ -242,11 +245,11 @@ class Order(models.Model):
         (STATUS_CANCELED, 'Отменен'),
     )
 
-    BUYING_TYPE_CHOICES = (
-        (BUYING_TYPE_SELF, 'Самовывоз из мастерской (бесплатно)'),
-        (BUYING_TYPE_DELIVERY1, 'Курьерская доставка по СПб (450₽)'),
-        (BUYING_TYPE_DELIVERY2, 'Почтовая отправка по России (300₽)'),
-        (BUYING_TYPE_DELIVERY3, 'Почтовая отправка за рубеж (600₽)'),
+    DELIVERY_TYPE_CHOICES = (
+        (DELIVERY_TYPE_SELF, 'Самовывоз из мастерской (бесплатно)'),
+        (DELIVERY_TYPE_DELIVERY_SPB, 'Курьерская доставка по СПб'),
+        (DELIVERY_TYPE_DELIVERY_RU, 'Почтовая отправка по России'),
+        (DELIVERY_TYPE_DELIVERY_WORLD, 'Почтовая отправка за рубеж'),
     )
 
     PAYMENT_CHOICES = (
@@ -271,13 +274,14 @@ class Order(models.Model):
         choices=STATUS_CHOICES,
         default=STATUS_CART
     )
-    buying_type = models.CharField(
+    delivery_type = models.CharField(
         max_length=100,
         verbose_name='Тип заказа',
-        choices=BUYING_TYPE_CHOICES,
-        null=True,
-        default=None
+        choices=DELIVERY_TYPE_CHOICES,
+        null=False,
+        default='self'
     )
+    delivery_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Стоимость доставки')
     payment_type = models.CharField(
         max_length=100,
         verbose_name='Способ оплаты',
@@ -291,9 +295,37 @@ class Order(models.Model):
     created_at = models.DateTimeField(default=timezone.now, verbose_name='Дата заказа')
     is_paid = models.BooleanField(default=False)  # оплачен ли заказ
     shipped_date = models.DateTimeField(blank=True, null=True)
+    tracking = models.CharField(max_length=50, verbose_name='Трекинг номер', null=True, blank=True)
 
     def __str__(self):
         return \
             'Заказ: {}. {} {} {}'.format(
                 str(self.id), self.last_name, self.first_name, self.phone
             )
+
+    def save(self, *args, **kwargs):
+
+        if self.delivery_type == self.DELIVERY_TYPE_SELF:
+            print(self.delivery_type)
+            self.delivery_cost = 0
+        elif self.delivery_type == self.DELIVERY_TYPE_DELIVERY_SPB:  # spb
+            if self.final_price < FREE_DELIVERY:
+                self.delivery_cost = COURIER_DELIVERY_COST
+            else:
+                self.delivery_cost = 0
+        elif self.delivery_type == self.DELIVERY_TYPE_DELIVERY_RU:  # RU
+            if self.final_price < FREE_DELIVERY:
+                self.delivery_cost = DELIVERY_RU_COST
+            else:
+                self.delivery_cost = 0
+        elif self.delivery_type == self.DELIVERY_TYPE_DELIVERY_WORLD:  # World
+            self.delivery_cost = DELIVERY_WORLD_COST
+
+        cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
+        if cart_data.get('final_price__sum'):
+            self.final_price = cart_data['final_price__sum'] + self.delivery_cost
+        else:
+            self.final_price = 0
+        self.total_products = cart_data['id__count']
+
+        super().save(*args, **kwargs)

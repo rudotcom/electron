@@ -34,11 +34,12 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
-<!--          <ul class="navbar-nav">-->
+          <ul class="navbar-nav">
+            <li><a href="{% url 'delivery' %}">Доставка</a></li>
 <!--            {% for category in categories %}-->
 <!--            <li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>-->
 <!--            {% endfor %}-->
-<!--          </ul>-->
+          </ul>
           <ul class="navbar-nav ml-auto">
           <li>
             <form class="d-flex mt-3" action="{% url 'search' %}" method="GET">

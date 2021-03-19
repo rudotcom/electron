@@ -14,10 +14,10 @@ from django.views.generic import DetailView, View, ListView
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-from .forms import OrderForm, LoginForm, RegistrationForm
+from .forms import OrderForm, LoginForm, RegistrationForm, CartForm
 from .mixins import CartMixin
 from .models import Category, SubCategory, Customer, OrderProduct, Product, Order
-from .utils import recalc_order
+# from .utils import recalc_order
 import telepot
 
 User = get_user_model()
@@ -154,7 +154,7 @@ class AddToCartView(CartMixin, View):
         )
         if created:
             self.order.products.add(order_product)
-        recalc_order(self.order)
+        self.order.save()
         messages.add_message(request, messages.INFO, "Товар добавлен в корзину")
 
         response = HttpResponseRedirect(f"/product/{product_slug}/")
@@ -172,7 +172,7 @@ class DeleteFromCartView(CartMixin, View):
         )
         self.order.products.remove(order_product)
         order_product.delete()
-        recalc_order(self.order)
+        self.order.save()
         messages.add_message(request, messages.INFO, "Товар удален из корзины")
         return HttpResponseRedirect('/cart/')
 
@@ -194,7 +194,7 @@ class ChangeQTYView(CartMixin, View):
             order_product.delete()
             messages.add_message(request, messages.INFO, "Товар удален из корзины")
         order_product.save()
-        recalc_order(self.order)
+        self.order.save()
         return HttpResponseRedirect('/cart/')
 
 
@@ -202,22 +202,31 @@ class CartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
+        form = CartForm(request.POST or None)
+        self.order.save()
+
         context = {
             'order': self.order,
-            'categories': categories
+            'categories': categories,
+            'form': form,
         }
         return render(request, 'cart.html', context)
 
 
 class CheckoutView(CartMixin, View):
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         categories = Category.objects.all()
         form = OrderForm(request.POST or None)
+
+        self.order.delivery_type = request.POST.get('delivery_type')
+        print('req', request.POST.get('delivery_type'))
+        self.order.save()
+
         context = {
             'order': self.order,
             'categories': categories,
-            'form': form
+            'form': form,
         }
 
         return render(request, 'checkout.html', context)
@@ -241,7 +250,7 @@ class MakeOrderView(CartMixin, View):
             order.phone = customer.phone
             order.address = form.cleaned_data['address']
             order.payment_type = form.cleaned_data['payment_type']
-            order.buying_type = form.cleaned_data['buying_type']
+            order.delivery_type = form.cleaned_data['delivery_type']
             order.comment = form.cleaned_data['comment']
             order.status = 'new'
             order.save()
@@ -255,12 +264,12 @@ class MakeOrderView(CartMixin, View):
                 teleg += f"{item}, {item.qty} шт\n"
                 teleg += f"{dict(order.PAYMENT_CHOICES)[order.payment_type]}\n"
                 teleg += f"{order.final_price}\n"
-                teleg += f"{dict(order.BUYING_TYPE_CHOICES)[order.buying_type]}\n"
-                if order.buying_type.startswith('delivery'):
+                teleg += f"{dict(order.DELIVERY_TYPE_CHOICES)[order.delivery_type]}\n"
+                if order.delivery_type.startswith('delivery'):
                     teleg += f"{order.address}\n"
 
-            # print(teleg)
-            send_telegram(teleg)
+            print(teleg)
+            # send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order})
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
                       'Интроверт<noreply@introvert.com.ru>', [user.email], fail_silently=False, html_message=html)
@@ -377,3 +386,15 @@ class ProfileView(CartMixin, View):
                 'categories': categories,
             }
         )
+
+
+class DeliveryView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+
+        context = {
+            'categories': categories,
+            'order': self.order
+        }
+        return render(request, 'page_delivery.html', context)
