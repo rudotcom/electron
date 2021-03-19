@@ -14,8 +14,8 @@ from django.views.generic import DetailView, View, ListView
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-from .forms import LoginForm, RegistrationForm, CartForm, SelfOrderForm, CourierOrderForm, CDEKOrderForm, \
-    PostRuOrderForm, PostWorldOrderForm
+from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
+    PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm
 from .mixins import CartMixin
 from .models import Category, SubCategory, Customer, OrderProduct, Product, Order
 import telepot
@@ -222,7 +222,7 @@ class CheckoutView(CartMixin, View):
 
         categories = Category.objects.all()
         if self.order.delivery_type == 'self':
-            form = SelfOrderForm()
+            form = None
         elif self.order.delivery_type == 'delivery_spb':
             form = CourierOrderForm()
         elif self.order.delivery_type == 'delivery_cdekspb':
@@ -246,7 +246,7 @@ class MakeOrderView(CartMixin, View):
     @transaction.atomic
     def post(self, request, *args, **kwargs):
         if self.order.delivery_type == 'self':
-            form = SelfOrderForm(request.POST or None)
+            form = None
         elif self.order.delivery_type == 'delivery_spb':
             form = CourierOrderForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_cdekspb':
@@ -262,7 +262,14 @@ class MakeOrderView(CartMixin, View):
         customer = Customer.objects.get(user=user.id, session=session)
         order = Order.objects.get(owner=customer, status='cart')
 
-        if form.is_valid():
+        if not form:
+            order.status = 'new'
+            order.save()
+            response = HttpResponseRedirect(f'/order_pay/{order.id}/')
+            new_session = get_random_session()
+            response.set_cookie(key='customersession', value=new_session)
+            return response
+        elif form.is_valid():
             if 'first_name' in form.cleaned_data.keys():
                 order.first_name = form.cleaned_data['first_name']
             if 'last_name' in form.cleaned_data.keys():
@@ -277,9 +284,9 @@ class MakeOrderView(CartMixin, View):
                 order.settlement = form.cleaned_data['settlement']
             if 'address' in form.cleaned_data.keys():
                 order.address = form.cleaned_data['address']
-            order.payment_type = form.cleaned_data['payment_type']
             if 'comment' in form.cleaned_data.keys():
                 order.comment = form.cleaned_data['comment']
+
             order.status = 'new'
             order.save()
 
@@ -290,7 +297,7 @@ class MakeOrderView(CartMixin, View):
 
             for item in order.products.all():
                 teleg += f"{item}, {item.qty} шт\n"
-                teleg += f"{dict(order.PAYMENT_CHOICES)[order.payment_type]}\n"
+                # teleg += f"{dict(order.PAYMENT_CHOICES)[order.payment_type]}\n"
                 teleg += f"{order.final_price}\n"
                 teleg += f"{dict(order.DELIVERY_TYPE_CHOICES)[order.delivery_type]}\n"
                 if order.delivery_type.startswith('delivery'):
@@ -302,12 +309,42 @@ class MakeOrderView(CartMixin, View):
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
                       'Интроверт<noreply@introvert.com.ru>', [user.email], fail_silently=False, html_message=html)
 
-            response = HttpResponseRedirect('/profile/')
+            response = HttpResponseRedirect(f'/order_pay/{order.id}/')
             new_session = get_random_session()
             response.set_cookie(key='customersession', value=new_session)
             return response
 
         return HttpResponseRedirect('/checkout/')
+
+
+class PayView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/login/')
+
+        form = PaymentMethodForm(request.POST or None)
+        order_id = kwargs.get('order')
+
+        pay_order = Order.objects.get(id=order_id)
+
+        categories = Category.objects.all()
+        return render(
+            request,
+            'page_payment.html',
+            {
+                'form': form,
+                'pay_order': self.order,
+                'pay_order': pay_order,
+                'categories': categories,
+            }
+        )
+
+
+class BankPayView(CartMixin, View):
+    def get(self, request, *args, **kwargs):
+        order_id = kwargs.get('order')
+        return render('Bank Payment. Order ' + str(order_id))
 
 
 class LoginView(CartMixin, View):

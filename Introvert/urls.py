@@ -19,7 +19,7 @@ from store.views import (
     RegistrationView,
     ProfileView,
     ProductSearchView,
-    SubCategoryDetailView, DeliveryView,
+    SubCategoryDetailView, DeliveryView, PayView, BankPayView,
 )
 
 urlpatterns = [
@@ -35,6 +35,8 @@ urlpatterns = [
     path('change-qty/<str:slug>/', ChangeQTYView.as_view(), name='change_qty'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('make-order/', MakeOrderView.as_view(), name='make_order'),
+    path('order_pay/<int:order>/', PayView.as_view(), name='order_pay'),
+    path('bank_pay/', BankPayView.as_view(), name='bank_pay'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),

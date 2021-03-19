@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">x</span>
+        </button>
+      </div>
+    {% endfor %}
+{% endif %}
+
+<div class="col-md-12" style="margin-top: 50px; margin-bottom: 150px">
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Детали заказа № {{ pay_order.id }}</h5>
+          </div>
+          <div class="modal-body">
+              <table>
+                  <thead>
+                  <tr>
+                      <th scope="col" colspan="2">Наименование</th>
+                      <td>Цена</td>
+                      <td>Кол-во</td>
+                      <td>Итого</td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for item in pay_order.products.all %}
+                    <tr>
+                        <th>{{ item.product.title }}</th>
+                        <td class="w-25"><img class="img-fluid" src="{{ item.product.image.url }}" alt="{{ item.product.title }}"></td>
+                        <td><strong>{{ item.product.price }} руб.</strong></td>
+                        <td>{{ item.qty }}</td>
+                        <td>{{ item.final_price }} руб.</td>
+                    </tr>
+                  {% endfor %}
+                    <tr>
+                        <td colspan="2"></td>
+                        <td>Итого:</td>
+                        <td>{{ pay_order.total_products }}</td>
+                        <td><strong>{{ pay_order.final_price }} руб.</strong></td>
+                    </tr>
+                  </tbody>
+              </table>
+              <hr>
+              <h4 class="text-center">Дополнительная информация</h4>
+              <p>Получатель: {{ pay_order.last_name }} {{ pay_order.first_name }} {{ pay_order.patronymic }}</p>
+              {% if pay_order.payment_type %}<p>Способ отплаты: {{ pay_order.get_payment_type_display }}</p>{% endif %}
+              {% if pay_order.delivery_type %}<p>Оформлено: {{ pay_order.get_delivery_type_display }}</p>{% endif %}
+              {% if pay_order.tracking %}<p>Трекинг номер: <a href="https://www.cdek.ru/ru/tracking">{{ pay_order.tracking }}</a></p>{% endif %}
+              {% if pay_order.customer.phone %}<p>Телефон: {{ pay_order.customer.phone }}</p>{% endif %}
+              {% if pay_order.postal_code %}<p>Индекс: {{ pay_order.postal_code }}</p>{% endif %}
+              {% if pay_order.settlement %}<p>Населенный пункт: {{ pay_order.settlement }}</p>{% endif %}
+              {% if pay_order.address %}<p>Адрес: {{ pay_order.address }}</p>{% endif %}
+              {% if pay_order.comment %}<p>Комментарий: {{ pay_order.comment }}</p>{% endif %}
+          </div>
+          <div class="modal-footer">
+              <form action="{% url 'bank_pay' %}" method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" class="btn btn-success btn-block mb-3" value="Оплатить">
+              </form>
+          </div>
+        </div>
+
+</div>
+
+{% endblock %}
