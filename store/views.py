@@ -136,6 +136,7 @@ class AddToCartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         session = request.COOKIES.get('customersession') or get_random_session()
+        print(request)
 
         customer, created = Customer.objects.get_or_create(session=session)
         user = User.objects.filter(username=request.user).first()
@@ -154,9 +155,9 @@ class AddToCartView(CartMixin, View):
         if created:
             self.order.products.add(order_product)
         recalc_order(self.order)
-        messages.add_message(request, messages.INFO, "Товар успешно добавлен")
+        messages.add_message(request, messages.INFO, "Товар добавлен в корзину")
 
-        response = HttpResponseRedirect('/cart/')
+        response = HttpResponseRedirect(f"/product/{product_slug}/")
         response.set_cookie(key='customersession', value=session)
         return response
 
@@ -239,6 +240,7 @@ class MakeOrderView(CartMixin, View):
             order.last_name = user.last_name
             order.phone = customer.phone
             order.address = form.cleaned_data['address']
+            order.payment_type = form.cleaned_data['payment_type']
             order.buying_type = form.cleaned_data['buying_type']
             order.comment = form.cleaned_data['comment']
             order.status = 'new'
@@ -248,9 +250,16 @@ class MakeOrderView(CartMixin, View):
                                  'Спасибо за заказ! Уведомление о заказе Вы получите по электронной почте')
 
             teleg = 'Новый заказ introvert.com.ru\n'  # Текст для телеграма
+
             for item in order.products.all():
                 teleg += f"{item}, {item.qty} шт\n"
+                teleg += f"{dict(order.PAYMENT_CHOICES)[order.payment_type]}\n"
+                teleg += f"{order.final_price}\n"
+                teleg += f"{dict(order.BUYING_TYPE_CHOICES)[order.buying_type]}\n"
+                if order.buying_type.startswith('delivery'):
+                    teleg += f"{order.address}\n"
 
+            # print(teleg)
             send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order})
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
@@ -286,7 +295,7 @@ class LoginView(CartMixin, View):
                 username=username, password=password
             )
             if user:
-                session = request.COOKIES.get('customersession')
+                session = request.COOKIES.get('customersession') or get_random_session()
                 customer, created = Customer.objects.get_or_create(session=session)
 
                 customer.user = user
@@ -330,8 +339,11 @@ class RegistrationView(CartMixin, View):
                 username=new_user.username, password=form.cleaned_data['password']
             )
             login(request, user)
-            customer = Customer.objects.get(session=session)
+            session = request.COOKIES.get('customersession') or get_random_session()
+            customer, created = Customer.objects.get_or_create(session=session)
+
             customer.user = user
+
             # new_user = form.save(commit=False)
             customer.phone = form.cleaned_data['phone']
             customer.address = form.cleaned_data['address']

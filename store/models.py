@@ -221,8 +221,13 @@ class Order(models.Model):
     STATUS_RETURN = 'return'
 
     BUYING_TYPE_SELF = 'self'
-    BUYING_TYPE_DELIVERY1 = 'delivery1'
-    BUYING_TYPE_DELIVERY2 = 'delivery2'
+    BUYING_TYPE_DELIVERY1 = 'deliveryspb'
+    BUYING_TYPE_DELIVERY2 = 'deliveryru'
+    BUYING_TYPE_DELIVERY3 = 'deliveryoutbound'
+
+    PAYMENT_TYPE1 = 'bankcard'
+    PAYMENT_TYPE2 = 'kiwi'
+
 
     STATUS_CHOICES = (
         (STATUS_CART, 'Корзина'),
@@ -238,9 +243,15 @@ class Order(models.Model):
     )
 
     BUYING_TYPE_CHOICES = (
-        (BUYING_TYPE_SELF, 'Самовывоз из торгового центра'),
-        (BUYING_TYPE_DELIVERY1, 'Доставка в пункт выдачи'),
-        (BUYING_TYPE_DELIVERY2, 'Почтовая доставка'),
+        (BUYING_TYPE_SELF, 'Самовывоз из мастерской (бесплатно)'),
+        (BUYING_TYPE_DELIVERY1, 'Курьерская доставка по СПб (450₽)'),
+        (BUYING_TYPE_DELIVERY2, 'Почтовая отправка по России (300₽)'),
+        (BUYING_TYPE_DELIVERY3, 'Почтовая отправка за рубеж (600₽)'),
+    )
+
+    PAYMENT_CHOICES = (
+        (PAYMENT_TYPE1, 'Оплата по карте онлайн'),
+        (PAYMENT_TYPE2, 'Киви кошелёк / пейпал'),
     )
 
     # user = models.ForeignKey(User, verbose_name='Автор', related_name='related_orders', on_delete=models.CASCADE)
@@ -264,6 +275,13 @@ class Order(models.Model):
         max_length=100,
         verbose_name='Тип заказа',
         choices=BUYING_TYPE_CHOICES,
+        null=True,
+        default=None
+    )
+    payment_type = models.CharField(
+        max_length=100,
+        verbose_name='Способ оплаты',
+        choices=PAYMENT_CHOICES,
         null=True,
         default=None
     )
