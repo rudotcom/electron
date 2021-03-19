@@ -14,10 +14,10 @@ from django.views.generic import DetailView, View, ListView
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-from .forms import OrderForm, LoginForm, RegistrationForm, CartForm
+from .forms import LoginForm, RegistrationForm, CartForm, SelfOrderForm, CourierOrderForm, CDEKOrderForm, \
+    PostRuOrderForm, PostWorldOrderForm
 from .mixins import CartMixin
 from .models import Category, SubCategory, Customer, OrderProduct, Product, Order
-# from .utils import recalc_order
 import telepot
 
 User = get_user_model()
@@ -136,16 +136,14 @@ class AddToCartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         session = request.COOKIES.get('customersession') or get_random_session()
-        print(request)
 
         customer, created = Customer.objects.get_or_create(session=session)
-        user = User.objects.filter(username=request.user).first()
-        if user:
+        if request.user.is_authenticated:
+            user = User.objects.get(username=request.user)
             customer.user = user
         customer.save()
 
-        order, created = Order.objects.get_or_create(owner=customer, status='cart')
-        self.order = order
+        self.order, created = Order.objects.get_or_create(owner=customer, status='cart')
 
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
@@ -203,8 +201,9 @@ class CartView(CartMixin, View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         form = CartForm(request.POST or None)
-        self.order.delivery_type = 'self'
-        self.order.save()
+        if self.order:
+            self.order.delivery_type = 'self'
+            self.order.save()
 
         context = {
             'order': self.order,
@@ -217,12 +216,21 @@ class CartView(CartMixin, View):
 class CheckoutView(CartMixin, View):
 
     def post(self, request, *args, **kwargs):
-        categories = Category.objects.all()
-        form = OrderForm(request.POST or None)
 
         self.order.delivery_type = request.POST.get('delivery_type')
-        print('req', request.POST.get('delivery_type'))
         self.order.save()
+
+        categories = Category.objects.all()
+        if self.order.delivery_type == 'self':
+            form = SelfOrderForm()
+        elif self.order.delivery_type == 'delivery_spb':
+            form = CourierOrderForm()
+        elif self.order.delivery_type == 'delivery_cdekspb':
+            form = CDEKOrderForm()
+        elif self.order.delivery_type == 'delivery_ru':
+            form = PostRuOrderForm()
+        elif self.order.delivery_type == 'delivery_world':
+            form = PostWorldOrderForm()
 
         context = {
             'order': self.order,
@@ -237,7 +245,17 @@ class MakeOrderView(CartMixin, View):
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        form = OrderForm(request.POST or None)
+        if self.order.delivery_type == 'self':
+            form = SelfOrderForm(request.POST or None)
+        elif self.order.delivery_type == 'delivery_spb':
+            form = CourierOrderForm(request.POST or None)
+        elif self.order.delivery_type == 'delivery_cdekspb':
+            form = CDEKOrderForm(request.POST or None)
+        elif self.order.delivery_type == 'delivery_ru':
+            form = PostRuOrderForm(request.POST or None)
+        elif self.order.delivery_type == 'delivery_world':
+            form = PostWorldOrderForm(request.POST or None)
+
         user = User.objects.get(username=request.user)
         session = request.COOKIES.get('customersession')
 
@@ -340,8 +358,6 @@ class RegistrationView(CartMixin, View):
         if form.is_valid():
             new_user = form.save(commit=False)
             new_user.email = form.cleaned_data['email']
-            new_user.first_name = form.cleaned_data['first_name']
-            new_user.last_name = form.cleaned_data['last_name']
             new_user.save()
             new_user.set_password(form.cleaned_data['password'])
             new_user.save()
@@ -351,13 +367,10 @@ class RegistrationView(CartMixin, View):
             login(request, user)
             session = request.COOKIES.get('customersession') or get_random_session()
             customer, created = Customer.objects.get_or_create(session=session)
-
-            customer.user = user
-
-            # new_user = form.save(commit=False)
-            customer.phone = form.cleaned_data['phone']
-            customer.address = form.cleaned_data['address']
+            if user:
+                customer.user = user
             customer.save()
+
             return HttpResponseRedirect('/cart/')
         categories = Category.objects.all()
         context = {

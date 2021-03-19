@@ -1,29 +1,95 @@
 from django import forms
 from django.contrib.auth import get_user_model
+
+from .mixins import RequiredFieldsMixin
 from .models import Order
 
 User = get_user_model()
 
 
-class OrderForm(forms.ModelForm):
-
+class SelfOrderForm(forms.ModelForm):
     class Meta:
         model = Order
 
         fields = (
-            'address', 'comment', 'payment_type'
+            'payment_type',
         )
 
 
-class CartForm(forms.ModelForm):
+class CDEKOrderForm(RequiredFieldsMixin, forms.ModelForm):
 
+    class Meta:
+        model = Order
+
+        fields = [
+            'address', 'last_name', 'first_name', 'patronymic', 'comment', 'payment_type',
+        ]
+        fields_required = ['address', 'last_name', 'first_name']
+        labels = {
+            'address': 'Адрес пункта выдачи заказов CDEK',
+        }
+
+
+class CourierOrderForm(RequiredFieldsMixin, forms.ModelForm):
+    class Meta:
+        model = Order
+
+        fields = (
+            'address', 'last_name', 'first_name', 'patronymic', 'phone', 'comment', 'payment_type',
+        )
+        fields_required = ['address', 'last_name', 'first_name', 'phone', ]
+        labels = {
+            'address': 'Адрес в Санкт-Петербурге',
+            'phone': 'Телефон получателя',
+        }
+        widgets = ()
+
+
+class PostRuOrderForm(RequiredFieldsMixin, forms.ModelForm):
+    class Meta:
+        model = Order
+
+        fields = (
+            'last_name', 'first_name', 'patronymic', 'phone', 'postal_code', 'settlement', 'address',
+            'comment', 'payment_type',
+        )
+        fields_required = ['address', 'last_name', 'first_name', 'patronymic', 'phone', 'postal_code',
+                           'settlement', ]
+        labels = {
+            'address': 'Адрес получателя',
+        }
+
+
+class PostWorldOrderForm(RequiredFieldsMixin, forms.ModelForm):
+    class Meta:
+        model = Order
+
+        fields = (
+            'first_name', 'last_name', 'patronymic', 'settlement', 'address', 'postal_code', 'phone',
+            'comment', 'payment_type',
+        )
+        fields_required = ['last_name', 'first_name',
+                           'settlement', 'address', ]
+        labels = {
+            'last_name': 'Фамилия (латинскими буквами)',
+            'first_name': 'Имя (латинскими буквами)',
+            'patronymic': 'Отчество (латинскими буквами)',
+            'phone': 'Телефон',
+            'postal_code': 'Индекс',
+            'settlement': 'Страна, Город (латинскими буквами)',
+            'address': 'Адрес получателя (латинскими буквами)',
+            'comment': 'Комментарий',
+            'payment_type': 'Тип оплаты',
+        }
+
+
+class CartForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('delivery_type',)
 
 
 class LoginForm(forms.ModelForm):
-
     password = forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
@@ -48,24 +114,15 @@ class LoginForm(forms.ModelForm):
 
 
 class RegistrationForm(forms.ModelForm):
-
     confirm_password = forms.CharField(widget=forms.PasswordInput)
     password = forms.CharField(widget=forms.PasswordInput)
-    phone = forms.CharField(required=False)
-    address = forms.CharField(required=False)
     email = forms.EmailField(required=True)
-    first_name = forms.CharField(required=True)
-    last_name = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].label = 'Логин (имя в системе)'
         self.fields['password'].label = 'Пароль'
         self.fields['confirm_password'].label = 'Подтвердите пароль'
-        self.fields['first_name'].label = 'Имя'
-        self.fields['last_name'].label = 'Фамилия'
-        self.fields['phone'].label = 'Номер телефона'
-        self.fields['address'].label = 'Адрес'
         self.fields['email'].label = 'Электронная почта'
 
     def clean_email(self):
@@ -98,4 +155,4 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'confirm_password', 'first_name', 'last_name', 'phone', 'address', 'email']
+        fields = ['username', 'password', 'confirm_password', 'email']

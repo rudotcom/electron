@@ -8,10 +8,11 @@ from django.utils.html import mark_safe
 User = get_user_model()
 FREE_DELIVERY = 2500  #
 FREE_GIFT = 800
-CDEK_OUTPOST_COST = 300  # Доставка до ближайшего к Вам пункта выдачи СДЭК (по СПб)
-COURIER_DELIVERY_COST = 450  # Доставка заказа курьером лично в руки, по городу Санкт-Петербургу
+DELIVERY_CDEK_COST = 300  # Доставка до ближайшего к Вам пункта выдачи СДЭК (по СПб)
+DELIVERY_COURIER_COST = 450  # Доставка заказа курьером лично в руки, по городу Санкт-Петербургу
 DELIVERY_RU_COST = 300  # В любой другой город России, доставка посредством почты, стоимость доставки 300₽
 DELIVERY_WORLD_COST = 900  # Стоимость доставки заказа авиа почтой по миру: 900₽.
+
 
 class MinDimentionErrorException(Exception):
     pass
@@ -169,8 +170,6 @@ class Customer(models.Model):
         verbose_name_plural = '[ Сессии ]'
 
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=20, verbose_name='Номер телефона', null=True, blank=True)
-    address = models.CharField(max_length=255, verbose_name='Адрес', null=True, blank=True)
     orders = models.ManyToManyField('Order', verbose_name='Заказы клиента', related_name='related_order')
     session = models.CharField(max_length=200, null=True, blank=True, verbose_name='Сессия клиента')
     created = models.DateTimeField(auto_now=True, verbose_name='Дата подключения клиента')
@@ -189,7 +188,8 @@ class OrderProduct(models.Model):
         verbose_name = 'Товар заказа'
         verbose_name_plural = 'Товары заказа'
 
-    order = models.ForeignKey('Order', verbose_name='Корзина', on_delete=models.CASCADE, related_name='related_products')
+    order = models.ForeignKey('Order', verbose_name='Корзина', on_delete=models.CASCADE,
+                              related_name='related_products')
     product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
     qty = models.PositiveIntegerField(default=1, verbose_name='шт')
     final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Общая цена')
@@ -226,10 +226,12 @@ class Order(models.Model):
     STATUS_RETURN = 'return'
 
     DELIVERY_TYPE_SELF = 'self'
+    DELIVERY_TYPE_CDEKSPB = 'delivery_cdekspb'
     DELIVERY_TYPE_SPB = 'delivery_spb'
     DELIVERY_TYPE_RU = 'delivery_ru'
     DELIVERY_TYPE_WORLD = 'delivery_world'
 
+    PAYMENT_TYPE0 = 'cash_card'
     PAYMENT_TYPE1 = 'bankcard'
     PAYMENT_TYPE2 = 'kiwi'
 
@@ -248,14 +250,16 @@ class Order(models.Model):
 
     DELIVERY_TYPE_CHOICES = (
         (DELIVERY_TYPE_SELF, 'Самовывоз из мастерской (бесплатно)'),
+        (DELIVERY_TYPE_CDEKSPB, 'Доставка до пункта выдачи СДЭК по СПб'),
         (DELIVERY_TYPE_SPB, 'Курьерская доставка по СПб'),
         (DELIVERY_TYPE_RU, 'Почтовая отправка по России'),
         (DELIVERY_TYPE_WORLD, 'Почтовая отправка за рубеж'),
     )
 
     PAYMENT_CHOICES = (
-        (PAYMENT_TYPE1, 'Оплата по карте онлайн'),
-        (PAYMENT_TYPE2, 'Киви кошелёк / пейпал'),
+        (PAYMENT_TYPE0, 'Наличные или банковская карта в мастерской'),
+        (PAYMENT_TYPE1, 'Банковская карта онлайн'),
+        (PAYMENT_TYPE2, 'Киви кошелёк / Paypal'),
     )
 
     # user = models.ForeignKey(User, verbose_name='Автор', related_name='related_orders', on_delete=models.CASCADE)
@@ -263,12 +267,8 @@ class Order(models.Model):
     products = models.ManyToManyField(OrderProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(verbose_name='Товары', default=0)
     final_price = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Общая сумма')
+    gift = models.ForeignKey(Product, null=True, verbose_name='Подарок', on_delete=models.DO_NOTHING)
 
-    first_name = models.CharField(max_length=255, verbose_name='Имя')
-    last_name = models.CharField(max_length=255, verbose_name='Фамилия')
-    phone = models.CharField(max_length=20, verbose_name='Телефон', null=True, blank=True)
-    postal_code = models.CharField(max_length=30, verbose_name='Индекс', null=True, blank=True)
-    address = models.CharField(max_length=1024, verbose_name='Адрес', null=True, blank=True)
     status = models.CharField(
         max_length=100,
         verbose_name='Статус заказа',
@@ -279,8 +279,8 @@ class Order(models.Model):
         max_length=100,
         verbose_name='Тип заказа',
         choices=DELIVERY_TYPE_CHOICES,
-        null=False,
-        default='self'
+        null=True,
+        default=None
     )
     delivery_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Стоимость доставки')
     payment_type = models.CharField(
@@ -298,6 +298,14 @@ class Order(models.Model):
     shipped_date = models.DateTimeField(blank=True, null=True)
     tracking = models.CharField(max_length=50, verbose_name='Трекинг номер', null=True, blank=True)
 
+    first_name = models.CharField(max_length=50, verbose_name='Имя', blank=True)
+    last_name = models.CharField(max_length=50, verbose_name='Фамилия', blank=True)
+    patronymic = models.CharField(max_length=50, verbose_name='Отчество', blank=True)
+    phone = models.CharField(max_length=20, verbose_name='Телефон', blank=True)
+    settlement = models.CharField(max_length=100, verbose_name='Населенный пункт', blank=True)
+    address = models.CharField(max_length=1024, verbose_name='Адрес', blank=True)
+    postal_code = models.CharField(max_length=30, verbose_name='Индекс', blank=True)
+
     def __str__(self):
         return \
             'Заказ: {}. {} {} {}'.format(
@@ -307,11 +315,15 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
 
         if self.delivery_type == self.DELIVERY_TYPE_SELF:
-            print(self.delivery_type)
             self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_SPB:  # spb
             if self.final_price < FREE_DELIVERY:
-                self.delivery_cost = COURIER_DELIVERY_COST
+                self.delivery_cost = DELIVERY_COURIER_COST
+            else:
+                self.delivery_cost = 0
+        elif self.delivery_type == self.DELIVERY_TYPE_CDEKSPB:  # CDEK spb
+            if self.final_price < FREE_DELIVERY:
+                self.delivery_cost = DELIVERY_CDEK_COST
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_RU:  # RU
@@ -322,11 +334,15 @@ class Order(models.Model):
         elif self.delivery_type == self.DELIVERY_TYPE_WORLD:  # World
             self.delivery_cost = DELIVERY_WORLD_COST
 
-        cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
-        if cart_data.get('final_price__sum'):
-            self.final_price = cart_data['final_price__sum'] + self.delivery_cost
+        if self.id:
+            cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
+            if cart_data.get('final_price__sum'):
+                self.final_price = cart_data['final_price__sum'] + self.delivery_cost
+            else:
+                self.final_price = 0
+            self.total_products = cart_data['id__count']
         else:
             self.final_price = 0
-        self.total_products = cart_data['id__count']
+            self.total_products = 0
 
         super().save(*args, **kwargs)
