@@ -59,7 +59,7 @@
             <td colspan="5">Подарок</td>
             {% else %}
             <td colspan="7">
-            <p><a href="{% url 'gifts' %}">Выбери подарок при сумме заказа выше {{ bonus_sum }} руб.</a></p>
+            <p><a href="{% url 'gifts' %}">Выбери подарок при сумме заказа от {{ bonus_sum }} руб.</a></p>
             </td>
        {% endif %}
         </tr>
