@@ -18,12 +18,19 @@
     {% for item in order.products.all %}
         <tr>
           <th scope="row">{{ item.product.title }}</th>
-          <td class="w-25"><img src="{{ item.product.image.url }}" class="img-fluid"></td>
+          <td>{{ item.product.image_tag }}</td>
           <td>{{ item.product.price }} &#x20bd;</td>
           <td>{{ item.qty }}</td>
           <td>{{ item.final_price }} &#x20bd;</td>
         </tr>
     {% endfor %}
+        <tr>
+        {% if order.gift %}
+            <th>{{ order.gift.title }} </th>
+            <td>{{ order.gift.image_tag }}</td>
+            <td colspan="3">Подарок</td>
+       {% endif %}
+        </tr>
         <tr>
             <td colspan="2">{{ order.get_delivery_type_display }}</td>
             <td colspan="3">{{ order.delivery_cost }} &#x20bd;</td>
