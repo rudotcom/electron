@@ -100,7 +100,8 @@ class Product(models.Model):
     description = models.TextField(verbose_name='Описание', null=True)
     care = models.TextField(verbose_name='Инструкция по уходу', null=True, blank=True)
     price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Цена')
-    price_discount = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Цена со скидкой', null=True, blank=True)
+    price_discount = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Цена со скидкой',
+                                         null=True, blank=True)
     length = models.IntegerField(verbose_name='Длина, см', null=True, blank=True)
     width = models.IntegerField(verbose_name='Ширина, см', null=True, blank=True)
     height = models.IntegerField(verbose_name='Высота, см', null=True, blank=True)
@@ -110,7 +111,8 @@ class Product(models.Model):
     bestseller = models.BooleanField(verbose_name='Хит', default=False)
     new = models.BooleanField(verbose_name='Новинка', default=False)
     gift = models.BooleanField(verbose_name='Подарок', blank=False, null=False, default=False)
-    gender = models.CharField(verbose_name='Пол', max_length=1, blank=False, null=False, default='G', choices=GENDER_CHOICES)
+    gender = models.CharField(verbose_name='Пол', max_length=1, blank=False, null=False, default='G',
+                              choices=GENDER_CHOICES)
     quantity = models.PositiveIntegerField(verbose_name='Наличие', default=0)
     display = models.BooleanField(verbose_name='Выставлять', default=True,
                                   blank=False, null=False)
@@ -140,7 +142,7 @@ class Product(models.Model):
         super().save(*args, **kwargs)
 
     def image_tag(self):
-        return mark_safe('<img src="/media/%s" width="50" height="50" />' % self.image)
+        return mark_safe('<img src="/media/%s" height="50" />' % self.image)
 
     image_tag.short_description = 'Изображение'
 
@@ -158,7 +160,7 @@ class ProductImage(models.Model):
         return self.product.title
 
     def image_tag(self):
-        return mark_safe('<img src="/media/%s" width="50" height="50" />' % self.image)
+        return mark_safe('<img src="/media/%s" height="50" />' % self.image)
 
     image_tag.short_description = 'Изображение'
 

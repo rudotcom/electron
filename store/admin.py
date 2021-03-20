@@ -1,11 +1,10 @@
 import datetime
 
 from PIL import Image
+from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-from django.db.models import Q
 from django.forms import ModelForm, ValidationError
-from django.contrib import admin
 from django.template.loader import render_to_string
 from django.utils.html import mark_safe
 
@@ -18,7 +17,7 @@ class ProductAdminForm(ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['image'].help_text = mark_safe(
-            '<i>Минимальный размер {}x{}, максимальный {}x{}, 3 Мб</i>'.format(
+            '<i>Минимальный размер {}x{}, максимальный {}x{}, 4 Мб</i>'.format(
                 *Product.MIN_DIMENSIONS, *Product.MAX_DIMENSIONS
             )
         )
@@ -42,7 +41,7 @@ class ProductAdminForm(ModelForm):
         img = Image.open(image)
 
         if image.size > Product.MAX_IMAGE_SIZE:
-            raise ValidationError('Размер файла изображения превышает допустимые 3 Мб')
+            raise ValidationError('Размер файла изображения превышает допустимые 4 Мб')
         if img.height < min_height or img.width < min_width:
             raise ValidationError('Размер загруженного изображения меньше допустимого {}x{}'.format(
                 *Product.MIN_DIMENSIONS))
