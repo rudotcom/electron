@@ -324,10 +324,10 @@ class MakeOrderView(CartMixin, View):
             teleg += f"{dict(order.PAYMENT_CHOICES)[order.payment_type]}\n"
             teleg += f"{dict(order.DELIVERY_TYPE_CHOICES)[order.delivery_type]}\n"
             if order.delivery_type.startswith('delivery'):
-                teleg += f"{order.address}\n"
+                teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
 
-            print(teleg)
-            # send_telegram(teleg)
+            # print(teleg)
+            send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order})
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
                       'Интроверт<noreply@introvert.com.ru>', [user.email], fail_silently=False, html_message=html)
