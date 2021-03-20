@@ -4,9 +4,21 @@
               <div class="card-body">
 				  <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
 				   {% if product.quantity %}
-                <a href="{% url 'add_to_cart' slug=product.slug %}">
-                  <button class="btn btn-danger">{{ product.price }} &#x20bd; В корзину</button>
-                </a>
+
+                    {% if product.bestseller %}
+                        <h6>Хит!</h6>
+                    {% endif %}
+                    {% if product.new %}
+                        <h6>Новинка!</h6>
+                    {% endif %}
+                    <h3>{% if product.price_discount %}
+                         <strike>{{ product.price }} &#x20bd;</strike><br>
+                         {{ product.price_discount }} &#x20bd;
+                       {% else %}
+                         {{ product.price }} &#x20bd;
+                     {% endif %}
+                    </h3>
+                       <a href="{% url 'add_to_cart' slug=product.slug %}">В корзину</a>
 				   {% else %}
 					 <p>Нет в наличии</p>
 				   {% endif %}
