@@ -120,7 +120,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;line-height:24px;color:#484848;">
-                                                <p>{{ user.first_name }}&nbsp;{{ user.last_name }}, Ваш заказ в магазине Интроверт оформлен. </p>
+                                                <p>{{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}, Ваш заказ в магазине Интроверт оформлен. </p>
 
 <table class="table">
   <thead>
@@ -142,6 +142,13 @@
           <td>{{ item.final_price }}&#x20bd;</td>
         </tr>
     {% endfor %}
+        {% if order.gift %}
+        <tr>
+            <th>{{ order.gift.title }} </th>
+            <td>{{ order.gift.image_tag }}</td>
+            <td colspan="3">Подарок</td>
+        </tr>
+       {% endif %}
         <tr>
           <td colspan="2">&nbsp;</td>
           <td>Итого:</td>
@@ -149,9 +156,22 @@
           <td><strong>{{ order.final_price }}&#x20bd;</strong></td>
           <td>&nbsp;</td>
         </tr>
+        <tr>
+            <td colspan="2">{{ order.get_delivery_type_display }}</td>
+            <td colspan="3">{{ order.delivery_cost }} &#x20bd;</td>
+        </tr>
   </tbody>
 </table>
-                                                <p>Статус заказа Вы можете посмотреть в <a href="http://introvert.com.ru/profile/">личном кабинете</a></p>
+<p>Покупатель: {{ order.last_name }} {{ order.first_name }} {{ order.patronymic }}</p>
+{% if order.payment_type %}<p>Способ отплаты: {{ order.get_payment_type_display }}</p>{% endif %}
+{% if order.delivery_type %}<p>Оформлено: {{ order.get_delivery_type_display }}</p>{% endif %}
+{% if order.tracking %}<p>Трекинг номер: <a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></p>{% endif %}
+{% if order.phone %}<p>Телефон: {{ order.phone }}</p>{% endif %}
+{% if order.postal_code %}<p>Индекс: {{ order.postal_code }}</p>{% endif %}
+{% if order.settlement %}<p>Населенный пункт: {{ order.settlement }}</p>{% endif %}
+{% if order.address %}<p>Адрес: {{ order.address }}</p>{% endif %}
+{% if order.comment %}<p>Комментарий: {{ order.comment }}</p>{% endif %}
+<p>Статус заказа Вы можете посмотреть в <a href="http://introvert.com.ru/profile/">личном кабинете</a></p>
                                             </td>
                                         </tr>
                                         <tr>

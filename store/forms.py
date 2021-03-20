@@ -30,9 +30,9 @@ class CDEKOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = [
-            'address', 'last_name', 'first_name', 'patronymic', 'payment_type', 'comment',
+            'address', 'last_name', 'first_name', 'patronymic', 'phone', 'payment_type', 'comment',
         ]
-        fields_required = ['address', 'last_name', 'first_name']
+        fields_required = ['address', 'last_name', 'first_name', 'phone']
         labels = {
             'address': 'Адрес пункта выдачи заказов CDEK',
         }

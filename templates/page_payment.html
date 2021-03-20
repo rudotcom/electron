@@ -60,7 +60,7 @@
               {% if pay_order.payment_type %}<p>Способ отплаты: {{ pay_order.get_payment_type_display }}</p>{% endif %}
               {% if pay_order.delivery_type %}<p>Оформлено: {{ pay_order.get_delivery_type_display }}</p>{% endif %}
               {% if pay_order.tracking %}<p>Трекинг номер: <a href="https://www.cdek.ru/ru/tracking">{{ pay_order.tracking }}</a></p>{% endif %}
-              {% if pay_order.customer.phone %}<p>Телефон: {{ pay_order.customer.phone }}</p>{% endif %}
+              {% if pay_order.phone %}<p>Телефон: {{ pay_order.phone }}</p>{% endif %}
               {% if pay_order.postal_code %}<p>Индекс: {{ pay_order.postal_code }}</p>{% endif %}
               {% if pay_order.settlement %}<p>Населенный пункт: {{ pay_order.settlement }}</p>{% endif %}
               {% if pay_order.address %}<p>Адрес: {{ pay_order.address }}</p>{% endif %}

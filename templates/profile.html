@@ -106,7 +106,7 @@
                               {% if order.payment_type %}<p>Способ отплаты: {{ order.get_payment_type_display }}</p>{% endif %}
                               {% if order.delivery_type %}<p>Оформлено: {{ order.get_delivery_type_display }}</p>{% endif %}
                               {% if order.tracking %}<p>Трекинг номер: <a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></p>{% endif %}
-                              {% if order.customer.phone %}<p>Телефон: {{ order.customer.phone }}</p>{% endif %}
+                              {% if order.phone %}<p>Телефон: {{ order.phone }}</p>{% endif %}
                               {% if order.postal_code %}<p>Индекс: {{ order.postal_code }}</p>{% endif %}
                               {% if order.settlement %}<p>Населенный пункт: {{ order.settlement }}</p>{% endif %}
                               {% if order.address %}<p>Адрес: {{ order.address }}</p>{% endif %}
