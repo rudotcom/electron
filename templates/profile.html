@@ -23,6 +23,7 @@
             <tr>
                 <th>Номер</th>
                 <th>Дата</th>
+                <th>Доставка</th>
                 <th>Статус</th>
                 <th>Сумма</th>
                 <th>Товар</th>
@@ -32,24 +33,27 @@
         <tbody>
         {% for order in orders %}
             <tr>
-                <td scope="row"><a href="{%  url 'order_pay' order.id %}">{{ order.id }}</a></td>
+                <td scope="row">
+                    <button class="btn btn-info" data-toggle="modal" data-target="#Modal-{{ order.id }}">{{ order.id }}</button>
+                </td>
                 <td scope="row">{{ order.created_at }}</td>
+                <td scope="row">{{ order.get_delivery_type_display }}</td>
                 <td>{{ order.get_status_display }}</td>
                 <td>{{ order.final_price }}</td>
-                <td><ul>
+                <td nowrap=""><ul>
                     {% for item in order.products.all %}
                     <li>{{ item.product.title}} x {{ item.qty }}</li>
                     {% endfor %}
                 </ul></td>
                 <td>
-                    <button class="btn btn-info" data-toggle="modal" data-target="#Modal-{{ order.id }}">Дополнительно</button>
+                <a href="{%  url 'order_pay' order.id %}"><button class="btn btn-danger">Оплатить</button></a>
+
                     <!-- Modal -->
                     <div class="modal fade" id="Modal-{{ order.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Детали заказа</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
                             <h5 class="text-center">Товары</h5>
@@ -90,10 +94,7 @@
                               {% if order.postal_code %}<p>Индекс: {{ order.postal_code }}</p>{% endif %}
                               {% if order.settlement %}<p>Населенный пункт: {{ order.settlement }}</p>{% endif %}
                               {% if order.address %}<p>Адрес: {{ order.address }}</p>{% endif %}
-                              <p>{{ order.comment }}</p>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                              {% if order.comment %}<p>Комментарий: {{ order.comment }}</p>{% endif %}
                           </div>
                         </div>
                       </div>

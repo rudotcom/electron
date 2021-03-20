@@ -334,7 +334,7 @@ class PayView(CartMixin, View):
             'page_payment.html',
             {
                 'form': form,
-                'pay_order': self.order,
+                'order': self.order,
                 'pay_order': pay_order,
                 'categories': categories,
             }
