@@ -33,17 +33,24 @@
                   {% for item in pay_order.products.all %}
                     <tr>
                         <th>{{ item.product.title }}</th>
-                        <td class="w-25"><img class="img-fluid" src="{{ item.product.image.url }}" alt="{{ item.product.title }}"></td>
-                        <td><strong>{{ item.product.price }} руб.</strong></td>
-                        <td>{{ item.qty }}</td>
-                        <td>{{ item.final_price }} руб.</td>
+                        <td class="w-25">{{ item.product.image_tag }}</td>
+                        <td><strong>{{ item.product.price }} &#x20bd;</strong></td>
+                        <td align="center">{{ item.qty }}</td>
+                        <td>{{ item.final_price }} &#x20bd;</td>
                     </tr>
                   {% endfor %}
                     <tr>
+                        {% if pay_order.gift %}
+                        <td>{{ pay_order.gift.title }} </td>
+                        <td>{{ pay_order.gift.image_tag }}</td>
+                        <td colspan="3">Подарок</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
                         <td colspan="2"></td>
                         <td>Итого:</td>
-                        <td>{{ pay_order.total_products }}</td>
-                        <td><strong>{{ pay_order.final_price }} руб.</strong></td>
+                        <td align="center">{{ pay_order.total_products }}</td>
+                        <td><strong>{{ pay_order.final_price }} &#x20bd;</strong></td>
                     </tr>
                   </tbody>
               </table>
@@ -61,6 +68,7 @@
           </div>
           <div class="modal-footer">
               <form action="{% url 'bank_pay' %}" method="POST">
+                <input type="hidden" name="order" value="{{ pay_order.id }}">
                 {% csrf_token %}
                 {{ form|crispy }}
                 <input type="submit" class="btn btn-success btn-block mb-3" value="Оплатить">

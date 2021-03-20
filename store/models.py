@@ -6,8 +6,8 @@ from django.utils import timezone
 from django.utils.html import mark_safe
 
 User = get_user_model()
-FREE_DELIVERY = 2500  #
-FREE_GIFT = 800
+FREE_DELIVERY = 2500  # Сумма, при которой доставка по РФ бесплатна
+FREE_GIFT = 800  # Сумма, при которой добавляется возможность выбрать подарок
 DELIVERY_CDEK_COST = 300  # Доставка до ближайшего к Вам пункта выдачи СДЭК (по СПб)
 DELIVERY_COURIER_COST = 450  # Доставка заказа курьером лично в руки, по городу Санкт-Петербургу
 DELIVERY_RU_COST = 300  # В любой другой город России, доставка посредством почты, стоимость доставки 300₽
@@ -176,7 +176,7 @@ class Customer(models.Model):
 
     def __str__(self):
         if self.user:
-            name = "{} {}".format(self.user.first_name, self.user.last_name)
+            name = f'{self.user.username} [ {self.user.email} ]'
         else:
             name = f"Аноним {self.session[0:5]}..."
         return name
@@ -216,7 +216,6 @@ class Order(models.Model):
 
     STATUS_CART = 'cart'
     STATUS_NEW = 'new'
-    STATUS_PAID = 'paid'
     STATUS_IN_PROGRESS = 'in_progress'
     STATUS_READY = 'is_ready'
     STATUS_SHIPPED = 'shipped'
@@ -238,7 +237,6 @@ class Order(models.Model):
     STATUS_CHOICES = (
         (STATUS_CART, 'Корзина'),
         (STATUS_NEW, 'Оформлен'),
-        (STATUS_PAID, 'Оплачен'),
         (STATUS_IN_PROGRESS, 'В обработке'),
         (STATUS_READY, 'Готов'),
         (STATUS_SHIPPED, 'Отправлен'),
@@ -259,7 +257,7 @@ class Order(models.Model):
     PAYMENT_CHOICES = (
         (PAYMENT_TYPE0, 'Наличные или банковская карта в мастерской'),
         (PAYMENT_TYPE1, 'Банковская карта онлайн'),
-        (PAYMENT_TYPE2, 'Киви кошелёк / Paypal'),
+        (PAYMENT_TYPE2, 'Kiwi кошелёк / Paypal'),
     )
 
     # user = models.ForeignKey(User, verbose_name='Автор', related_name='related_orders', on_delete=models.CASCADE)
@@ -294,7 +292,7 @@ class Order(models.Model):
     remark = models.CharField(max_length=255, verbose_name='Примечания от магазина',
                               null=True, blank=True, help_text='Служебные примечания, клиенту недоступны')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='Дата заказа')
-    is_paid = models.BooleanField(default=False)  # оплачен ли заказ
+    is_paid = models.BooleanField(default=False, verbose_name='Оплачен')  # оплачен ли заказ
     shipped_date = models.DateTimeField(blank=True, null=True)
     tracking = models.CharField(max_length=50, verbose_name='Трекинг номер', null=True, blank=True)
 
@@ -312,8 +310,44 @@ class Order(models.Model):
                 str(self.id), self.last_name, self.first_name, self.phone
             )
 
-    def save(self, *args, **kwargs):
+    def get_fio(self):
+        return f'{self.last_name} {self.first_name[0:1]}.{self.patronymic[0:1]}'
+    get_fio.short_description = 'Ф.И.О.'
 
+    def save(self, *args, **kwargs):
+        # Пересчитать сумму в корзине
+        if self.id:
+            cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
+            if cart_data.get('final_price__sum'):
+                self.final_price = cart_data['final_price__sum'] + self.delivery_cost
+            else:
+                self.final_price = 0
+            self.total_products = cart_data['id__count']
+        else:
+            self.final_price = 0
+            self.total_products = 0
+
+        """
+        Если сумма меньше бонусной, удалить подарок
+        Если больше и подарка в корзине нет, перенести подарок из корзины в ячейку order.gift
+        """
+        if self.final_price < FREE_GIFT:
+            self.gift = None
+        # elif not self.gift:
+        #     # Найти товар в корзине, уменьшить количество на 1 и создать подарок в заказе
+        #     for order_product in self.products.all():
+        #         if order_product.product.gift:
+        #             qty = order_product.qty
+        #             if qty > 1:
+        #                 order_product.qty -= 1
+        #                 order_product.save()
+        #             else:
+        #                 self.products.remove(order_product)
+        #                 order_product.delete()
+        #             self.gift = order_product.product
+        #             break
+
+        # Пересчитать стоимость доставки в зависимости от суммы корзины
         if self.delivery_type == self.DELIVERY_TYPE_SELF:
             self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_SPB:  # spb
@@ -333,16 +367,5 @@ class Order(models.Model):
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_WORLD:  # World
             self.delivery_cost = DELIVERY_WORLD_COST
-
-        if self.id:
-            cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
-            if cart_data.get('final_price__sum'):
-                self.final_price = cart_data['final_price__sum'] + self.delivery_cost
-            else:
-                self.final_price = 0
-            self.total_products = cart_data['id__count']
-        else:
-            self.final_price = 0
-            self.total_products = 0
 
         super().save(*args, **kwargs)

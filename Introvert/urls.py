@@ -19,7 +19,7 @@ from store.views import (
     RegistrationView,
     ProfileView,
     ProductSearchView,
-    SubCategoryDetailView, DeliveryView, PayView, BankPayView,
+    SubCategoryDetailView, DeliveryView, PayView, BankPayView, GiftListView,
 )
 
 urlpatterns = [
@@ -27,6 +27,7 @@ urlpatterns = [
     path('', BaseView.as_view(), name='base'),
     path('search/', ProductSearchView.as_view(), name='search'),
     path('product/<str:slug>/', ProductDetailView.as_view(), name='product_detail'),
+    path('gifts/', GiftListView.as_view(), name='gifts'),
     path('subcategory/<str:slug>/', SubCategoryDetailView.as_view(), name='subcategory_detail'),
     path('category/<str:slug>/', CategoryDetailView.as_view(), name='category_detail'),
     path('cart/', CartView.as_view(), name='cart'),

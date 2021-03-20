@@ -28,8 +28,8 @@
   <tbody>
     {% for item in order.products.all %}
         <tr>
-          <th scope="row">{{ item.product.title }}</th>
-          <td class="w-25"><img src="{{ item.product.image.url }}" class="img-thumbnail"></td>
+          <td scope="row">{{ item.product.title }}</td>
+          <td class="w-25">{{ item.product.image_tag }}</td>
           <td>
           {%  if item.product.price_discount  %}
               <strike>{{ item.product.price }}&#x20bd;</strike><br>
@@ -52,6 +52,17 @@
           </td>
         </tr>
     {% endfor %}
+        <tr>
+            {% if order.gift %}
+            <td>{{ order.gift.title }} </td>
+            <td>{{ order.gift.image_tag }}</td>
+            <td colspan="5">Подарок</td>
+            {% else %}
+            <td colspan="7">
+            <p><a href="{% url 'gifts' %}">Выбери подарок при сумме заказа выше {{ bonus_sum }} руб.</a></p>
+            </td>
+       {% endif %}
+        </tr>
         <tr>
           <td colspan="2">&nbsp;</td>
           <td>Итого:</td>

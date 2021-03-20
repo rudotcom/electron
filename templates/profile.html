@@ -46,8 +46,13 @@
                     {% endfor %}
                 </ul></td>
                 <td>
+                {% if order.is_paid %}
+                Оплачен
+                {% elif order.payment_type == 'cash_card' %}
+                    Оплата в мастерской
+                {% else %}
                 <a href="{%  url 'order_pay' order.id %}"><button class="btn btn-danger">Оплатить</button></a>
-
+                {% endif %}
                     <!-- Modal -->
                     <div class="modal fade" id="Modal-{{ order.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
@@ -56,7 +61,6 @@
                             <h5 class="modal-title" id="exampleModalLabel">Детали заказа</h5>
                           </div>
                           <div class="modal-body">
-                            <h5 class="text-center">Товары</h5>
                               <table>
                                   <thead>
                                   <tr>
@@ -70,17 +74,29 @@
                                   {% for item in order.products.all %}
                                     <tr>
                                         <th>{{ item.product.title }}</th>
-                                        <td class="w-25"><img class="img-fluid" src="{{ item.product.image.url }}" alt="{{ item.product.title }}"></td>
-                                        <td><strong>{{ item.product.price }} руб.</strong></td>
+                                        <td class="w-25"><img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" height="50"></td>
+                                        <td>{{ item.product.price }} &#x20bd;</td>
                                         <td>{{ item.qty }}</td>
-                                        <td>{{ item.final_price }} руб.</td>
+                                        <td>{{ item.final_price }} &#x20bd;</td>
                                     </tr>
                                   {% endfor %}
+                                    <tr>
+                                        {% if order.gift %}
+                                        <td>{{ order.gift }} </td>
+                                        <td>{{ order.gift.image_tag }}</td>
+                                        <td colspan="5">Подарок</td>
+                                         {% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">{{ order.get_delivery_type_display }}</td>
+                                        <td colspan="2"></td>
+                                        <td>{{ order.delivery_cost }} &#x20bd;</td>
+                                    </tr>
                                     <tr>
                                         <td colspan="2"></td>
                                         <td>Итого:</td>
                                         <td>{{ order.total_products }}</td>
-                                        <td><strong>{{ order.final_price }} руб.</strong></td>
+                                        <td><strong>{{ order.final_price }} &#x20bd;</strong></td>
                                     </tr>
                                   </tbody>
                               </table>

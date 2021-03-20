@@ -8,16 +8,16 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import login, authenticate
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.views.generic import DetailView, View, ListView
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
 from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
-    PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm
+    PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm
 from .mixins import CartMixin
-from .models import Category, SubCategory, Customer, OrderProduct, Product, Order
+from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, FREE_GIFT
 import telepot
 
 User = get_user_model()
@@ -33,6 +33,20 @@ def send_telegram(text):
 
 class MyQ(Q):
     default = 'OR'
+
+
+class GiftListView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        gift_products = Product.objects.filter(gift=True)
+        context = {
+            'bonus_sum': FREE_GIFT,
+            'categories': categories,
+            'products': gift_products,
+            'order': self.order
+        }
+        return render(request, 'gift_list.html', context)
 
 
 class BaseView(CartMixin, View):
@@ -147,13 +161,22 @@ class AddToCartView(CartMixin, View):
 
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
-        order_product, created = OrderProduct.objects.get_or_create(
-            order=self.order, product=product
-        )
-        if created:
-            self.order.products.add(order_product)
-        self.order.save()
-        messages.add_message(request, messages.INFO, "Товар добавлен в корзину")
+        if product.gift and not self.order.gift and self.order.final_price >= FREE_GIFT:
+            self.order.gift = product
+            self.order.save()
+            messages.add_message(request, messages.INFO, "Подарок добавлен к Вашему заказу")
+        else:
+            order_product, created = OrderProduct.objects.get_or_create(
+                order=self.order, product=product
+            )
+
+            if created:
+                self.order.products.add(order_product)
+            else:
+                order_product.qty += 1
+                order_product.save()
+            self.order.save()
+            messages.add_message(request, messages.INFO, "Товар добавлен в корзину")
 
         response = HttpResponseRedirect(f"/product/{product_slug}/")
         response.set_cookie(key='customersession', value=session)
@@ -168,6 +191,7 @@ class DeleteFromCartView(CartMixin, View):
         order_product = OrderProduct.objects.get(
             order=self.order, product=product
         )
+
         self.order.products.remove(order_product)
         order_product.delete()
         self.order.save()
@@ -184,14 +208,15 @@ class ChangeQTYView(CartMixin, View):
             order=self.order, product=product
         )
         qty = int(request.POST.get('qty'))
+
         if qty:
             order_product.qty = qty
             messages.add_message(request, messages.INFO, "Кол-во товара изменено")
+            order_product.save()
         else:
             self.order.products.remove(order_product)
             order_product.delete()
             messages.add_message(request, messages.INFO, "Товар удален из корзины")
-        order_product.save()
         self.order.save()
         return HttpResponseRedirect('/cart/')
 
@@ -206,6 +231,7 @@ class CartView(CartMixin, View):
             self.order.save()
 
         context = {
+            'bonus_sum': FREE_GIFT,
             'order': self.order,
             'categories': categories,
             'form': form,
@@ -222,7 +248,7 @@ class CheckoutView(CartMixin, View):
 
         categories = Category.objects.all()
         if self.order.delivery_type == 'self':
-            form = None
+            form = SelfOrderForm()
         elif self.order.delivery_type == 'delivery_spb':
             form = CourierOrderForm()
         elif self.order.delivery_type == 'delivery_cdekspb':
@@ -246,7 +272,7 @@ class MakeOrderView(CartMixin, View):
     @transaction.atomic
     def post(self, request, *args, **kwargs):
         if self.order.delivery_type == 'self':
-            form = None
+            form = SelfOrderForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_spb':
             form = CourierOrderForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_cdekspb':
@@ -262,14 +288,7 @@ class MakeOrderView(CartMixin, View):
         customer = Customer.objects.get(user=user.id, session=session)
         order = Order.objects.get(owner=customer, status='cart')
 
-        if not form:
-            order.status = 'new'
-            order.save()
-            response = HttpResponseRedirect(f'/order_pay/{order.id}/')
-            new_session = get_random_session()
-            response.set_cookie(key='customersession', value=new_session)
-            return response
-        elif form.is_valid():
+        if form.is_valid():
             if 'first_name' in form.cleaned_data.keys():
                 order.first_name = form.cleaned_data['first_name']
             if 'last_name' in form.cleaned_data.keys():
@@ -284,6 +303,8 @@ class MakeOrderView(CartMixin, View):
                 order.settlement = form.cleaned_data['settlement']
             if 'address' in form.cleaned_data.keys():
                 order.address = form.cleaned_data['address']
+            if 'payment_type' in form.cleaned_data.keys():
+                order.payment_type = form.cleaned_data['payment_type']
             if 'comment' in form.cleaned_data.keys():
                 order.comment = form.cleaned_data['comment']
 
@@ -342,9 +363,11 @@ class PayView(CartMixin, View):
 
 
 class BankPayView(CartMixin, View):
-    def get(self, request, *args, **kwargs):
-        order_id = kwargs.get('order')
-        return render('Bank Payment. Order ' + str(order_id))
+
+    def post(self, request, *args, **kwargs):
+        order_id = request.POST.get('order')
+        print(request.POST)
+        return HttpResponse('<a href=/>Home</a><br>Форма платежной системы. Bank Payment. Order ' + str(order_id))
 
 
 class LoginView(CartMixin, View):
