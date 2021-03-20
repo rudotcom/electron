@@ -82,8 +82,8 @@ class Product(models.Model):
         ordering = ('subcategory', 'title')
 
     MIN_DIMENSIONS = (400, 400)
-    MAX_DIMENSIONS = (3000, 3000)
-    MAX_IMAGE_SIZE = 3145728
+    MAX_DIMENSIONS = (4500, 4500)
+    MAX_IMAGE_SIZE = 4145728
 
     GENDER_CHOICES = (
         ('G', 'Для всех'),
