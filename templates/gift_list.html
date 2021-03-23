@@ -1,22 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}Подарки{% endblock %}
 
+                  {% block breadcrumbs %}
+                <li class="breadcrumb-item active">Выбери подарок</li>
+                  {% endblock %}
 {% block content %}
-    <nav aria-label="breadcrumb" class="mt-5">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Выбери подарок</li>
-      </ol>
-    </nav>
 <p>
     При сумме товаров в корзине от {{ bonus_sum }} руб Вы можете добавить в корзину любой из этих подарков абсолютно бесплатно!
 </p>
 
-        <div class="row mt-5">
-          {% for product in products %}
-            {% include 'product_card.html' %}
-          {% endfor %}
-        </div>
+    <div class="row mt-5">
+      {% for product in products %}
+        {% include 'product_card.html' %}
+      {% endfor %}
+    </div>
 
 
 {% endblock content %}

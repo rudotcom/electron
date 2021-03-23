@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ flatpage.title }} {% endblock %}}
+
+{% block header %} {{ flatpage.title }} {% endblock %}}
+                  {% block breadcrumbs %}
+                <li class="breadcrumb-item active">{{ flatpage.title }}</li>
+                  {% endblock %}
+{% block content %} {{ flatpage.content }} {% endblock %}}

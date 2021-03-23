@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -19,7 +19,7 @@ from store.views import (
     RegistrationView,
     ProfileView,
     ProductSearchView,
-    SubCategoryDetailView, DeliveryView, PayView, BankPayView, GiftListView,
+    SubCategoryDetailView, PayView, BankPayView, GiftListView,
 )
 
 urlpatterns = [
@@ -42,7 +42,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('delivery/', DeliveryView.as_view(), name='delivery'),
 
     path(
         'admin/password_reset/',

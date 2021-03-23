@@ -35,7 +35,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav">
-            <li><a href="{% url 'delivery' %}">Доставка</a> </li>
+            <li><a href="/delivery/">Доставка</a> </li>
             <li><a href="{% url 'gifts' %}">Подарки</a> </li>
 <!--            {% for category in categories %}-->
 <!--            <li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>-->
@@ -94,6 +94,14 @@
       <!-- /.col-lg-3 -->
 
       <div class="col-lg-9">
+            <nav aria-label="breadcrumb" class="mt-5">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
+                  {% block breadcrumbs %}
+                <li class="breadcrumb-item active">Популярное</li>
+                  {% endblock %}
+              </ol>
+            </nav>
         {% block content %}
         {% if messages %}
             {% for message in messages %}

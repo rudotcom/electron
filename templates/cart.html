@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
+                  {% block breadcrumbs %}
+                <li class="breadcrumb-item active">Корзина</li>
+                  {% endblock %}
 {% block content %}
 <h3 class="text-center mt-5 mb-5">Ваша корзина {% if not order.products.count %}пуста{% endif %}</h3>
 {% if messages %}

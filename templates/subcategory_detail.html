@@ -2,14 +2,11 @@
 
 {% block title %}{{ category.name }} {{ subcategory.name }}{% endblock %}
 
-{% block content %}
-    <nav aria-label="breadcrumb" class="mt-5">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
+                  {% block breadcrumbs %}
         <li class="breadcrumb-item active"><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
         <li class="breadcrumb-item active">{{ subcategory.name }}</li>
-      </ol>
-    </nav>
+                  {% endblock %}
+{% block content %}
 <div class="row">
           {% for product in subcategory_products %}
             {% include 'product_card.html' %}

@@ -471,15 +471,3 @@ class ProfileView(CartMixin, View):
                 'categories': categories,
             }
         )
-
-
-class DeliveryView(CartMixin, View):
-
-    def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
-
-        context = {
-            'categories': categories,
-            'order': self.order
-        }
-        return render(request, 'page_delivery.html', context)

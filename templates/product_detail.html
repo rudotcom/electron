@@ -1,15 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}{{ product.title }}{% endblock %}
 
+                  {% block breadcrumbs %}
+                <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+                  {% endblock %}
 {% block content %}
-    <nav aria-label="breadcrumb" class="mt-5">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
-        <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
-      </ol>
-    </nav>
-{% if messages %}
+
+    {% if messages %}
     {% for message in messages %}
       <div class="alert alert-success alert-dismissible fade show" role="alert">
         <strong>{{ message }}</strong>

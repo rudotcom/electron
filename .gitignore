@@ -1,4 +1,6 @@
-# Project exclude paths
+*.pyc
+db.sqlite3
+__pycache__
+.idea/
+/static/
 /venv/
-Introvert/.env
-media/*
