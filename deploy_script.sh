@@ -12,6 +12,7 @@ if [ $? == 0 ]
 then
   echo "Python venv is already available. Activating..."
   source venv/bin/activate
+  pip3 install -r requirements.txt
 else
   virtualenv -p python venv
   source venv/bin/activate
