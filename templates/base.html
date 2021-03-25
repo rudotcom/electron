@@ -37,7 +37,7 @@
             {% else %}
                 <li><a href="{% url 'profile' %}">Личный Кабинет</a><a href="{% url 'logout' %}" title="Выйти"><i class="fa fa-sign-out"></i></a></li>
             {% endif %}
-                <li><a href="{% url 'cart' %}">Корзина <span class="">[{{ order.products.count }}]</span> {% if order.final_price %}{{ order.final_price }}&#x20bd;{% endif %}</a></li>
+                <li><a href="{% url 'cart' %}" title="Корзина"><i class="fa fa-shopping-cart"></i> <span class="">[{{ order.products.count }}]</span> {% if order.final_price %}{{ order.final_price }}&#x20bd;{% endif %}</a></li>
               </ul>
             </nav>
           </div>
@@ -119,8 +119,8 @@
               <p class="col-lg-12 small copyright-text text-center">Copyright &copy; 2021 INTROVERT</p>
             </div>
             <div class="col-lg-4 col-md-4 tm-footer-div">
-              <h3 class="tm-footer-div-title">Get Social</h3>
-              <p>Доставка заказа курьером лично в руки, по городу Санкт-Петербургу.</p>
+              <h3 class="tm-footer-div-title">Соцсети</h3>
+              <p>Публикации наших товаров в соцсетях.</p>
               <div class="tm-social-icons-container">
                 <a href="https://www.instagram.com/introvert_store_/" class="tm-social-icon" target="_blank"><i class="fa fa-instagram"></i></a>
                 <a href="https://vk.com/introvert.store" class="tm-social-icon" target="_blank"><i class="fa fa-vk"></i></a>
