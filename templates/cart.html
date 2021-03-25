@@ -6,17 +6,8 @@
                   {% endblock %}
 {% block content %}
 <h3 class="text-center mt-5 mb-5">Ваша корзина {% if not order.products.count %}пуста{% endif %}</h3>
-{% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>{{ message }}</strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    {% endfor %}
-{% endif %}
-{% if order.products.count %}
+
+    {% if order.products.count %}
 <table class="table">
   <thead>
     <tr>

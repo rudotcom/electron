@@ -17,41 +17,41 @@
       </div>
     {% endfor %}
 {% endif %}
-<div class="row">
-    <div class="col-md-4">
-        <img src="{{ product.image.url }}" class="img-fluid" id="main-image">
-       <div class="row">
-            <div class="col-md-4" style="cursor: pointer;">
-                <img src="{{ product.image.url }}" class="img-thumbnail" onclick="javascript:document.getElementById('main-image').src=this.src">
-            </div>
+<div class="tm-product-details">
+        <div class="tm-product-image-container">
+            <img src="{{ product.image.url }}" class="img-thumbnail" id="main-image">
+            <div class="tm-product-thumbnails">
+            {% if product.productimage_set.count %}
+                <img src="{{ product.image.url }}" onclick="javascript:document.getElementById('main-image').src=this.src">
             {% for product_image in product.productimage_set.all %}
-            <div class="col-md-4">
-                <img src="{{ product_image.image.url }}" class="img-thumbnail" onclick="javascript:document.getElementById('main-image').src=this.src" style="cursor: pointer;">
-            </div>
+                <img src="{{ product_image.image.url }}" onclick="javascript:document.getElementById('main-image').src=this.src" style="cursor: pointer;">
             {% endfor %}
+            {% endif %}
+            </div>
         </div>
-    </div>
-    <div class="col-md-8">
-        <h3>{{ product.title }}</h3>
+        <h3 class="tm-product-title">{{ product.title }}</h3>
+        {% if product.new %}
+        <h4>Новинка</h4>
+        {% endif %}
         {% if product.bestseller %}
-        <h6>Хит</h6>
+        <h4>Хит</h4>
         {% endif %}
         {% if product.price_discount %}
-         Цена: <strike>{{ product.price }} &#x20bd;</strike>
-         <p>{{ product.price_discount }} &#x20bd;</p>
+         <strike class="tm-product-price">{{ product.price }} &#x20bd;</strike>
+         <div class="tm-product-price">{{ product.price_discount }} &#x20bd;</div>
        {% else %}
-         <p>Цена: {{ product.price }} &#x20bd;</p>
+         <div class="tm-product-price">{{ product.price }} &#x20bd;</div>
        {% endif %}
        {% if product.quantity %}
-       <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-danger">В корзину</button></a>
+       <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-danger">В корзину <i class="fa fa-shopping-cart"></i></button></a>
        {% else %}
          <p>Нет в наличии</p>
        {% endif %}
         {% if product.limited %}
-        <h6>Лимитированный выпуск</h6>
+        <h4>Лимитированный выпуск</h4>
         {% endif %}
         <hr>
-       <p>{{ product.description|safe }}</p>
+       <div class="tm-product-description tm-product-text">{{ product.description|safe }}</div>
      <table class="table">
       <tbody>
       {% if product.color %}
@@ -91,16 +91,6 @@
    <p class="mt-4">Инструкции по уходу:</p>
     <p>{{ product.care }}</p>
     {% endif %}
-    <table class="table">
-      <tbody>
-      {% for f_name, f_value in product.get_features.items %}
-        <tr>
-          <th scope="row">{{ f_name }}</th>
-          <td>{{ f_value }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-</div>
+
 
 {% endblock content %}

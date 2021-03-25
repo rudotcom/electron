@@ -1,0 +1,37 @@
+            <div class="tm-popular-item">
+                <a href="{{ product.get_absolute_url }}">
+                <img src="{{ product.image.url }}" alt="Popular" class="tm-popular-item-img">
+                </a>
+              <div class="tm-popular-item-description">
+                <h3><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h3>
+                  <hr class="tm-popular-item-hr">
+                <p>
+                    {% if product.quantity %}
+
+                    <h3>{% if product.price_discount %}
+                         <strike>{{ product.price }} &#x20bd;</strike><br>
+                         {{ product.price_discount }} &#x20bd;
+                       {% else %}
+                         {{ product.price }} &#x20bd;
+                     {% endif %}
+                    </h3>
+
+				   {% else %}
+					 <p>Нет в наличии</p>
+				   {% endif %}
+</p>
+                    {% if product.new %}
+                <div class="tag-container new-container" title="Новинка!">
+                    <a href="{% url 'add_to_cart' slug=product.slug %}"><i class="fa fa-star"></i></a>
+                </div>
+                    {% endif %}
+                    {% if product.bestseller %}
+                <div class="tag-container hit-container" title="Хит продаж!">
+                    <a href="{% url 'add_to_cart' slug=product.slug %}"><i class="fa fa-bomb"></i></a>
+                </div>
+                    {% endif %}
+                <div class="tag-container order-now-container">
+                    <a href="{% url 'add_to_cart' slug=product.slug %}"><i class="fa fa-shopping-cart"></i></a>
+                </div>
+              </div>
+            </div>
