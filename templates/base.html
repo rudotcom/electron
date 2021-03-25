@@ -98,7 +98,7 @@
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
                   {% block breadcrumbs %}
-                <li class="breadcrumb-item active">Популярное</li>
+                <li class="breadcrumb-item active">Популярные товары</li>
                   {% endblock %}
               </ol>
             </nav>
@@ -113,13 +113,6 @@
               </div>
             {% endfor %}
         {% endif %}
-
-            <nav aria-label="breadcrumb" class="mt-5">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
-                <li class="breadcrumb-item active">Популярное</li>
-              </ol>
-            </nav>
 
         <div class="row mt-5">
           {% for product in products %}
@@ -143,8 +136,8 @@
       <p class="m-0 text-center text-white">Copyright &copy; Introvert 2021
           +7 (999) 123-1212
       <a href="#" class="fa fa-facebook"></a>
-        <a href="https://www.instagram.com/introvert_store_/" class="fa fa-instagram"></a>
-        <a href="https://vk.com/introvert.store" class="fa fa-vk"></a>
+        <a href="https://www.instagram.com/introvert_store_/" class="fa fa-instagram" target="_blank"></a>
+        <a href="https://vk.com/introvert.store" class="fa fa-vk" target="_blank"></a>
       </p>
     </div>
     <!-- /.container -->
