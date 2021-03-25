@@ -189,13 +189,14 @@ class FlatPageAdmin(FlatPageAdmin):
     form = FlatPageAdminForm
 
     fieldsets = (
-        (None, {'fields': ('url', 'title', 'content', 'sites')}),
+        (None, {'fields': ('url', 'title', 'content', )}),
         (_('Advanced options'), {
             'classes': ('collapse',),
             'fields': (
                 'enable_comments',
                 'registration_required',
                 'template_name',
+                'sites',
             ),
         }),
     )
