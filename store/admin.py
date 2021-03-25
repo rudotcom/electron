@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from django import forms
 from PIL import Image
 from django.contrib import admin
@@ -16,7 +16,6 @@ from store.models import Category, SubCategory, Product, ProductImage, Order, Or
 
 
 class ProductAdminForm(ModelForm):
-
     description = forms.CharField(label='Описание', widget=CKEditorWidget())
 
     def __init__(self, *args, **kwargs):
@@ -120,7 +119,7 @@ class CustomerAdmin(admin.ModelAdmin):
 def admin_order_shipped(modeladmin, request, queryset):
     user = User.objects.get(username=request.user)
     for order in queryset:
-        order.shipped_date = datetime.datetime.now()
+        order.shipped_date = datetime.now()
         order.status = Order.STATUS_SHIPPED
         order.save()
 
@@ -134,6 +133,7 @@ def admin_order_shipped(modeladmin, request, queryset):
 
 
 class OrderItemInline(admin.TabularInline):
+
     model = OrderProduct
     fields = ['product', 'image_tag', 'qty', 'final_price', ]
     readonly_fields = ['product', 'image_tag', 'qty', 'final_price', ]
@@ -144,15 +144,16 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
+
     fields = (('last_name', 'first_name', 'patronymic'), 'owner', 'created_at', 'phone', 'delivery_type', 'postal_code',
               'settlement', 'address', 'comment', 'delivery_cost', ('final_price', 'is_paid'), 'payment_type', 'status',
-              'tracking', 'remark', 'gift', )
+              'tracking', 'remark', 'gift',)
     readonly_fields = ['created_at', 'delivery_type', 'delivery_cost', 'comment', 'owner', 'gift', 'final_price']
     list_display = ('id', 'delivery_type', 'status', 'payment_type', 'is_paid', 'total_products', 'final_price',
                     'get_fio', 'created_at')
     list_display_links = ('id', 'delivery_type', 'status')
     ordering = ('-created_at', 'owner', 'status', 'delivery_type',)
-    list_filter = ('status', 'delivery_type', 'created_at', )
+    list_filter = ('status', 'delivery_type', 'created_at',)
     inlines = [OrderItemInline]
 
     # def formfield_for_choice_field(self, db_field, request, **kwargs):
@@ -185,11 +186,10 @@ class FlatPageAdminForm(forms.ModelForm):
 
 # Define a new FlatPageAdmin
 class FlatPageAdmin(FlatPageAdmin):
-
     form = FlatPageAdminForm
 
     fieldsets = (
-        (None, {'fields': ('url', 'title', 'content', )}),
+        (None, {'fields': ('url', 'title', 'content',)}),
         (_('Advanced options'), {
             'classes': ('collapse',),
             'fields': (

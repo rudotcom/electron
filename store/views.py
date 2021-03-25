@@ -1,7 +1,7 @@
 import os
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -158,6 +158,10 @@ class AddToCartView(CartMixin, View):
         customer.save()
 
         self.order, created = Order.objects.get_or_create(owner=customer, status='cart')
+        if created:
+            # Это создание новой корзины. Удалить корзины старше 2 дней
+            old_carts = Order.objects.filter(status__exact='cart', created_at__lte=datetime.now() - timedelta(days=2))
+            old_carts.delete()
 
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
@@ -471,3 +475,15 @@ class ProfileView(CartMixin, View):
                 'categories': categories,
             }
         )
+
+
+# class AboutView(CartMixin, View):
+#
+#     def get(self, request, *args, **kwargs):
+#         categories = Category.objects.all()
+#
+#         context = {
+#             'categories': categories,
+#             'order': self.order
+#         }
+#         return render(request, 'flatpages/default.html', context)

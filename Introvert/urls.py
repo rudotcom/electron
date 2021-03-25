@@ -20,11 +20,13 @@ from store.views import (
     ProfileView,
     ProductSearchView,
     SubCategoryDetailView, PayView, BankPayView, GiftListView,
+    # AboutView,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', BaseView.as_view(), name='base'),
+    # path(r'^about/[\w-_0-9]+/$', AboutView.as_view(), name='about'),
     path('search/', ProductSearchView.as_view(), name='search'),
     path('product/<str:slug>/', ProductDetailView.as_view(), name='product_detail'),
     path('gifts/', GiftListView.as_view(), name='gifts'),
