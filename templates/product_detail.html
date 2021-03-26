@@ -10,7 +10,7 @@
 
 <div class="tm-product-details">
         <div class="tm-product-image-container">
-            <img src="{{ product.image.url }}" class="img-thumbnail" id="main-image">
+            <img src="{{ product.image.url }}" class="img-thumbnail shadow-img" id="main-image">
             <div class="tm-product-thumbnails">
             {% if product.productimage_set.count %}
                 <img src="{{ product.image.url }}" onclick="javascript:document.getElementById('main-image').src=this.src">

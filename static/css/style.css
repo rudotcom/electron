@@ -8,7 +8,7 @@ a {
 }
 p { text-align: justify; }
 * { font-family: 'Open Sans', sans-serif; }
-.container { max-width: 1480px; }
+.container { max-width: 1180px; }
 .tm-handwriting-font { font-family: 'Damion', cursive; }
 .tm-top-header {
     /*position: fixed;*/
@@ -17,11 +17,11 @@ p { text-align: justify; }
   background: black;
   color: white;
 }
-input { color: #0E2231}
+input { color: #0E2231; font-size: 12px;}
 
 .tm-site-name, .tm-site-name a, .tm-site-name a:hover {
   color: #FFFFFF;
-  font-weight:bolder;
+  font-weight:900;
   display: inline-block;
   font-size: 32px;
   margin: 0 10px;
@@ -38,7 +38,7 @@ input { color: #0E2231}
       -ms-flex-align: center;
           align-items: center;
   font-weight: 700;
-  text-transform: uppercase;  
+  text-transform: uppercase;
 }
 .tm-nav li {
   list-style: none;
@@ -70,6 +70,7 @@ input { color: #0E2231}
           justify-content: space-between;
   padding-top: 10px;
   padding-bottom: 10px;
+    width: 100%;
 }
 .mobile-menu-icon { display: none; }
 .tm-section { margin-bottom: 60px; }
@@ -132,9 +133,9 @@ input { color: #0E2231}
 .category_menu li .active {
     border: 1px solid rgba(100,50,50,.125);
 }
-.light-gray-bg { background-color: #e4e4e4; }
-.tm-main-section { padding-top: 20px; overflow: hidden;}
-.img-thumbnail { padding: 8px; width:400px}
+.light-gray-bg { background-color: #ededed; }
+.tm-main-section { padding-top: 20px; overflow: hidden; max-width: 1180px;}
+.img-thumbnail { padding: 8px; width:400px; border: 0;}
 .inline-block { display: inline-block; }
 .shadow-img {
   background: url(/static/img/shadow.png) no-repeat center bottom;
@@ -502,8 +503,8 @@ ol li:before {
 
 .tm-product-image-container { float: left; }
 .tm-product-image-container img { width: 400px; border-radius: 4px;}
-.tm-product-thumbnails { padding: 8px; border: #ededed 1px solid; }
-.tm-product-thumbnails img { width: 50px; cursor: pointer;}
+.tm-product-thumbnails { padding: 8px; align-content: center}
+.tm-product-thumbnails img { width: 58px; cursor: pointer; border: #ededed 1px solid; padding: 4px; }
 .form-control {
   border-color: #aeaeaf;
   border-radius: 10px;
@@ -590,7 +591,7 @@ button.tm-more-button {
     text-align: left; 
   }
   .tm-header-line { width: 44px; }
-  .tm-main-section { padding-top: 20px; max-width: 1480px;}
+  .tm-main-section { padding-top: 20px; max-width: 1080px;}
   .tm-section-header-container { 
     -webkit-box-align: start; 
     -webkit-align-items: flex-start; 
