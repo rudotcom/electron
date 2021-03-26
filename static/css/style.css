@@ -197,8 +197,8 @@ input { color: #0E2231}
   background: url(/static/img/product-bg.png) no-repeat;
   background-size: 100% 100%;
   max-width: 294px;
-  margin-top: 30px;  
-  margin-bottom: 80px;
+  margin-top: 10px;
+  margin-bottom: 20px;
   height: 500px;
 }
 .tm-item-image {

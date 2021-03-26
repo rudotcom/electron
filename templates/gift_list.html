@@ -9,11 +9,9 @@
     При сумме товаров в корзине от {{ bonus_sum }} руб Вы можете добавить в корзину любой из этих подарков абсолютно бесплатно!
 </p>
 
-    <div class="row mt-5">
       {% for product in products %}
         {% include 'i_item_card.html' %}
       {% endfor %}
-    </div>
 
 
 {% endblock content %}
