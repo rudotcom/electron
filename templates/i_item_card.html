@@ -1,25 +1,27 @@
             <div class="tm-popular-item">
-                <a href="{{ product.get_absolute_url }}">
-                <img src="{{ product.image.url }}" alt="Popular" class="tm-popular-item-img">
-                </a>
+                <div class="tm-item-image">
+              <a href="{{ product.get_absolute_url }}"><img src="{{ product.image.url }}" alt="Popular" class="tm-popular-item-img"></a>
+                </div>
               <div class="tm-popular-item-description">
-                <h5><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h5>
-                  <hr class="tm-popular-item-hr">
-                <p>
-                    {% if product.quantity %}
+                <div class="tag-container title-container">
+                    <div><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></div>
+                    <hr class="tm-popular-item-hr">
+                </div>
 
-                    <h3>{% if product.price_discount %}
-                         <strike>{{ product.price }} &#x20bd;</strike><br>
-                         {{ product.price_discount }} &#x20bd;
+                 <div class="tag-container price-container">
+                   {% if product.quantity %}
+                    <div>{% if product.price_discount %}
+                        <strike>{{ product.price|floatformat:"0" }}&#x20bd;</strike><br>
+                         {{ product.price_discount|floatformat:"0" }}&#x20bd;
                        {% else %}
-                         {{ product.price }} &#x20bd;
+                         {{ product.price|floatformat:"0" }}&#x20bd;
                      {% endif %}
-                    </h3>
-
+                    </div>
 				   {% else %}
 					 <p>Нет в наличии</p>
 				   {% endif %}
-</p>
+                 </div>
+
                     {% if product.new %}
                 <div class="tag-container new-container" title="Новинка!">
                     <a href="{% url 'add_to_cart' slug=product.slug %}"><i class="fa fa-star"></i></a>
