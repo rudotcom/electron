@@ -3,20 +3,11 @@
 
                   {% block breadcrumbs %}
                 <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
-                <li class="breadcrumb-item-active" aria-current="page">{{ product.title }}</li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
                   {% endblock %}
 {% block content %}
 
-    {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>{{ message }}</strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    {% endfor %}
-{% endif %}
+
 <div class="tm-product-details">
         <div class="tm-product-image-container">
             <img src="{{ product.image.url }}" class="img-thumbnail" id="main-image">
