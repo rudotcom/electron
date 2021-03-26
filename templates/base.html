@@ -29,6 +29,11 @@
             </div>
             <nav class="tm-nav">
               <ul>
+          <li>
+            <form action="{% url 'search' %}" method="GET">
+              <input name="p" type="input" placeholder="Поиск товара"><input type="submit" value="Поиск">
+            </form>
+          </li>
                 <li><a href="{% url 'base' %}">Товары</a></li>
                 <li><a href="{% url 'gifts' %}">Подарки</a></li>
             {% if not request.user.is_authenticated %}
@@ -48,6 +53,14 @@
     <div class="tm-main-section light-gray-bg">
       <div class="container">
 
+          <div>
+              <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
+                  {% block breadcrumbs %}
+                <li class="breadcrumb-item-active">Популярные товары</li>
+                  {% endblock %}
+              </ul>
+          </div>
       <div class="category_menu">
         <ul>
           {% for category in categories %}
@@ -69,14 +82,6 @@
       <!-- /.col-lg-3 -->
 
       <div class="page-content">
-          <div>
-              <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
-                  {% block breadcrumbs %}
-                <li class="breadcrumb-item active">Популярные товары</li>
-                  {% endblock %}
-              </ul>
-          </div>
     {% if messages %}
         {% for message in messages %}
           <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">

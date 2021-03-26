@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
                   {% block breadcrumbs %}
-                <li class="breadcrumb-item active">Все товары</li>
-                <li class="breadcrumb-item active">Поиск</li>
+                <li class="breadcrumb-item">Все товары</li>
+                <li class="breadcrumb-item-active">Поиск</li>
                   {% endblock %}
 {% block content %}
     <div class="row">
       {% for product in object_list %}
-            {% include 'product_card.html' %}
+            {% include 'i_item_card.html' %}
       {% endfor %}
     </div>
 
