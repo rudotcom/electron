@@ -77,7 +77,7 @@
                                   {% for item in order.products.all %}
                                     <tr>
                                         <th>{{ item.product.title }}</th>
-                                        <td class="w-25"><img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" height="50"></td>
+                                        <td class="w-25">{{ item.product.image_thumb }}</td>
                                         <td>{{ item.product.price }} &#x20bd;</td>
                                         <td>{{ item.qty }}</td>
                                         <td>{{ item.final_price }} &#x20bd;</td>

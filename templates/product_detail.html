@@ -10,12 +10,12 @@
 
 <div class="tm-product-details">
         <div class="tm-product-image-container">
-            <img src="{{ product.image.url }}" class="img-thumbnail shadow-img" id="main-image">
+            <img src="/media/card/{{ product.image.name }}" class="img-thumbnail shadow-img" id="main-image" data-toggle="modal" data-target="#imageModal">
             <div class="tm-product-thumbnails">
             {% if product.productimage_set.count %}
-                <img src="{{ product.image.url }}" onclick="javascript:document.getElementById('main-image').src=this.src">
+                <img src="/media/thumb/{{ product.image.name }}" onclick="populate_image('{{ product.image.name }}')">
             {% for product_image in product.productimage_set.all %}
-                <img src="{{ product_image.image.url }}" onclick="javascript:document.getElementById('main-image').src=this.src" style="cursor: pointer;">
+                <img src="/media/thumb/{{ product_image.image.name }}" onclick="populate_image('{{ product_image.image.name }}')">
             {% endfor %}
             {% endif %}
             </div>
@@ -81,7 +81,29 @@
    <p class="mt-4">Инструкции по уходу:</p>
     <p>{{ product.care }}</p>
     {% endif %}
-   </div>
+    <!-- Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">{{ product.title }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <img src="{{ product.image.url }}" alt="{{ product.title }}" id="modal-image">
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+    <script>
+    function populate_image(image) {
+        document.getElementById('main-image').src='/media/card/' + image
+        document.getElementById('modal-image').src='/media/' + image
 
+    }
+    </script>
 
 {% endblock content %}

@@ -1,9 +1,14 @@
+import os
+from uuid import uuid4
+
 from PIL import Image
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import mark_safe
+
+from Introvert import settings
 
 User = get_user_model()
 FREE_DELIVERY = 2500  # Сумма, при которой доставка по РФ бесплатна
@@ -74,6 +79,13 @@ class SubCategory(models.Model):
         return reverse('subcategory_detail', kwargs={'slug': self.slug})
 
 
+def path_and_rename(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f'{instance.category.slug}_{instance.slug}.{ext}'
+    os.remove(os.path.join(settings.MEDIA_ROOT, filename))
+    return f'{filename}'
+
+
 class Product(models.Model):
 
     class Meta:
@@ -81,8 +93,9 @@ class Product(models.Model):
         verbose_name_plural = '[ 2. Товары ]'
         ordering = ('subcategory', 'title')
 
-    MIN_DIMENSIONS = (400, 400)
-    MAX_DIMENSIONS = (4500, 4500)
+    PRODUCT_BIG = (3000, 3000)
+    PRODUCT_CARD = (400, 400)
+    PRODUCT_THUMB = (50, 50)
     MAX_IMAGE_SIZE = 4145728
 
     GENDER_CHOICES = (
@@ -96,7 +109,7 @@ class Product(models.Model):
                                     on_delete=models.CASCADE)
     title = models.CharField(max_length=255, verbose_name='Наименование')
     slug = models.SlugField(unique=True)
-    image = models.ImageField(verbose_name='Изображение')
+    image = models.ImageField(verbose_name='Изображение', upload_to=path_and_rename)
     description = models.TextField(verbose_name='Описание', null=True)
     care = models.TextField(verbose_name='Инструкция по уходу', null=True, blank=True)
     price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Цена')
@@ -130,21 +143,39 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         image = self.image
         img = Image.open(image)
-        min_width, min_height = self.MIN_DIMENSIONS
-        max_width, max_height = self.MAX_DIMENSIONS
+        min_width, min_height = self.PRODUCT_CARD
 
         if img.height < min_height or img.width < min_width:
             raise MinDimentionErrorException('Загруженное изображение меньше допустимого {}x{}'.format(
-                *self.MIN_DIMENSIONS))
-        if img.height > max_height or img.width > max_width:
-            raise MaxDimentionErrorException('Загруженное изображение больше допустимого {}x{}'.format(
-                *self.MAX_DIMENSIONS))
+                *self.PRODUCT_CARD))
+        else:
+            ext = image.name.split('.')[-1]
+            filename = f'{self.category.slug}_{self.slug}.{ext}'
+
+            img.thumbnail(self.PRODUCT_BIG, Image.ANTIALIAS)
+            img.save(os.path.join(settings.MEDIA_ROOT, filename), 'JPEG', quality=95)
+
+            img.thumbnail(self.PRODUCT_CARD, Image.ANTIALIAS)
+            img.save(os.path.join(settings.MEDIA_ROOT, 'card', filename), 'JPEG', quality=85)
+
+            img.thumbnail(self.PRODUCT_THUMB)
+            img.save(os.path.join(settings.MEDIA_ROOT, 'thumb', filename))
+
         super().save(*args, **kwargs)
 
-    def image_tag(self):
-        return mark_safe('<img src="/media/%s" height="50" />' % self.image)
+    def image_thumb(self):
+        return mark_safe('<img src="/media/thumb/%s" height="50" />' % self.image)
 
-    image_tag.short_description = 'Изображение'
+    image_thumb.short_description = 'Изображение'
+
+
+def path_and_rename_more(instance, filename):
+    ext = filename.split('.')[-1]
+    # get filename
+    # os.remove(os.path.join(settings.MEDIA_ROOT, filename))
+    filename = '{}.{}'.format(uuid4().hex, ext)
+    # return the whole path to the file
+    return os.path.join(filename)
 
 
 class ProductImage(models.Model):
@@ -159,10 +190,29 @@ class ProductImage(models.Model):
     def __str__(self):
         return self.product.title
 
-    def image_tag(self):
-        return mark_safe('<img src="/media/%s" height="50" />' % self.image)
+    def save(self, *args, **kwargs):
+        image = self.image
+        img = Image.open(image)
 
-    image_tag.short_description = 'Изображение'
+        ext = image.name.split('.')[-1]
+        filename = '{}.{}'.format(uuid4().hex, ext)
+        image.name = filename
+
+        img.thumbnail(Product.PRODUCT_BIG, Image.ANTIALIAS)
+        img.save(filename)
+
+        img.thumbnail(Product.PRODUCT_CARD, Image.ANTIALIAS)
+        img.save(os.path.join(settings.MEDIA_ROOT, 'card', filename), 'JPEG', quality=85)
+
+        img.thumbnail(Product.PRODUCT_THUMB)
+        img.save(os.path.join(settings.MEDIA_ROOT, 'thumb', filename))
+
+        super().save(*args, **kwargs)
+
+    def image_thumb(self):
+        return mark_safe('<img src="/media/thumb/%s" height="50" />' % self.image)
+
+    image_thumb.short_description = 'Изображение'
 
 
 class Customer(models.Model):
@@ -204,10 +254,10 @@ class OrderProduct(models.Model):
         self.final_price = self.qty * price
         super().save(*args, **kwargs)
 
-    def image_tag(self):
-        return mark_safe('<img src="/media/%s" width="50" height="50" />' % self.product.image)
+    def image_thumb(self):
+        return mark_safe('<img src="/media/thumb/%s" width="50" height="50" />' % self.product.image)
 
-    image_tag.short_description = 'Изображение'
+    image_thumb.short_description = 'Изображение'
 
 
 class Order(models.Model):

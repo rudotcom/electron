@@ -21,7 +21,7 @@ input { color: #0E2231; font-size: 12px;}
 
 .tm-site-name, .tm-site-name a, .tm-site-name a:hover {
   color: #FFFFFF;
-  font-weight:900;
+  font-weight:700;
   display: inline-block;
   font-size: 32px;
   margin: 0 10px;
@@ -135,7 +135,7 @@ input { color: #0E2231; font-size: 12px;}
 }
 .light-gray-bg { background-color: #ededed; }
 .tm-main-section { padding-top: 20px; overflow: hidden; max-width: 1180px;}
-.img-thumbnail { padding: 8px; width:400px; border: 0;}
+.img-thumbnail { padding: 8px; width:400px; border: 0; cursor: pointer;}
 .inline-block { display: inline-block; }
 .shadow-img {
   background: url(/static/img/shadow.png) no-repeat center bottom;
@@ -308,8 +308,8 @@ input { color: #0E2231; font-size: 12px;}
 }
 .title-container {
     left: 8px;
-    font-size: 24px;
-    font-weight: 900;
+    font-size: 18px;
+    font-weight: 700;
     width: 94%;
 }
 
@@ -502,9 +502,9 @@ ol li:before {
 }
 
 .tm-product-image-container { float: left; }
-.tm-product-image-container img { width: 400px; border-radius: 4px;}
-.tm-product-thumbnails { padding: 8px; align-content: center}
-.tm-product-thumbnails img { width: 58px; cursor: pointer; border: #ededed 1px solid; padding: 4px; }
+.tm-product-image-container img { border-radius: 4px;}
+.tm-product-thumbnails { padding: 4px; align-content: center; }
+.tm-product-thumbnails img { cursor: pointer; border: #ededed 1px solid; padding: 4px;}
 .form-control {
   border-color: #aeaeaf;
   border-radius: 10px;

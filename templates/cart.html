@@ -23,7 +23,7 @@
     {% for item in order.products.all %}
         <tr>
           <td scope="row">{{ item.product.title }}</td>
-          <td class="w-25">{{ item.product.image_tag }}</td>
+            <td><div class="tm-product-thumbnails">{{ item.product.image_thumb }}</div></td>
           <td>
           {%  if item.product.price_discount  %}
               <strike>{{ item.product.price }}&#x20bd;</strike><br>
@@ -36,8 +36,6 @@
             <form action="{% url 'change_qty' slug=item.product.slug %}" method="POST">
               {% csrf_token %}
               <input type="number" class="form-control" name="qty" style="width: 70px;" min="0" value="{{ item.qty }}" onchange="this.form.submit()">
-<!--              <br>-->
-<!--              <input type="submit" class="btn btn-primary" value="Изменить кол-во">-->
             </form>
           </td>
             <td>{{ item.final_price }}&#x20bd;</td>

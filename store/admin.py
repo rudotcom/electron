@@ -22,8 +22,8 @@ class ProductAdminForm(ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['image'].help_text = mark_safe(
-            '<i>Минимальный размер {}x{}, максимальный {}x{}, 4 Мб</i>'.format(
-                *Product.MIN_DIMENSIONS, *Product.MAX_DIMENSIONS
+            '<i>Минимальный размер {}x{}</i>'.format(
+                *Product.PRODUCT_CARD
             )
         )
         # instance = kwargs.get('instance')
@@ -40,8 +40,7 @@ class ProductAdminForm(ModelForm):
     # return self.cleaned_data
 
     def clean_image(self):  # Работа с полем image
-        min_width, min_height = Product.MIN_DIMENSIONS
-        max_width, max_height = Product.MAX_DIMENSIONS
+        min_width, min_height = Product.PRODUCT_CARD
         image = self.cleaned_data['image']
         img = Image.open(image)
 
@@ -49,17 +48,14 @@ class ProductAdminForm(ModelForm):
             raise ValidationError('Размер файла изображения превышает допустимые 4 Мб')
         if img.height < min_height or img.width < min_width:
             raise ValidationError('Размер загруженного изображения меньше допустимого {}x{}'.format(
-                *Product.MIN_DIMENSIONS))
-        if img.height > max_height or img.width > max_width:
-            raise ValidationError('Размер загруженного изображения больше допустимого {}x{}'.format(
-                *Product.MAX_DIMENSIONS))
+                *Product.PRODUCT_CARD))
         return image
 
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
-    fields = ['product', 'image_tag', 'image', ]
-    readonly_fields = ['product', 'image_tag', ]
+    fields = ['product', 'image_thumb', 'image', ]
+    readonly_fields = ['product', 'image_thumb', ]
     can_delete = True
     extra = 0
     # max_num = 0
@@ -74,7 +70,7 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Товар',
          {'fields': ['title', 'category', 'subcategory', 'price', 'price_discount', 'quantity',
-                     ('image', 'image_tag',), 'description', 'display', ]}
+                     ('image', 'image_thumb',), 'description', 'display', ]}
          ),
         ('Параметры',
          {'fields': ['length', 'width', 'height', 'material', 'color'],
@@ -93,8 +89,8 @@ class ProductAdmin(admin.ModelAdmin):
           'classes': ['collapse']}
          ),
     ]
-    readonly_fields = ['image_tag', 'visits', 'last_visit', 'date_added', ]
-    list_display = ('title', 'image_tag', 'visits', 'category', 'price', 'price_discount', 'quantity',
+    readonly_fields = ['image_thumb', 'visits', 'last_visit', 'date_added', ]
+    list_display = ('title', 'image_thumb', 'visits', 'category', 'price', 'price_discount', 'quantity',
                     'bestseller', 'new', 'display')
     list_filter = ['bestseller', 'new', 'display', ]
     search_fields = ['title', 'description']
@@ -135,8 +131,8 @@ def admin_order_shipped(modeladmin, request, queryset):
 class OrderItemInline(admin.TabularInline):
 
     model = OrderProduct
-    fields = ['product', 'image_tag', 'qty', 'final_price', ]
-    readonly_fields = ['product', 'image_tag', 'qty', 'final_price', ]
+    fields = ['product', 'image_thumb', 'qty', 'final_price', ]
+    readonly_fields = ['product', 'image_thumb', 'qty', 'final_price', ]
     can_delete = False
     extra = 0
     max_num = 0
@@ -175,7 +171,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 class ProductImageAdmin(admin.ModelAdmin):
     fields = ['product', 'image', ]
-    list_display = ('product', 'image_tag',)
+    list_display = ('product', 'image_thumb',)
     ordering = ('product',)
 
 
@@ -212,5 +208,5 @@ admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
 
-# admin.site.register(ProductImage, ProductImageAdmin)
+admin.site.register(ProductImage, ProductImageAdmin)
 # admin.site.register(Customer, CustomerAdmin)
