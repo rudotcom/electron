@@ -27,11 +27,11 @@
             </div>
             <nav class="tm-nav">
               <ul>
-          <li>
-            <form action="{% url 'search' %}" method="GET">
-              <input name="p" type="input" placeholder="Поиск товара"><input type="submit" value="Поиск">
-            </form>
-          </li>
+              <li>
+                <form action="{% url 'search' %}" method="GET">
+                  <input name="p" type="input" placeholder="Поиск товара"><input type="submit" value="Поиск">
+                </form>
+              </li>
                 <li><a href="{% url 'base' %}">Товары</a></li>
                 <li><a href="{% url 'gifts' %}">Подарки</a></li>
             {% if not request.user.is_authenticated %}
@@ -47,6 +47,34 @@
         </div>
       </div>
     </div>
+
+
+
+    {% if messages %}
+          <div class="toast fade show" style="position: absolute; right: 50px;">
+            <div class="toast-header">
+              <strong class="mr-auto">Ваши товары</strong>
+              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true" class="hide-toast">×</span>
+              </button>
+            </div>
+         {% for message in messages %}
+           <div class="toast-body">
+              {{ message }}
+            </div>
+         {% endfor %}
+          </div>
+        <script>
+        $(document).ready(function(){
+            $(".hide-toast").click(function(){
+                $(".toast").toast('hide');
+            });
+        });
+        </script>
+    {% endif %}
+
+
+
 
     <div class="container tm-main-section light-gray-bg">
           <div>
@@ -79,16 +107,6 @@
 
 
       <div class="page-content">
-    {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
-            <strong>{{ message }}</strong>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-        {% endfor %}
-    {% endif %}
 
         {% block content %}
 
