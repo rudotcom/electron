@@ -93,8 +93,8 @@ class Product(models.Model):
         verbose_name_plural = '[ 2. Товары ]'
         ordering = ('subcategory', 'title')
 
-    PRODUCT_BIG = (3000, 3000)
-    PRODUCT_CARD = (400, 400)
+    PRODUCT_BIG = (1080, 3000)
+    PRODUCT_CARD = (300, 400)
     PRODUCT_THUMB = (50, 50)
     MAX_IMAGE_SIZE = 4145728
 
