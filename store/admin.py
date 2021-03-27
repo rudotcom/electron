@@ -210,3 +210,4 @@ admin.site.register(Order, OrderAdmin)
 
 # admin.site.register(ProductImage, ProductImageAdmin)
 # admin.site.register(Customer, CustomerAdmin)
+
