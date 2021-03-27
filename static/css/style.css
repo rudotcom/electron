@@ -457,7 +457,11 @@ ol li:before {
     font-weight: bolder;
     color: #9B703F;
 }
-
+.toast {
+    background-color: rgba(255,244,162,1);
+    border-radius: 8px;
+    max-width: 300px;
+}
 
 .tm-product-title {
   margin-top: 0;

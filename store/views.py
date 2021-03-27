@@ -215,7 +215,7 @@ class ChangeQTYView(CartMixin, View):
 
         if qty:
             order_product.qty = qty
-            messages.add_message(request, messages.INFO, f'Количество товара "{order_product}" изменено')
+            messages.add_message(request, messages.INFO, f'Количество товара "{order_product}" изменено на {qty}')
             order_product.save()
         else:
             self.order.products.remove(order_product)
