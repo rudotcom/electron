@@ -34,7 +34,7 @@
          <div class="tm-product-price">{{ product.price }} &#x20bd;</div>
        {% endif %}
        {% if product.quantity %}
-       <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-danger">В корзину <i class="fa fa-shopping-cart"></i></button></a>
+       <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-warning">В корзину <i class="fa fa-shopping-cart"></i></button></a>
        {% else %}
          <p>Нет в наличии</p>
        {% endif %}

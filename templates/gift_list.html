@@ -5,9 +5,9 @@
                 <li class="breadcrumb-item active">Выбери подарок</li>
                   {% endblock %}
 {% block content %}
-<p>
-    При сумме товаров в корзине от {{ bonus_sum }} руб Вы можете добавить в корзину любой из этих подарков абсолютно бесплатно!
-</p>
+    <div class="alert alert-warning" role="alert">
+      При сумме товаров в корзине от {{ bonus_sum }} руб Вы можете добавить в корзину любой из этих подарков абсолютно бесплатно!
+    </div>
 
       {% for product in products %}
         {% include 'item_card.html' %}
