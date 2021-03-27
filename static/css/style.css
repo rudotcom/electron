@@ -310,12 +310,15 @@ input { color: #0E2231; font-size: 12px;}
     font-weight: 700;
   text-shadow: -1px 0 #927c58, 0 1px #927c58, 1px 0 #927c58, 0 -1px #927c58;
 }
-.title-container a {
+.title-container {
     left: 8px;
     font-size: 18px;
     font-weight: 700;
     width: 92%;
-    text-decoration: none;
+}
+.title-container a {
+  text-decoration: none;
+  text-shadow: -1px 0 #c9c9c9, 0 1px #c9c9c9, 1px 0 #c9c9c9, 0 -1px #c9c9c9;
 }
 
 .tm-special-item {

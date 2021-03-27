@@ -168,7 +168,7 @@ class AddToCartView(CartMixin, View):
         if product.gift and not self.order.gift and self.order.final_price >= FREE_GIFT:
             self.order.gift = product
             self.order.save()
-            messages.add_message(request, messages.INFO, f'Подарок добавлен к Вашему заказу: {product}')
+            messages.add_message(request, messages.INFO, f'К Вашему заказу добавлен подарок: {product}')
         else:
             order_product, created = OrderProduct.objects.get_or_create(
                 order=self.order, product=product
@@ -180,7 +180,7 @@ class AddToCartView(CartMixin, View):
                 order_product.qty += 1
                 order_product.save()
             self.order.save()
-            messages.add_message(request, messages.INFO, f'Товар "{order_product}" добавлен в корзину')
+            messages.add_message(request, messages.INFO, f'В корзину добавлен "{order_product}"')
 
         response = HttpResponseRedirect(f"/product/{product_slug}/")
         response.set_cookie(key='customersession', value=session)
@@ -199,7 +199,7 @@ class DeleteFromCartView(CartMixin, View):
         self.order.products.remove(order_product)
         order_product.delete()
         self.order.save()
-        messages.add_message(request, messages.INFO, f'Товар "{order_product}" удален из корзины')
+        messages.add_message(request, messages.INFO, f'Из корзины удален "{order_product}"')
         return HttpResponseRedirect('/cart/')
 
 
@@ -220,7 +220,7 @@ class ChangeQTYView(CartMixin, View):
         else:
             self.order.products.remove(order_product)
             order_product.delete()
-            messages.add_message(request, messages.INFO, f'Товар "{order_product}" удален из корзины')
+            messages.add_message(request, messages.INFO, f'Из корзины удален "{order_product}"')
         self.order.save()
         return HttpResponseRedirect('/cart/')
 
