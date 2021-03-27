@@ -40,7 +40,7 @@
             {% else %}
                 <li><a href="{% url 'profile' %}">Личный Кабинет</a><a href="{% url 'logout' %}" title="Выйти"><i class="fa fa-sign-out"></i></a></li>
             {% endif %}
-                <li><a href="{% url 'cart' %}" title="Корзина"><i class="fa fa-shopping-cart"></i> <span class="">[{{ order.products.count }}]</span> {% if order.final_price %}{{ order.final_price }}&#x20bd;{% endif %}</a></li>
+                <li><a href="{% url 'cart' %}" title="Корзина"><i class="fa fa-shopping-cart"></i> <span class="badge badge-light">{{ order.products.count }}</span> {% if order.final_price %}{{ order.final_price }}&#x20bd;{% endif %}</a></li>
               </ul>
             </nav>
           </div>
