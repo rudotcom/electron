@@ -233,6 +233,8 @@ class CartView(CartMixin, View):
         if self.order:
             self.order.delivery_type = 'self'
             self.order.save()
+            if self.order.final_price >= FREE_GIFT and not self.order.gift:
+                messages.add_message(request, messages.INFO, f'Выбери подарок! Сумма товаров в корзине: {self.order.final_price}')
 
         context = {
             'bonus_sum': FREE_GIFT,

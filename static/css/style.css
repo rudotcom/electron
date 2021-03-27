@@ -462,7 +462,7 @@ ol li:before {
     border-radius: 8px;
     max-width: 300px;
 }
-
+.toast-body { border-bottom: #ffd393 1px solid; margin-bottom: 8px;}
 .tm-product-title {
   margin-top: 0;
   margin-bottom: 15px;
