@@ -198,8 +198,8 @@ class ProductImage(models.Model):
         filename = '{}.{}'.format(uuid4().hex, ext)
         image.name = filename
 
-        img.thumbnail(Product.PRODUCT_BIG, Image.ANTIALIAS)
-        img.save(settings.MEDIA_ROOT, filename)
+        # img.thumbnail(Product.PRODUCT_BIG, Image.ANTIALIAS)
+        # img.save(settings.MEDIA_ROOT, filename)
 
         img.thumbnail(Product.PRODUCT_CARD, Image.ANTIALIAS)
         img.save(os.path.join(settings.MEDIA_ROOT, 'card', filename), 'JPEG', quality=85)
