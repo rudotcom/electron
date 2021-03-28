@@ -62,7 +62,7 @@ class BaseView(CartMixin, View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         # products = Product.objects.all()
-        popular_products = Product.objects.all().order_by('-visits')[0:12]
+        popular_products = Product.objects.all().order_by('-visits')
         # recently_viewed_products = Product.objects.all().order_by('-last_visit')[0:4]
 
         context = {
