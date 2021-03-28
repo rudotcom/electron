@@ -22,25 +22,28 @@
         </div>
         <h3 class="tm-product-title">{{ product.title }}</h3>
         {% if product.new %}
-        <h4>Новинка</h4>
+        <span class="badge badge-danger">Новинка</span>
         {% endif %}
         {% if product.bestseller %}
-        <h4>Хит</h4>
+        <span class="badge badge-warning">Хит</span>
         {% endif %}
-        {% if product.price_discount %}
-         <strike class="tm-product-price">{{ product.price }} &#x20bd;</strike>
-         <div class="tm-product-price">{{ product.price_discount }} &#x20bd;</div>
-       {% else %}
-         <div class="tm-product-price">{{ product.price }} &#x20bd;</div>
-       {% endif %}
+        {% if product.limited %}
+        <span class="badge badge-info">Лимитированный выпуск</span>
+        {% endif %}
+        <div class="tm-product-price">
+            {% if product.price_discount %}
+             <div class="tm-old-price">{{ product.price }} &#x20bd;</div>
+             {{ product.price_discount }} &#x20bd;
+           {% else %}
+             {{ product.price }} &#x20bd;
+           {% endif %}
+
+        </div>
        {% if product.quantity %}
        <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-warning">В корзину <i class="fa fa-shopping-cart"></i></button></a>
        {% else %}
          <p>Нет в наличии</p>
        {% endif %}
-        {% if product.limited %}
-        <h4>Лимитированный выпуск</h4>
-        {% endif %}
         <hr>
        <div class="tm-product-description">{{ product.description|safe }}</div>
      <table class="table">
@@ -78,8 +81,8 @@
       </tbody>
     </table>
     {% if product.care %}
-   <p class="mt-4">Инструкции по уходу:</p>
-    <p>{{ product.care }}</p>
+   <h5>Инструкции по уходу:</h5>
+    <p class="tm-product-description">{{ product.care }}</p>
     {% endif %}
     <!-- Modal -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">

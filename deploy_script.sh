@@ -4,7 +4,6 @@
 # by this command it will print postgres version if installed or not
 # to stdout and stderr
 
-echo Current dir: $PWD
 # Next we will check if venv is there or not
 # cd django3-ecommerce-v2
 ls | grep "venv" > /dev/null 2>&1

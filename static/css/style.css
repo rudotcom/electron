@@ -463,6 +463,10 @@ ol li:before {
     font-weight: bolder;
     color: #9B703F;
 }
+.tm-old-price {
+    text-decoration: line-through #ff0051;
+    color: #c9c9c9;
+}
 .toast {
     background-color: rgba(255,244,162,1);
     border-radius: 8px;
@@ -482,14 +486,17 @@ ol li:before {
     height: 50px;
 }
 .tm-product-title {
+    font-weight: 900;
   margin-top: 0;
   margin-bottom: 15px;
   -webkit-transition: all 0.3s ease;
           transition: all 0.3s ease;
+    color: #6c757d;
 }
 .tm-product-description {
   margin-bottom: 0;
   text-align: justify;
+    padding: 20px;
 }
 .tm-product-price-link {
   border: 2px solid rgb(174,174,174);
