@@ -192,7 +192,7 @@ class AddToCartView(CartMixin, View):
         if product.gift and not self.order.gift and self.order.final_price >= FREE_GIFT:
             self.order.gift = product
             self.order.save()
-            messages.add_message(request, messages.INFO, f'К Вашему заказу добавлен подарок: {product}')
+            messages.add_message(request, messages.INFO, f'{product.image_thumb()} К Вашему заказу добавлен подарок: {product}')
         else:
             order_product, created = OrderProduct.objects.get_or_create(
                 order=self.order, product=product
