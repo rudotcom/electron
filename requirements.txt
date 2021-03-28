@@ -5,4 +5,4 @@ python-dotenv~=0.15.0
 django-crispy-forms
 psycopg2-binary
 django-ckeditor~=6.0.0
-pymorphy2
+pymorphy2~=0.9.1
