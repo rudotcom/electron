@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
+import store.models
 
 
 class Migration(migrations.Migration):
@@ -13,7 +14,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL)
     ]
 
     operations = [
@@ -196,5 +197,10 @@ class Migration(migrations.Migration):
             model_name='order',
             name='gift',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='store.product', verbose_name='Подарок'),
+        ),
+        migrations.AlterField(
+            model_name='product',
+            name='image',
+            field=models.ImageField(upload_to=store.models.path_and_rename, verbose_name='Изображение'),
         ),
     ]

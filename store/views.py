@@ -180,7 +180,7 @@ class AddToCartView(CartMixin, View):
                 order_product.qty += 1
                 order_product.save()
             self.order.save()
-            messages.add_message(request, messages.INFO, f'В корзину добавлен "{order_product}"')
+            messages.add_message(request, messages.INFO, f'В корзину добавлено:\n "{order_product}"')
 
         response = HttpResponseRedirect(f"/product/{product_slug}/")
         response.set_cookie(key='customersession', value=session)
@@ -199,7 +199,7 @@ class DeleteFromCartView(CartMixin, View):
         self.order.products.remove(order_product)
         order_product.delete()
         self.order.save()
-        messages.add_message(request, messages.INFO, f'Из корзины удален "{order_product}"')
+        messages.add_message(request, messages.INFO, f'Из корзины удалено:\n "{order_product}"')
         return HttpResponseRedirect('/cart/')
 
 
@@ -220,7 +220,7 @@ class ChangeQTYView(CartMixin, View):
         else:
             self.order.products.remove(order_product)
             order_product.delete()
-            messages.add_message(request, messages.INFO, f'Из корзины удален "{order_product}"')
+            messages.add_message(request, messages.INFO, f'Из корзины удалено:\n "{order_product}"')
         self.order.save()
         return HttpResponseRedirect('/cart/')
 
@@ -235,7 +235,7 @@ class CartView(CartMixin, View):
             self.order.save()
             if self.order.final_price >= FREE_GIFT and not self.order.gift:
                 messages.add_message(request, messages.INFO,
-                                     f'Скорее выбери подарок! Сумма товаров в корзине: {self.order.final_price}')
+                                     f'Скорее выбери подарок!\n Сумма товаров в корзине: {self.order.final_price}')
 
         context = {
             'bonus_sum': FREE_GIFT,
@@ -319,7 +319,7 @@ class MakeOrderView(CartMixin, View):
             order.save()
 
             messages.add_message(request, messages.INFO,
-                                 'Спасибо за заказ! Уведомление о заказе Вы получите по электронной почте')
+                                 'Спасибо за заказ! \nУведомление о заказе Вы получите по электронной почте')
 
             teleg = 'Новый заказ introvert.com.ru\n'  # Текст для телеграма
 

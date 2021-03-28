@@ -463,9 +463,9 @@ ol li:before {
 .toast {
     background-color: rgba(255,244,162,1);
     border-radius: 8px;
-    max-width: 300px;
+    width: 300px;
 }
-.toast-body { border-bottom: #ffd393 1px solid; margin-bottom: 8px;}
+.toast-body { border-bottom: #ffd393 1px solid; margin-bottom: 5px;}
 .tm-product-title {
   margin-top: 0;
   margin-bottom: 15px;

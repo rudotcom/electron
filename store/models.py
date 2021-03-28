@@ -71,12 +71,18 @@ class SubCategory(models.Model):
                                  on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     objects = SubCategoryManager()
+    # quantity = models.IntegerField(null=True)
 
     def __str__(self):
         return "{} {}".format(self.category, self.name)
 
     def get_absolute_url(self):
         return reverse('subcategory_detail', kwargs={'slug': self.slug})
+
+    # def save(self):
+    #     self.quantity = SubCategory.objects.get(self).product_set.count()
+    #     self.save()
+    #
 
 
 def path_and_rename(instance, filename):
