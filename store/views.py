@@ -19,12 +19,26 @@ from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEK
 from .mixins import CartMixin
 from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, FREE_GIFT
 import telepot
+import pymorphy2
 
 User = get_user_model()
+morph = pymorphy2.MorphAnalyzer()
 
 group_id = -543527686
 telegram_token = os.getenv('telegram_token')
 telegramBot = telepot.Bot(telegram_token)  # token
+
+
+def reconcile_verb(item):
+    """согласование рода глагола "добавлен", "удален" с наименованием товара """
+    phrase = item.split(' ')
+    word = phrase[0]
+    if 'femn' in morph.parse(word)[0].tag:
+        return 'а'
+    elif 'masc' in morph.parse(word)[0].tag:
+        return ''
+    else:
+        return 'о'
 
 
 def send_telegram(text):
@@ -182,7 +196,9 @@ class AddToCartView(CartMixin, View):
                 order_product.qty += 1
                 order_product.save()
             self.order.save()
-            messages.add_message(request, messages.INFO, f'В корзину добавлено:\n "{order_product}"')
+            added_verb = 'добавлен' + reconcile_verb(order_product.product.title)
+
+            messages.add_message(request, messages.INFO, f'В корзину {added_verb} "{order_product.product}"')
 
         response = HttpResponseRedirect(f"/product/{product_slug}/")
         response.set_cookie(key='customersession', value=session)
@@ -201,7 +217,8 @@ class DeleteFromCartView(CartMixin, View):
         self.order.products.remove(order_product)
         order_product.delete()
         self.order.save()
-        messages.add_message(request, messages.INFO, f'Из корзины удалено:\n "{order_product}"')
+        removed_verb = 'удален' + reconcile_verb(order_product.product.title)
+        messages.add_message(request, messages.INFO, f'Из корзины {removed_verb} "{order_product}"')
         return HttpResponseRedirect('/cart/')
 
 
@@ -222,7 +239,8 @@ class ChangeQTYView(CartMixin, View):
         else:
             self.order.products.remove(order_product)
             order_product.delete()
-            messages.add_message(request, messages.INFO, f'Из корзины удалено:\n "{order_product}"')
+            removed_verb = 'удален' + reconcile_verb(order_product.product.title)
+            messages.add_message(request, messages.INFO, f'Из корзины {removed_verb} "{order_product}"')
         self.order.save()
         return HttpResponseRedirect('/cart/')
 
