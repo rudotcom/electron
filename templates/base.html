@@ -58,7 +58,7 @@
             </div>
          {% for message in messages %}
            <div class="toast-body">
-              {{ message|linebreaks }}
+              {{ message|safe }}
             </div>
          {% endfor %}
           </div>

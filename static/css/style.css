@@ -468,7 +468,19 @@ ol li:before {
     border-radius: 8px;
     width: 300px;
 }
-.toast-body { border-bottom: #ffd393 1px solid; margin-bottom: 5px;}
+.toast-body {
+    border-bottom: #ffd393 1px solid;
+    margin-bottom: 5px;
+    display: table;
+}
+.toast-body img {
+    float: right;
+    padding: 4px;
+    margin: 0 8px;
+    border: #d5cfa1 1px solid;
+    border-radius: 4px;
+    height: 50px;
+}
 .tm-product-title {
   margin-top: 0;
   margin-bottom: 15px;

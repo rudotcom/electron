@@ -170,7 +170,7 @@ class Product(models.Model):
         super().save(*args, **kwargs)
 
     def image_thumb(self):
-        return mark_safe('<img src="/media/thumb/%s" height="50" />' % self.image)
+        return mark_safe('<img src="/media/thumb/%s">' % self.image)
 
     image_thumb.short_description = 'Изображение'
 

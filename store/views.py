@@ -200,12 +200,17 @@ class AddToCartView(CartMixin, View):
             if created:
                 self.order.products.add(order_product)
                 added_verb = reconcile_verb('добавлен', order_product.product.title)
-                messages.add_message(request, messages.INFO, f'В корзину {added_verb} "{order_product.product}"')
+                messages.add_message(request, messages.INFO, f'{order_product.product.image_thumb()} '
+                                                             f'"{order_product.product}" {added_verb} в корзину')
             else:
                 order_product.qty += 1
                 order_product.save()
-                messages.add_message(request, messages.INFO,
-                                     f'Количество товара "{order_product}" изменено на {order_product.qty} шт.')
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    f'{order_product.product.image_thumb()} '
+                    f'Количество товара "{order_product}" изменено на {order_product.qty} шт.'
+                )
             self.order.save()
 
         response = HttpResponseRedirect(f"/product/{product_slug}/")
@@ -226,7 +231,8 @@ class DeleteFromCartView(CartMixin, View):
         order_product.delete()
         self.order.save()
         removed_verb = reconcile_verb('удален', order_product.product.title)
-        messages.add_message(request, messages.INFO, f'Из корзины {removed_verb} "{order_product}"')
+        messages.add_message(request, messages.INFO,
+                             f'{order_product.product.image_thumb()} "{order_product}" {removed_verb} из корзины')
         return HttpResponseRedirect('/cart/')
 
 
@@ -242,13 +248,19 @@ class ChangeQTYView(CartMixin, View):
 
         if qty:
             order_product.qty = qty
-            messages.add_message(request, messages.INFO, f'Количество товара "{order_product}" изменено на {qty} шт.')
+            messages.add_message(
+                request,
+                messages.INFO,
+                f'{order_product.product.image_thumb()} Количество товара "{order_product}" изменено на {qty} шт.'
+            )
             order_product.save()
         else:
             self.order.products.remove(order_product)
             order_product.delete()
             removed_verb = reconcile_verb('удален', order_product.product.title)
-            messages.add_message(request, messages.INFO, f'Из корзины {removed_verb} "{order_product}"')
+            messages.add_message(request, messages.INFO,
+                                 f'{order_product.product.image_thumb()} '
+                                 f'Из корзины {removed_verb} "{order_product}"')
         self.order.save()
         return HttpResponseRedirect('/cart/')
 
