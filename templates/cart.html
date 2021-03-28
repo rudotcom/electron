@@ -16,7 +16,7 @@
       <td scope="col">Цена</td>
       <td scope="col">Кол-во</td>
       <td scope="col">Общая цена</td>
-      <td scope="col">Действие</td>
+      <td scope="col">&nbsp;</td>
     </tr>
   </thead>
   <tbody>
@@ -40,7 +40,7 @@
           </td>
             <td>{{ item.final_price }}&#x20bd;</td>
           <td>
-            <a href="{% url 'delete_from_cart' slug=item.product.slug %}"><button class="btn btn-danger">Удалить</button></a>
+            <a href="{% url 'delete_from_cart' slug=item.product.slug %}"><button class="btn btn-light">Удалить</button></a>
           </td>
         </tr>
     {% endfor %}
