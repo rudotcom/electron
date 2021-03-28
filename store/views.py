@@ -33,11 +33,16 @@ def reconcile_verb(verb, item):
     """согласование рода глагола "добавлен", "удален" с наименованием товара """
     phrase = item.split(' ')
     word = phrase[0]
-    if 'plur' in morph.parse(word)[0].tag:
+    tag = str(morph.parse(word)[0].tag)
+
+    if word.lower() in ['шопер', ]:
+        tag = 'masc'
+
+    if 'plur' in tag:
         return f'{verb}ы'
-    if word.lower() in ['шопер', ] or 'masc' in morph.parse(word)[0].tag:
+    if'masc' in tag:
         return f'{verb}'
-    elif 'femn' in morph.parse(word)[0].tag:
+    elif 'femn' in tag:
         return f'{verb}a'
     else:
         return f'{verb}о'
