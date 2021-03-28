@@ -73,8 +73,8 @@
             </td>
             {% else %}
 {#           <a href="{% url 'checkout' %}"><button class="btn btn-primary">Перейти к оформлению</button></a>#}
-        <td colspan="3" align="right">
         <form action="{% url 'checkout' %}" method="POST">
+        <td colspan="3" align="right">
             {% csrf_token %}
             {{ form.delivery_type }}
         </td>

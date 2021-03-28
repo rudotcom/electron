@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login, authenticate
+from django.contrib.flatpages.models import FlatPage
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
@@ -56,21 +57,6 @@ class MyQ(Q):
     default = 'OR'
 
 
-class GiftListView(CartMixin, View):
-
-    def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
-        gift_products = Product.objects.filter(gift=True)
-        context = {
-            'bonus_sum': FREE_GIFT,
-            'categories': categories,
-            'products': gift_products,
-            'order': self.order,
-            'page_role': 'gifts',
-        }
-        return render(request, 'gift_list.html', context)
-
-
 class BaseView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
@@ -86,6 +72,21 @@ class BaseView(CartMixin, View):
             'page_role': 'products',
         }
         return render(request, 'base.html', context)
+
+
+class GiftListView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        gift_products = Product.objects.filter(gift=True)
+        context = {
+            'bonus_sum': FREE_GIFT,
+            'categories': categories,
+            'products': gift_products,
+            'order': self.order,
+            'page_role': 'gifts',
+        }
+        return render(request, 'gift_list.html', context)
 
 
 class ProductDetailView(CartMixin, DetailView):
@@ -524,13 +525,15 @@ class ProfileView(CartMixin, View):
         )
 
 
-# class AboutView(CartMixin, View):
-#
-#     def get(self, request, *args, **kwargs):
-#         categories = Category.objects.all()
-#
-#         context = {
-#             'categories': categories,
-#             'order': self.order
-#         }
-#         return render(request, 'flatpages/default.html', context)
+class AboutView(CartMixin, View):
+    model = FlatPage
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+
+        context = {
+            'categories': categories,
+            'order': self.order,
+            'flatpage': self,
+        }
+        return render(request, 'flatpages/default.html', context)

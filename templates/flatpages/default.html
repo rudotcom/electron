@@ -6,4 +6,14 @@
                   {% block breadcrumbs %}
                 <li class="breadcrumb-item active">{{ flatpage.title }}</li>
                   {% endblock %}
+
+      <div class="category_menu">
+        <ul>
+          {% for flatpage in flatpages %}
+          <li class="category-top"><a href="{{ flatpage.get_absolute_url }}">{{ flatpage.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <!-- /.col-lg-3 -->
+
 {% block content %} {{ flatpage.content }} {% endblock %}}
