@@ -44,7 +44,8 @@ class GiftListView(CartMixin, View):
             'bonus_sum': FREE_GIFT,
             'categories': categories,
             'products': gift_products,
-            'order': self.order
+            'order': self.order,
+            'page_role': 'gifts',
         }
         return render(request, 'gift_list.html', context)
 
@@ -60,7 +61,8 @@ class BaseView(CartMixin, View):
         context = {
             'categories': categories,
             'products': popular_products,
-            'order': self.order
+            'order': self.order,
+            'page_role': 'products',
         }
         return render(request, 'base.html', context)
 
@@ -242,6 +244,7 @@ class CartView(CartMixin, View):
             'order': self.order,
             'categories': categories,
             'form': form,
+            'page_role': 'cart',
         }
         return render(request, 'cart.html', context)
 
@@ -387,7 +390,8 @@ class LoginView(CartMixin, View):
         context = {
             'form': form,
             'categories': categories,
-            'order': self.order
+            'order': self.order,
+            'page_role': 'login',
         }
         return render(request, 'login.html', context)
 
@@ -426,7 +430,8 @@ class RegistrationView(CartMixin, View):
         context = {
             'form': form,
             'categories': categories,
-            'order': self.order
+            'order': self.order,
+            'page_role': 'registration',
         }
         return render(request, 'registration.html', context)
 
@@ -476,6 +481,7 @@ class ProfileView(CartMixin, View):
                 'orders': orders,
                 'order': self.order,
                 'categories': categories,
+                'page_role': 'profile'
             }
         )
 

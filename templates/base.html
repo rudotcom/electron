@@ -32,15 +32,15 @@
                   <input name="p" type="input" placeholder="Поиск товара"><input type="submit" value="Поиск">
                 </form>
               </li>
-                <li><a href="{% url 'base' %}">Товары</a></li>
-                <li><a href="{% url 'gifts' %}">Подарки</a></li>
+                <li><a href="{% url 'base' %}"{% if page_role == 'products' %} class="active"{% endif %}>Товары</a></li>
+                <li><a href="{% url 'gifts' %}"{% if page_role == 'gifts' %} class="active"{% endif %}>Подарки</a></li>
             {% if not request.user.is_authenticated %}
-                <li><a href="{% url 'login' %}">Войти</a></li>
-                <li><a href="{% url 'registration' %}">Регистрация</a></li>
+                <li><a href="{% url 'login' %}"{% if page_role == 'login' %} class="active"{% endif %}>Войти</a></li>
+                <li><a href="{% url 'registration' %}"{% if page_role == 'registration' %} class="active"{% endif %}>Регистрация</a></li>
             {% else %}
-                <li><a href="{% url 'profile' %}">Личный Кабинет</a><a href="{% url 'logout' %}" title="Выйти"><i class="fa fa-sign-out"></i></a></li>
+                <li><a href="{% url 'profile' %}"{% if page_role == 'profile' %} class="active"{% endif %}>Личный Кабинет</a><a href="{% url 'logout' %}" title="Выйти"><i class="fa fa-sign-out"></i></a></li>
             {% endif %}
-                <li><a href="{% url 'cart' %}" title="Корзина"><i class="fa fa-shopping-cart"></i> <span class="badge badge-pill badge-warning">{{ order.products.count }}</span> {% if order.final_price %}{{ order.final_price }}&#x20bd;{% endif %}</a></li>
+                <li><a href="{% url 'cart' %}" title="Корзина"{% if page_role == 'cart' %} class="active"{% endif %}><i class="fa fa-shopping-cart"></i> <span class="badge badge-pill badge-warning">{{ order.products.count|default:0 }}</span> {% if order.final_price %}{{ order.final_price }}&#x20bd;{% endif %}</a></li>
               </ul>
             </nav>
           </div>

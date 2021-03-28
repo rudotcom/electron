@@ -54,7 +54,7 @@ input { color: #0E2231; font-size: 12px;}
 .tm-nav li a:hover,
  .tm-nav li a:focus,
  .tm-nav li a.active {  
-  color: #aeaeaf;
+  color: #ffe5b9;
   text-decoration: none;
 }
 .tm-nav li a.active {
@@ -132,6 +132,9 @@ input { color: #0E2231; font-size: 12px;}
     padding: .15rem 2.25rem;
     margin-bottom: -1px;
     text-decoration: none;
+}
+.cat-active a {
+  color: #9B703F;
 }
 .category_menu li .active {
     border: 1px solid rgba(100,50,50,.125);
