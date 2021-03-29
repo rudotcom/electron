@@ -137,7 +137,7 @@
     {% for item in order.products.all %}
         <tr>
           <td scope="row">{{ item.product.title }}</td>
-          <td class="w-25"><img src="http://introvert.com.ru{{ item.product.image.url }}" height="50"></td>
+          <td class="w-25"><img src="http://introvert.com.ru/media/thumb/{{ item.product.image.url }}" height="50"></td>
           <td>{{ item.product.price }}&#x20bd;</td>
           <td>{{ item.qty }}</td>
           <td>{{ item.final_price }}&#x20bd;</td>
@@ -145,8 +145,8 @@
     {% endfor %}
         {% if order.gift %}
         <tr>
-            <th>{{ order.gift.title }} </th>
-            <td>{{ order.gift.image_tag }}</td>
+            <th>{{ order.gift.title }}</th>
+            <td><img src="http://introvert.com.ru/media/thumb/{{ order.gift.image.url }}" height="50"></td>
             <td colspan="3">Подарок</td>
         </tr>
        {% endif %}
@@ -163,14 +163,14 @@
   </tbody>
 </table>
 <p>Покупатель: {{ order.last_name }} {{ order.first_name }} {{ order.patronymic }}</p>
-{% if order.payment_type %}<p>Способ отплаты: {{ order.get_payment_type_display }}</p>{% endif %}
-{% if order.delivery_type %}<p>Оформлено: {{ order.get_delivery_type_display }}</p>{% endif %}
-{% if order.tracking %}<p>Трекинг номер: <a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></p>{% endif %}
-{% if order.phone %}<p>Телефон: {{ order.phone }}</p>{% endif %}
-{% if order.postal_code %}<p>Индекс: {{ order.postal_code }}</p>{% endif %}
-{% if order.settlement %}<p>Населенный пункт: {{ order.settlement }}</p>{% endif %}
-{% if order.address %}<p>Адрес: {{ order.address }}</p>{% endif %}
-{% if order.comment %}<p>Комментарий: {{ order.comment }}</p>{% endif %}
+{% if order.payment_type %}<div><span class="label">Способ отплаты:</span><span class="data">{{ order.get_payment_type_display }}</span></div>{% endif %}
+{% if order.delivery_type %}<div><span class="label">Оформлено:</span><span class="data">{{ order.get_delivery_type_display }}</span></div>{% endif %}
+{% if order.tracking %}<div><span class="label">Трекинг номер:</span><span class="data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></span></div>{% endif %}
+{% if order.phone %}<div><span class="label">Телефон:</span><span class="data">{{ order.phone }}</span></div>{% endif %}
+{% if order.postal_code %}<div><span class="label">Индекс:</span><span class="data">{{ order.postal_code }}</span></div>{% endif %}
+{% if order.settlement %}<div><span class="label">Населенный пункт:</span><span class="data">{{ order.settlement }}</span></div>{% endif %}
+{% if order.address %}<div><span class="label">Адрес:</span><span class="data">{{ order.address }}</span></div>{% endif %}
+{% if order.comment %}<div><span class="label">Комментарий:</span><span class="data">{{ order.comment }}</span></div>{% endif %}
 <p>Статус заказа Вы можете посмотреть в <a href="http://introvert.com.ru/profile/">личном кабинете</a></p>
                                             </td>
                                         </tr>
