@@ -54,9 +54,14 @@
 .table tbody tr:last-child td:last-child {
 	border-radius: 0 0 20px 0;
 }
-.label { font-size: small; font-weight: bold; width: 200px; border-left: rgba(68,67,68,0.6) 8px solid;}
+.order_body {    padding-bottom: 200px;
+    background: #ffffff url(http://introvert.com.ru/static/img/email-envelope.png) no-repeat center bottom;
+  background-size: 100%;
+}
+.label { font-size: small; font-weight: bold; width: 120px; float: left;}
 .data { font-size: small; border-bottom: rgba(68,67,68,0.6) 1px solid;}
-    </style>
+.to_pay a {width:100%; display: block; border-radius: 4px; background-color: #55aa88; text-align: center; color: #fff; padding: 0;text-decoration:none;}
+.always {font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:18px;color:#484848;font-style:italic;text-align:center}    </style>
 </head>
 <body bgcolor="#ffffff" style="margin:0; padding:0;">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -122,8 +127,8 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;line-height:24px;color:#484848;">
-                                                <p>{{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}</p>
-                                                <p>Ваш заказ в магазине Интроверт оформлен. </p>
+                                                <p>Заказ в магазине Интроверт оформлен. </p>
+                                                <p>Получатель: {{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}</p>
 
 <table class="table">
   <thead>
@@ -139,7 +144,7 @@
     {% for item in order.products.all %}
         <tr>
           <td scope="row">{{ item.product.title }}</td>
-          <td class="w-25"><img src="http://introvert.com.ru/media/thumb/{{ item.product.image.url }}" height="50"></td>
+          <td class="w-25"><img src="http://introvert.com.ru/media/thumb/{{ item.product.image.name }}" height="50"></td>
           <td>{{ item.product.price }}&#x20bd;</td>
           <td>{{ item.qty }}</td>
           <td>{{ item.final_price }}&#x20bd;</td>
@@ -164,36 +169,29 @@
         </tr>
   </tbody>
 </table>
-<p>Покупатель: {{ order.last_name }} {{ order.first_name }} {{ order.patronymic }}</p>
-{% if order.payment_type %}<div><span class="label">Способ отплаты:</span><span class="data">{{ order.get_payment_type_display }}</span></div>{% endif %}
-{% if order.delivery_type %}<div><span class="label">Оформлено:</span><span class="data">{{ order.get_delivery_type_display }}</span></div>{% endif %}
-{% if order.tracking %}<div><span class="label">Трекинг номер:</span><span class="data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></span></div>{% endif %}
-{% if order.phone %}<div><span class="label">Телефон:</span><span class="data">{{ order.phone }}</span></div>{% endif %}
-{% if order.postal_code %}<div><span class="label">Индекс:</span><span class="data">{{ order.postal_code }}</span></div>{% endif %}
-{% if order.settlement %}<div><span class="label">Населенный пункт:</span><span class="data">{{ order.settlement }}</span></div>{% endif %}
-{% if order.address %}<div><span class="label">Адрес:</span><span class="data">{{ order.address }}</span></div>{% endif %}
-{% if order.comment %}<div><span class="label">Комментарий:</span><span class="data">{{ order.comment }}</span></div>{% endif %}
-<p>Статус заказа Вы можете посмотреть в <a href="http://introvert.com.ru/profile/">личном кабинете</a></p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:18px;color:#484848;">
-                                                <i>Всегда в продаже стильные сумки и аксессуары,<br>
-                                                    магазин Интроверт</i>
-                                            </td>
-                                        </tr>
-                                        <tr style="width: 100%; max-width:680px; background:#e6ecec;">
-                                            <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:18px;color:#484848;">
-                                                <p>Вы получили это письмо, потому что сделали заказ в магазине Интроверт</p>
-                                               <p><a href="https://introvert.com.ru/help" style="color:#535B63!important;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:22px; text-decoration:underline;" target="_blank"><span style="color:#535B63;">Помощь и поддержка</span></a></p>
-
-                                            </td>
-                                        </tr>
-                                        <tr style="width: 100%; max-width:680px; background:#e6ecec;">
-                                            <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:18px;color:#484848;">
-                                                        <a href="https://www.instagram.com/introvert_store_/" class="fa fa-instagram">instagram</a>
-                                                        <a href="https://vk.com/introvert.store" class="fa fa-vk">vk</a>
-
+<table class="table">
+  <tbody>
+	<tr>
+		<td>
+<div class="order_body">
+{% if order.payment_type %}<div><div class="label">Способ отплаты:</div><div class="data">{{ order.get_payment_type_display }}</div></div>{% endif %}
+{% if order.delivery_type %}<div><div class="label">Оформлено:</div><div class="data">{{ order.get_delivery_type_display }}</div></div>{% endif %}
+{% if order.tracking %}<div><div class="label">Трекинг номер:</div><div class="data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></div></div>{% endif %}
+{% if order.phone %}<div><div class="label">Телефон:</div><div class="data">{{ order.phone }}</div></div>{% endif %}
+{% if order.postal_code %}<div><div class="label">Индекс:</div><div class="data">{{ order.postal_code }}</div></div>{% endif %}
+{% if order.settlement %}<div><div class="label">Населенный пункт:</div><div class="data">{{ order.settlement }}</div></div>{% endif %}
+{% if order.address %}<div><div class="label">Адрес:</div><div class="data">{{ order.address }}</div></div>{% endif %}
+{% if order.comment %}<div><div class="label">Комментарий:</div><div class="data">{{ order.comment }}</div></div>{% endif %}
+</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+<div class="always"><p>Вы получили это письмо, потому что сделали заказ в магазине Интроверт
+<div class="social">
+<a href="https://www.instagram.com/introvert_store_/" class="fa fa-instagram">instagram</a>
+<a href="https://vk.com/introvert.store" class="fa fa-vk">vk</a>
+</div>
                                             </td>
                                         </tr>
                                         </tbody>

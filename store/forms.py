@@ -20,7 +20,7 @@ class SelfOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = [
-            'payment_type', 'comment',
+            'last_name', 'first_name', 'payment_type', 'comment',
         ]
 
 
