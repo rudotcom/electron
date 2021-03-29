@@ -372,7 +372,6 @@ class MakeOrderView(CartMixin, View):
             if order.gift:
                 teleg += f"- Подарок: {order.gift}\n"
             teleg += f"{order.final_price}\n"
-            teleg += f"{dict(order.PAYMENT_CHOICES)[order.payment_type]}\n"
             teleg += f"{dict(order.DELIVERY_TYPE_CHOICES)[order.delivery_type]}\n"
             if order.delivery_type.startswith('delivery'):
                 teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
