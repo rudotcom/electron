@@ -54,6 +54,8 @@
 .table tbody tr:last-child td:last-child {
 	border-radius: 0 0 20px 0;
 }
+.label { font-size: small; font-weight: bold; width: 200px; border-left: rgba(68,67,68,0.6) 8px solid;}
+.data { font-size: small; border-bottom: rgba(68,67,68,0.6) 1px solid;}
     </style>
 </head>
 <body bgcolor="#ffffff" style="margin:0; padding:0;">
@@ -145,7 +147,7 @@
     {% endfor %}
         {% if order.gift %}
         <tr>
-            <th>{{ order.gift.title }}</th>
+            <td>{{ order.gift.title }}</td>
             <td><img src="http://introvert.com.ru/media/thumb/{{ order.gift.image.url }}" height="50"></td>
             <td colspan="3">Подарок</td>
         </tr>
