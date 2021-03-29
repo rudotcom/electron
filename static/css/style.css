@@ -308,10 +308,10 @@ input { color: #0E2231; font-size: 12px;}
 .price-container {
   top: -342px;
     right: 10px;
-    color: goldenrod;
+    color: #daa520;
     font-size: 34px;
     font-weight: 700;
-  text-shadow: -1px 0 #927c58, 0 1px #927c58, 1px 0 #927c58, 0 -1px #927c58;
+  text-shadow: -1px 0 #b68c26, 0 1px #b68c26, 1px 0 #b68c26, 0 -1px #b68c26;
 }
 .title-container {
     left: 8px;
@@ -473,9 +473,10 @@ ol li:before {
     width: 300px;
 }
 .toast-body {
-    border-bottom: #ffd393 1px solid;
-    margin-bottom: 5px;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    margin-bottom: 8px;
     display: table;
+    width: 100%;
 }
 .toast-body img {
     float: right;
