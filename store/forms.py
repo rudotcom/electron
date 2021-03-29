@@ -30,7 +30,7 @@ class CDEKOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = [
-            'address', 'last_name', 'first_name', 'patronymic', 'phone', 'payment_type', 'comment',
+            'address', 'last_name', 'first_name', 'patronymic', 'phone', 'comment',
         ]
         fields_required = ['address', 'last_name', 'first_name', 'phone']
         labels = {
@@ -43,7 +43,7 @@ class CourierOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = (
-            'address', 'last_name', 'first_name', 'patronymic', 'phone', 'payment_type', 'comment',
+            'address', 'last_name', 'first_name', 'patronymic', 'phone', 'comment',
         )
         fields_required = ['address', 'last_name', 'first_name', 'phone', ]
         labels = {
@@ -58,8 +58,7 @@ class PostRuOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = (
-            'last_name', 'first_name', 'patronymic', 'phone', 'postal_code', 'settlement', 'address', 'payment_type',
-            'comment',
+            'last_name', 'first_name', 'patronymic', 'phone', 'postal_code', 'settlement', 'address', 'comment',
         )
         fields_required = ['address', 'last_name', 'first_name', 'patronymic', 'phone', 'postal_code',
                            'settlement', ]
@@ -73,8 +72,7 @@ class PostWorldOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = (
-            'first_name', 'last_name', 'patronymic', 'settlement', 'address', 'postal_code', 'phone', 'payment_type',
-            'comment',
+            'first_name', 'last_name', 'patronymic', 'settlement', 'address', 'postal_code', 'phone', 'comment',
         )
         fields_required = ['last_name', 'first_name',
                            'settlement', 'address', ]
