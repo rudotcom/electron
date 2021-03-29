@@ -23,7 +23,7 @@ from store.views import (
     PayView,
     BankPayView,
     GiftListView,
-    AboutView,
+    AboutView, EmailView,
 )
 
 urlpatterns = [
@@ -42,6 +42,7 @@ urlpatterns = [
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('make-order/', MakeOrderView.as_view(), name='make_order'),
     path('order_pay/<int:order>/', PayView.as_view(), name='order_pay'),
+    path('order_email/<int:order>/', EmailView.as_view(), name='order_email'),
     path('bank_pay/', BankPayView.as_view(), name='bank_pay'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),

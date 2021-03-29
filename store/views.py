@@ -15,6 +15,7 @@ from django.views.generic import DetailView, View, ListView
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
+from Introvert import settings
 from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
     PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm
 from .mixins import CartMixin
@@ -42,7 +43,7 @@ def reconcile_verb_gender(verb, item):
 
     if 'plur' in tag:
         return f'{verb}ы'
-    if'masc' in tag:
+    if 'masc' in tag:
         return f'{verb}'
     elif 'femn' in tag:
         return f'{verb}a'
@@ -91,7 +92,6 @@ class GiftListView(CartMixin, View):
 
 
 class ProductDetailView(CartMixin, DetailView):
-
     model = Product
     context_object_name = 'product'
     template_name = 'product_detail.html'
@@ -193,7 +193,8 @@ class AddToCartView(CartMixin, View):
         if product.gift and not self.order.gift and self.order.final_price >= FREE_GIFT:
             self.order.gift = product
             self.order.save()
-            messages.add_message(request, messages.INFO, f'{product.image_thumb()} К Вашему заказу добавлен подарок: {product}')
+            messages.add_message(request, messages.INFO,
+                                 f'{product.image_thumb()} К Вашему заказу добавлен подарок: {product}')
         else:
             order_product, created = OrderProduct.objects.get_or_create(
                 order=self.order, product=product
@@ -392,6 +393,9 @@ class MakeOrderView(CartMixin, View):
 
 
 class PayView(CartMixin, View):
+    """
+    TODO: Не показывать чужие заказы. Проверять принадлежит ли заказ юзеру.
+    """
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -539,3 +543,25 @@ class AboutView(CartMixin, View):
             'flatpage': self,
         }
         return render(request, 'flatpages/default.html', context)
+
+
+class EmailView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/login/')
+
+        order_id = kwargs.get('order')
+
+        pay_order = Order.objects.get(id=order_id)
+
+        return render(
+            request,
+            'order_placed.html',
+            {
+                # 'site_url': "localhost:8888",
+                'site_url': settings.SITE_URL,
+                'order': self.order,
+                'pay_order': pay_order,
+            }
+        )
