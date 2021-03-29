@@ -54,11 +54,11 @@
 .table tbody tr:last-child td:last-child {
 	border-radius: 0 0 20px 0;
 }
-.order_body {    padding-bottom: 200px;
+.order_body {    padding-bottom: 220px;
     background: #ffffff url(http://introvert.com.ru/static/img/email-envelope.png) no-repeat center bottom;
   background-size: 100%;
 }
-.label { font-size: small; font-weight: bold; width: 120px; float: left;}
+.label { font-size: small; font-weight: bold; width: 150px; float: left;white-space: nowrap;}
 .data { font-size: small; border-bottom: rgba(68,67,68,0.6) 1px solid;}
 .to_pay a {width:100%; display: block; border-radius: 4px; background-color: #55aa88; text-align: center; color: #fff; padding: 0;text-decoration:none;}
 .always {font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:18px;color:#484848;font-style:italic;text-align:center}    </style>
@@ -150,7 +150,7 @@
         {% if order.gift %}
         <tr>
             <td>{{ order.gift.title }}</td>
-            <td><img src="http://introvert.com.ru/media/thumb/{{ order.gift.product.image.url }}" height="50"></td>
+            <td><img src="http://introvert.com.ru/media/thumb/{{ order.gift.image.name }}" height="50"></td>
             <td colspan="3">Подарок</td>
         </tr>
        {% endif %}

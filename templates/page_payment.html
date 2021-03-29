@@ -26,7 +26,7 @@
                   {% for item in pay_order.products.all %}
                     <tr>
                         <th>{{ item.product.title }}</th>
-                        <td class="w-25">{{ item.product.image_tag }}</td>
+                        <td class="w-25">{{ item.product.image_thumb }}</td>
                         <td><strong>{{ item.product.price }} &#x20bd;</strong></td>
                         <td align="center">{{ item.qty }}</td>
                         <td>{{ item.final_price }} &#x20bd;</td>
@@ -35,7 +35,7 @@
                     <tr>
                         {% if pay_order.gift %}
                         <td>{{ pay_order.gift.title }} </td>
-                        <td>{{ pay_order.gift.image_tag }}</td>
+                        <td>{{ pay_order.gift.image_thumb }}</td>
                         <td colspan="3">Подарок</td>
                         {% endif %}
                     </tr>
