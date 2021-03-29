@@ -56,10 +56,12 @@
     background: #ffffff url(http://{{ site_url }}/static/img/email-envelope.png) no-repeat center bottom;
   background-size: 100%;
 }
-.label { font-size: small; font-weight: bold; width: 150px; float: left;white-space: nowrap;}
-.data { font-size: small; border-bottom: rgba(68,67,68,0.6) 1px solid;}
+.order-label { font-size: small; font-weight: bold; width: 150px; float: left;white-space: nowrap;}
+.order-data { font-size: small; border-bottom: rgba(68,67,68,0.6) 1px solid;}
 .to_pay a {width:100%; display: block; border-radius: 4px; background-color: #55aa88; text-align: center; color: #fff; padding: 0;text-decoration:none;}
-.always {font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:18px;color:#484848;font-style:italic;text-align:center}    </style>
+.always {font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:14px;color:#484848;font-style:italic;text-align:center}
+.small {font-size:11px; color: #6c757d;}
+    </style>
 </head>
 <body bgcolor="#ffffff" style="margin:0; padding:0;">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -135,7 +137,7 @@
     {% for item in order.products.all %}
         <tr>
           <td scope="row">{{ item.product.title }}</td>
-          <td class="w-25"><img src="http://{{ site_url }}/media/thumb/{{ item.product.image.name }}" height="50"></td>
+          <td><img src="http://{{ site_url }}/media/thumb/{{ item.product.image.name }}"></td>
           <td>{{ item.product.price }}&#x20bd;</td>
           <td>{{ item.qty }}</td>
           <td>{{ item.final_price }}&#x20bd;</td>
@@ -143,9 +145,9 @@
     {% endfor %}
         {% if order.gift %}
         <tr>
-            <td>{{ order.gift.title }}</td>
-            <td><img src="http://{{ site_url }}/media/thumb/{{ order.gift.image.name }}" height="50"></td>
-            <td colspan="3">Подарок</td>
+            <td>Подарок</td>
+            <td><img src="http://{{ site_url }}/media/thumb/{{ order.gift.image.name }}"></td>
+            <td colspan="3">{{ order.gift.title }}</td>
         </tr>
        {% endif %}
         <tr>
@@ -165,26 +167,27 @@
 	<tr>
 		<td>
 <div class="order_body">
-{% if order.delivery_type %}<div><div class="label">&nbsp;</div><div class="data">{{ order.get_delivery_type_display }}</div></div>{% endif %}
-{% if order.first_name or order.last_name %}<div><div class="label">Получатель:</div><div class="data">{{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}</div></div>{% endif %}
-{% if order.payment_type %}<div><div class="label">Способ отплаты:</div><div class="data">{{ order.get_payment_type_display }}</div></div>{% endif %}
-{% if order.tracking %}<div><div class="label">Трекинг номер:</div><div class="data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></div></div>{% endif %}
-{% if order.phone %}<div><div class="label">Телефон:</div><div class="data">{{ order.phone }}</div></div>{% endif %}
-{% if order.postal_code %}<div><div class="label">Индекс:</div><div class="data">{{ order.postal_code }}</div></div>{% endif %}
-{% if order.settlement %}<div><div class="label">Населенный пункт:</div><div class="data">{{ order.settlement }}</div></div>{% endif %}
-{% if order.address %}<div><div class="label">Адрес:</div><div class="data">{{ order.address }}</div></div>{% endif %}
-{% if order.comment %}<div><div class="label">Комментарий:</div><div class="data">{{ order.comment }}</div></div>{% endif %}
+{% if order.delivery_type %}<div><div class="order-label">&nbsp;</div><div class="order-data">{{ order.get_delivery_type_display }}</div></div>{% endif %}
+{% if order.first_name or order.last_name %}<div><div class="order-label">Получатель:</div><div class="order-data">{{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}</div></div>{% endif %}
+{% if order.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order.get_payment_type_display }}</div></div>{% endif %}
+{% if order.tracking %}<div><div class="order-label">Трекинг номер:</div><div class="order-data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></div></div>{% endif %}
+{% if order.phone %}<div><div class="order-label">Телефон:</div><div class="order-data">{{ order.phone }}</div></div>{% endif %}
+{% if order.postal_code %}<div><div class="order-label">Индекс:</div><div class="order-data">{{ order.postal_code }}</div></div>{% endif %}
+{% if order.settlement %}<div><div class="order-label">Населенный пункт:</div><div class="order-data">{{ order.settlement }}</div></div>{% endif %}
+{% if order.address %}<div><div class="order-label">Адрес:</div><div class="order-data">{{ order.address }}</div></div>{% endif %}
+{% if order.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order.comment }}</div></div>{% endif %}
 <p class="to_pay"><a href="http://{{ site_url }}/order_pay/{{ order.id }}/">Оплатить заказ</a></p>
-<div class="always">Всегда в продаже стильные сумки и аксессуары,<br>магазин Интроверт</div>
+<div class="always small">Всегда в продаже стильные сумки и аксессуары,<br>магазин Интроверт</div>
 </div>
 		</td>
 	</tr>
 	</tbody>
 </table>
-<div class="always"><p>Вы получили это письмо, потому что сделали заказ в магазине Интроверт
+<div class="small"><p>Вы получили это письмо, потому что сделали заказ в магазине Интроверт
 <div class="social">
 <a href="https://www.instagram.com/introvert_store_/" class="fa fa-instagram">instagram</a>
 <a href="https://vk.com/introvert.store" class="fa fa-vk">vk</a>
+<a href="#" class="fa fa-tiktok">tiktok</a>
 </div>
                                             </td>
                                         </tr>

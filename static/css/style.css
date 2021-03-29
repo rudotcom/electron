@@ -262,6 +262,9 @@ input { color: #0E2231; font-size: 12px;}
   -webkit-transition: all 0.3s ease;
           transition: all 0.3s ease;
 }
+.order-label { font-size: small; font-weight: bold; width: 150px; float: left;white-space: nowrap;}
+.order-data { font-size: small; border-bottom: rgba(68,67,68,0.6) 1px solid;}
+
 .tm-popular-item:hover { background-image: url(/static/img/product-bg-hover.png); }
 .tm-popular-item:hover .tm-popular-item-title { color: #aeaeaf; }
 .tm-popular-item:hover hr {
@@ -471,6 +474,7 @@ ol li:before {
     background-color: rgba(255,244,162,1);
     border-radius: 8px;
     width: 300px;
+    z-index: 1000;
 }
 .toast-body {
     border-bottom: 1px solid rgba(0,0,0,.05);

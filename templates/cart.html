@@ -23,7 +23,7 @@
     {% for item in order.products.all %}
         <tr>
           <td scope="row">{{ item.product.title }}</td>
-            <td><div class="tm-product-thumbnails">{{ item.product.image_thumb }}</div></td>
+          <td><div class="tm-product-thumbnails">{{ item.product.image_thumb }}</div></td>
           <td>
           {%  if item.product.price_discount  %}
               <strike>{{ item.product.price }}&#x20bd;</strike><br>
@@ -47,7 +47,7 @@
         <tr>
             {% if order.gift %}
             <td>{{ order.gift.title }} </td>
-            <td class="toast-body">{{ order.gift.image_thumb }}</td>
+            <td class="tm-product-thumbnails">{{ order.gift.image_thumb }}</td>
             <td colspan="5">Подарок</td>
             {% else %}
             <td colspan="7">

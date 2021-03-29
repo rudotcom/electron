@@ -76,7 +76,7 @@
                                   <tbody>
                                   {% for item in order.products.all %}
                                     <tr>
-                                        <th>{{ item.product.title }}</th>
+                                        <td>{{ item.product.title }}</td>
                                         <td class="w-25">{{ item.product.image_thumb }}</td>
                                         <td>{{ item.product.price }} &#x20bd;</td>
                                         <td>{{ item.qty }}</td>
@@ -104,16 +104,17 @@
                                   </tbody>
                               </table>
                               <hr>
-                              <h4 class="text-center">Дополнительная информация</h4>
-                              <p>Покупатель: {{ order.last_name }} {{ order.first_name }} {{ order.patronymic }}</p>
-                              {% if order.payment_type %}<p>Способ отплаты: {{ order.get_payment_type_display }}</p>{% endif %}
-                              {% if order.delivery_type %}<p>Оформлено: {{ order.get_delivery_type_display }}</p>{% endif %}
-                              {% if order.tracking %}<p>Трекинг номер: <a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></p>{% endif %}
-                              {% if order.phone %}<p>Телефон: {{ order.phone }}</p>{% endif %}
-                              {% if order.postal_code %}<p>Индекс: {{ order.postal_code }}</p>{% endif %}
-                              {% if order.settlement %}<p>Населенный пункт: {{ order.settlement }}</p>{% endif %}
-                              {% if order.address %}<p>Адрес: {{ order.address }}</p>{% endif %}
-                              {% if order.comment %}<p>Комментарий: {{ order.comment }}</p>{% endif %}
+<div class="order_body">
+{% if order.delivery_type %}<div><div class="order-label">&nbsp;</div><div class="order-data">{{ order.get_delivery_type_display }}</div></div>{% endif %}
+{% if order.first_name or order.last_name %}<div><div class="order-label">Получатель:</div><div class="order-data">{{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}</div></div>{% endif %}
+{% if order.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order.get_payment_type_display }}</div></div>{% endif %}
+{% if order.tracking %}<div><div class="order-label">Трекинг номер:</div><div class="order-data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></div></div>{% endif %}
+{% if order.phone %}<div><div class="order-label">Телефон:</div><div class="order-data">{{ order.phone }}</div></div>{% endif %}
+{% if order.postal_code %}<div><div class="order-label">Индекс:</div><div class="order-data">{{ order.postal_code }}</div></div>{% endif %}
+{% if order.settlement %}<div><div class="order-label">Населенный пункт:</div><div class="order-data">{{ order.settlement }}</div></div>{% endif %}
+{% if order.address %}<div><div class="order-label">Адрес:</div><div class="order-data">{{ order.address }}</div></div>{% endif %}
+{% if order.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order.comment }}</div></div>{% endif %}
+</div>
                           </div>
                         </div>
                       </div>

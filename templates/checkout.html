@@ -11,8 +11,7 @@
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">Наименование</th>
-      <th scope="col">Изображение</th>
+      <th scope="col" colspan="2">Наименование</th>
       <th scope="col">Цена</th>
       <th scope="col">Кол-во</th>
         <th scope="col">Общая цена</th>
@@ -21,8 +20,8 @@
   <tbody>
     {% for item in order.products.all %}
         <tr>
-          <th scope="row">{{ item.product.title }}</th>
-          <td>{{ item.product.image_thumb }}</td>
+          <td scope="row">{{ item.product.title }}</td>
+          <td class="tm-product-thumbnails">{{ item.product.image_thumb }}</td>
           <td>{{ item.product.price }} &#x20bd;</td>
           <td>{{ item.qty }}</td>
           <td>{{ item.final_price }} &#x20bd;</td>
@@ -30,8 +29,8 @@
     {% endfor %}
         <tr>
         {% if order.gift %}
-            <th>{{ order.gift.title }} </th>
-            <td>{{ order.gift.image_thumb }}</td>
+            <td>{{ order.gift.title }} </td>
+            <td class="tm-product-thumbnails">{{ order.gift.image_thumb }}</td>
             <td colspan="3">Подарок</td>
        {% endif %}
         </tr>
