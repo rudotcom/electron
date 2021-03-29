@@ -35,9 +35,10 @@ def reconcile_verb(verb, item):
     phrase = item.split(' ')
     word = phrase[0]
     tag = str(morph.parse(word)[0].tag)
-
-    if word.lower() in ['шопер', ]:
-        tag = 'masc'
+    for form in morph.parse(word):
+        if 'nomn' in form.tag:
+            tag = form.tag
+            break
 
     if 'plur' in tag:
         return f'{verb}ы'
