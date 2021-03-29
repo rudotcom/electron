@@ -20,8 +20,9 @@ class SelfOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = [
-            'last_name', 'first_name', 'payment_type', 'comment',
+            'last_name', 'first_name', 'phone', 'payment_type', 'comment',
         ]
+        fields_required = ['last_name', 'first_name', 'phone']
 
 
 class CDEKOrderForm(RequiredFieldsMixin, forms.ModelForm):
