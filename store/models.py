@@ -99,7 +99,7 @@ class Product(models.Model):
         verbose_name_plural = '[ 2. Товары ]'
         ordering = ('subcategory', 'title')
 
-    PRODUCT_BIG = (1080, 3000)
+    PRODUCT_BIG = (1100, 3000)
     PRODUCT_CARD = (300, 400)
     PRODUCT_THUMB = (50, 50)
     MAX_IMAGE_SIZE = 4145728
@@ -175,15 +175,6 @@ class Product(models.Model):
     image_thumb.short_description = 'Изображение'
 
 
-def path_and_rename_more(instance, filename):
-    ext = filename.split('.')[-1]
-    # get filename
-    # os.remove(os.path.join(settings.MEDIA_ROOT, filename))
-    filename = '{}.{}'.format(uuid4().hex, ext)
-    # return the whole path to the file
-    return os.path.join(filename)
-
-
 class ProductImage(models.Model):
 
     class Meta:
@@ -203,9 +194,11 @@ class ProductImage(models.Model):
         ext = image.name.split('.')[-1]
         filename = '{}.{}'.format(uuid4().hex, ext)
         image.name = filename
+        super().save(*args, **kwargs)
+        os.remove(os.path.join(settings.MEDIA_ROOT, filename))
 
-        # img.thumbnail(Product.PRODUCT_BIG, Image.ANTIALIAS)
-        # img.save(settings.MEDIA_ROOT, filename)
+        img.thumbnail(Product.PRODUCT_BIG, Image.ANTIALIAS)
+        img.save(os.path.join(settings.MEDIA_ROOT, filename), 'JPEG', quality=85)
 
         img.thumbnail(Product.PRODUCT_CARD, Image.ANTIALIAS)
         img.save(os.path.join(settings.MEDIA_ROOT, 'card', filename), 'JPEG', quality=85)
@@ -213,7 +206,6 @@ class ProductImage(models.Model):
         img.thumbnail(Product.PRODUCT_THUMB)
         img.save(os.path.join(settings.MEDIA_ROOT, 'thumb', filename))
 
-        super().save(*args, **kwargs)
 
     def image_thumb(self):
         return mark_safe('<img src="/media/thumb/%s" height="50" />' % self.image)
