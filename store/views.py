@@ -412,7 +412,6 @@ class PayView(CartMixin, View):
             'page_payment.html',
             {
                 'form': form,
-                'order': self.order,
                 'pay_order': pay_order,
                 'categories': categories,
             }
@@ -559,9 +558,7 @@ class EmailView(CartMixin, View):
             request,
             'order_placed.html',
             {
-                # 'site_url': "localhost:8888",
                 'site_url': settings.SITE_URL,
-                'order': self.order,
-                'pay_order': pay_order,
+                'order': pay_order,
             }
         )
