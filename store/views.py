@@ -203,7 +203,7 @@ class AddToCartView(CartMixin, View):
                 self.order.products.add(order_product)
                 added_verb = reconcile_verb_gender('добавлен', order_product.product.title)
                 messages.add_message(request, messages.INFO, f'{order_product.product.image_thumb()} '
-                                                             f'"{order_product.product}" {added_verb} в корзину')
+                                                             f'<b>{order_product.product}</b> {added_verb} в корзину')
             else:
                 order_product.qty += 1
                 order_product.save()
@@ -211,7 +211,7 @@ class AddToCartView(CartMixin, View):
                     request,
                     messages.INFO,
                     f'{order_product.product.image_thumb()} '
-                    f'Количество товара "{order_product}" изменено на {order_product.qty} шт.'
+                    f'Количество товара <b>{order_product}</b> изменено на {order_product.qty} шт.'
                 )
             self.order.save()
 
@@ -234,7 +234,7 @@ class DeleteFromCartView(CartMixin, View):
         self.order.save()
         removed_verb = reconcile_verb_gender('удален', order_product.product.title)
         messages.add_message(request, messages.INFO,
-                             f'{order_product.product.image_thumb()} "{order_product}" {removed_verb} из корзины')
+                             f'{order_product.product.image_thumb()} <b>{order_product}</b> {removed_verb} из корзины')
         return HttpResponseRedirect('/cart/')
 
 
@@ -253,7 +253,7 @@ class ChangeQTYView(CartMixin, View):
             messages.add_message(
                 request,
                 messages.INFO,
-                f'{order_product.product.image_thumb()} Количество товара "{order_product}" изменено на {qty} шт.'
+                f'{order_product.product.image_thumb()} Количество товара <b>{order_product}</b> изменено на {qty} шт.'
             )
             order_product.save()
         else:
@@ -262,7 +262,7 @@ class ChangeQTYView(CartMixin, View):
             removed_verb = reconcile_verb_gender('удален', order_product.product.title)
             messages.add_message(request, messages.INFO,
                                  f'{order_product.product.image_thumb()} '
-                                 f'Из корзины {removed_verb} "{order_product}"')
+                                 f'Из корзины {removed_verb} <b>{order_product}</b>')
         self.order.save()
         return HttpResponseRedirect('/cart/')
 
