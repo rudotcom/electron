@@ -5,9 +5,10 @@
                 <li class="breadcrumb-item active">Корзина</li>
                   {% endblock %}
 {% block content %}
-<h3 class="text-center mt-5 mb-5">Ваша корзина {% if not order.products.count %}пуста{% endif %}</h3>
+<h3 class="text-center mb-5">Ваша корзина {% if not order.products.count %}пуста{% endif %}</h3>
 
     {% if order.products.count %}
+<div class="modal-content">
 <table class="table">
   <thead>
     <tr>
@@ -85,5 +86,6 @@
         </tr>
   </tbody>
 </table>
+</div>
 {% endif %}
 {% endblock content %}
