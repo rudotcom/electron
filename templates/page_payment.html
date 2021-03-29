@@ -25,7 +25,7 @@
                   <tbody>
                   {% for item in pay_order.products.all %}
                     <tr>
-                        <th>{{ item.product.title }}</th>
+                        <td>{{ item.product.title }}</td>
                         <td class="w-25">{{ item.product.image_thumb }}</td>
                         <td><strong>{{ item.product.price }} &#x20bd;</strong></td>
                         <td align="center">{{ item.qty }}</td>
