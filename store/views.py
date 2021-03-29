@@ -30,7 +30,7 @@ telegram_token = os.getenv('telegram_token')
 telegramBot = telepot.Bot(telegram_token)  # token
 
 
-def reconcile_verb(verb, item):
+def reconcile_verb_gender(verb, item):
     """согласование рода глагола "добавлен", "удален" с наименованием товара """
     phrase = item.split(' ')
     word = phrase[0]
@@ -201,7 +201,7 @@ class AddToCartView(CartMixin, View):
 
             if created:
                 self.order.products.add(order_product)
-                added_verb = reconcile_verb('добавлен', order_product.product.title)
+                added_verb = reconcile_verb_gender('добавлен', order_product.product.title)
                 messages.add_message(request, messages.INFO, f'{order_product.product.image_thumb()} '
                                                              f'"{order_product.product}" {added_verb} в корзину')
             else:
@@ -232,7 +232,7 @@ class DeleteFromCartView(CartMixin, View):
         self.order.products.remove(order_product)
         order_product.delete()
         self.order.save()
-        removed_verb = reconcile_verb('удален', order_product.product.title)
+        removed_verb = reconcile_verb_gender('удален', order_product.product.title)
         messages.add_message(request, messages.INFO,
                              f'{order_product.product.image_thumb()} "{order_product}" {removed_verb} из корзины')
         return HttpResponseRedirect('/cart/')
@@ -259,7 +259,7 @@ class ChangeQTYView(CartMixin, View):
         else:
             self.order.products.remove(order_product)
             order_product.delete()
-            removed_verb = reconcile_verb('удален', order_product.product.title)
+            removed_verb = reconcile_verb_gender('удален', order_product.product.title)
             messages.add_message(request, messages.INFO,
                                  f'{order_product.product.image_thumb()} '
                                  f'Из корзины {removed_verb} "{order_product}"')
