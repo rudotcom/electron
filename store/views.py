@@ -374,7 +374,7 @@ class MakeOrderView(CartMixin, View):
             order.save()
 
             messages.add_message(request, messages.INFO,
-                                 'Спасибо за заказ! \nУведомление о заказе Вы получите по электронной почте')
+                                 'Ваш заказ оформлен! \nСпасибо, что выбрали нас.')
 
             teleg = 'Новый заказ introvert.com.ru\n'  # Текст для телеграма
 
@@ -382,7 +382,7 @@ class MakeOrderView(CartMixin, View):
                 teleg += f"- {item}, {item.qty} шт\n"
             if order.gift:
                 teleg += f"- Подарок: {order.gift}\n"
-            teleg += f"{order.total_price_gross}\n"
+            teleg += f"Итого: {order.total_price_gross} р\n"
             teleg += f"{dict(order.DELIVERY_TYPE_CHOICES)[order.delivery_type]}\n"
             if order.delivery_type.startswith('delivery'):
                 teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
