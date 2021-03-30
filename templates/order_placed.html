@@ -121,7 +121,7 @@
                                         <tbody>
                                         <tr>
                                             <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;line-height:24px;color:#484848;">
-                                                <p>Заказ в магазине Интроверт оформлен (№{{ order.id }}) </p>
+                                                <p>Заказ № {{ order.id }} оформлен </p>
 
 <table class="table">
   <thead>
@@ -167,7 +167,7 @@
 	<tr>
 		<td>
 <div class="order_body">
-{% if order.delivery_type %}<div><div class="order-label">&nbsp;</div><div class="order-data">{{ order.get_delivery_type_display }}</div></div>{% endif %}
+<div><div class="order-label">Заказ №</div><div class="order-data">{{ order.id }}</div></div>
 {% if order.first_name or order.last_name %}<div><div class="order-label">Получатель:</div><div class="order-data">{{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}</div></div>{% endif %}
 {% if order.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order.get_payment_type_display }}</div></div>{% endif %}
 {% if order.tracking %}<div><div class="order-label">Трекинг номер:</div><div class="order-data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></div></div>{% endif %}
