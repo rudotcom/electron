@@ -8,15 +8,14 @@
 <h3 class="text-center mb-5">Ваша корзина {% if not order.products.count %}пуста{% endif %}</h3>
 
     {% if order.products.count %}
-<div class="modal-content">
-<table class="table">
+<table class="table-product-list">
   <thead>
     <tr>
-      <td colspan="2"></td>
-      <td scope="col">Цена</td>
-      <td scope="col">Кол-во</td>
-      <td scope="col">Общая цена</td>
-      <td scope="col">&nbsp;</td>
+      <th colspan="2"></th>
+      <th scope="col">Цена</th>
+      <th scope="col">Кол-во</th>
+      <th scope="col">Общая цена</th>
+      <th scope="col">&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -62,6 +61,8 @@
           <td><strong>{{ order.final_price }} &#x20bd;</strong></td>
           <td>&nbsp;</td>
         </tr>
+    </tbody>
+    <tfoot>
         <tr>
             {% if not request.user.is_authenticated %}
             <td colspan="1"></td>
@@ -72,20 +73,19 @@
               </a> или <a href="{% url 'registration' %}">Зарегистрироваться</a>
             </td>
             {% else %}
-{#           <a href="{% url 'checkout' %}"><button class="btn btn-primary">Перейти к оформлению</button></a>#}
-        <form action="{% url 'checkout' %}" method="POST">
         <td colspan="3" align="right">
+        <form action="{% url 'checkout' %}" method="POST">
             {% csrf_token %}
             {{ form.delivery_type }}
         </td>
         <td colspan="4">
-            <input type="submit" class="btn btn-success" value="Оформить заказ">
+            <input type="submit" class="btn btn-success" value="Выбрать тип доставки">
         </td>
         </form>
             {% endif %}
         </tr>
-  </tbody>
+    </tfoot>
 </table>
-</div>
+
 {% endif %}
 {% endblock content %}

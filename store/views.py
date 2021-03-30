@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 
 from Introvert import settings
 from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
-    PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm
+    PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm, PaymentForm, OnlinePaymentForm
 from .mixins import CartMixin
 from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, FREE_GIFT
 import telepot
@@ -301,19 +301,25 @@ class CheckoutView(CartMixin, View):
         categories = Category.objects.all()
         if self.order.delivery_type == 'self':
             form = SelfOrderForm()
+            form_pay = PaymentForm()
         elif self.order.delivery_type == 'delivery_spb':
             form = CourierOrderForm()
+            form_pay = OnlinePaymentForm()
         elif self.order.delivery_type == 'delivery_cdekspb':
             form = CDEKOrderForm()
+            form_pay = OnlinePaymentForm()
         elif self.order.delivery_type == 'delivery_ru':
             form = PostRuOrderForm()
+            form_pay = OnlinePaymentForm()
         elif self.order.delivery_type == 'delivery_world':
             form = PostWorldOrderForm()
+            form_pay = OnlinePaymentForm()
 
         context = {
             'order': self.order,
             'categories': categories,
             'form': form,
+            'form_pay': form_pay,
         }
 
         return render(request, 'checkout.html', context)
@@ -325,14 +331,19 @@ class MakeOrderView(CartMixin, View):
     def post(self, request, *args, **kwargs):
         if self.order.delivery_type == 'self':
             form = SelfOrderForm(request.POST or None)
+            form_pay = PaymentForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_spb':
             form = CourierOrderForm(request.POST or None)
+            form_pay = OnlinePaymentForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_cdekspb':
             form = CDEKOrderForm(request.POST or None)
+            form_pay = OnlinePaymentForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_ru':
             form = PostRuOrderForm(request.POST or None)
+            form_pay = OnlinePaymentForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_world':
             form = PostWorldOrderForm(request.POST or None)
+            form_pay = OnlinePaymentForm(request.POST or None)
 
         user = User.objects.get(username=request.user)
         session = request.COOKIES.get('customersession')
@@ -340,7 +351,8 @@ class MakeOrderView(CartMixin, View):
         customer = Customer.objects.get(user=user.id, session=session)
         order = Order.objects.get(owner=customer, status='cart')
 
-        if form.is_valid():
+        print('EEEE', form_pay.errors)
+        if form.is_valid() and form_pay.is_valid():
             if 'first_name' in form.cleaned_data.keys():
                 order.first_name = form.cleaned_data['first_name']
             if 'last_name' in form.cleaned_data.keys():
@@ -355,10 +367,10 @@ class MakeOrderView(CartMixin, View):
                 order.settlement = form.cleaned_data['settlement']
             if 'address' in form.cleaned_data.keys():
                 order.address = form.cleaned_data['address']
-            if 'payment_type' in form.cleaned_data.keys():
-                order.payment_type = form.cleaned_data['payment_type']
             if 'comment' in form.cleaned_data.keys():
                 order.comment = form.cleaned_data['comment']
+            if 'payment_type' in form_pay.cleaned_data.keys():
+                order.payment_type = form_pay.cleaned_data['payment_type']
 
             order.status = 'new'
             order.save()
@@ -404,15 +416,16 @@ class PayView(CartMixin, View):
         form = PaymentMethodForm(request.POST or None)
         order_id = kwargs.get('order')
 
-        pay_order = Order.objects.get(id=order_id)
+        order_to_pay = Order.objects.get(id=order_id)
 
         categories = Category.objects.all()
         return render(
             request,
             'page_payment.html',
             {
+                'order': self.order,
                 'form': form,
-                'pay_order': pay_order,
+                'order_to_pay': order_to_pay,
                 'categories': categories,
             }
         )

@@ -20,8 +20,8 @@
         <h5>У вас еще нет заказов. <a href="{% url 'base' %}">Начать делать покупки</a></h5>
     </div>
 {% else %}
-<div class="col-md-12" style="margin-top: 50px; margin-bottom: 150px">
-    <table class="table">
+
+    <table class="table-product-list">
         <thead>
             <tr>
                 <th>Номер</th>
@@ -29,8 +29,7 @@
                 <th>Доставка</th>
                 <th>Статус</th>
                 <th>Сумма</th>
-                <th>Товар</th>
-                <th>Дополнительно</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -43,11 +42,6 @@
                 <td scope="row">{{ order.get_delivery_type_display }}</td>
                 <td>{{ order.get_status_display }}</td>
                 <td>{{ order.final_price }}</td>
-                <td nowrap=""><ul>
-                    {% for item in order.products.all %}
-                    <li>{{ item.product.title}} x {{ item.qty }}</li>
-                    {% endfor %}
-                </ul></td>
                 <td>
                 {% if order.is_paid %}
                 Оплачен
@@ -61,16 +55,16 @@
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Детали заказа</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Детали заказа № {{ order.id }}</h5>
                           </div>
                           <div class="modal-body">
-                              <table>
+                              <table class="table-product-list">
                                   <thead>
                                   <tr>
-                                      <th scope="col" colspan="2">Наименование</th>
-                                      <td>Цена</td>
-                                      <td>Кол-во</td>
-                                      <td>Итого</td>
+                                      <th scope="col" colspan="2"></th>
+                                      <th>Цена</th>
+                                      <th>Кол-во</th>
+                                      <th>Итого</th>
                                   </tr>
                                   </thead>
                                   <tbody>
@@ -95,13 +89,22 @@
                                         <td colspan="2"></td>
                                         <td>{{ order.delivery_cost }} &#x20bd;</td>
                                     </tr>
-                                    <tr>
-                                        <td colspan="2"></td>
+                                   </tbody>
+                                  <tfoot>
+                                   <tr>
+                                        <td colspan="2">
+                {% if order.is_paid %}
+                Оплачен
+                {% elif order.payment_type != 'cash_card' %}
+                <a href="{%  url 'order_pay' order.id %}"><button class="btn btn-danger">Оплатить заказ</button></a>
+                {% endif %}
+
+                                        </td>
                                         <td>Итого:</td>
                                         <td>{{ order.total_products }}</td>
                                         <td><strong>{{ order.final_price }} &#x20bd;</strong></td>
                                     </tr>
-                                  </tbody>
+                                  </tfoot>
                               </table>
                               <hr>
 <div class="order_body">
@@ -123,8 +126,13 @@
             </tr>
         {% endfor %}
         </tbody>
+    <tfoot>
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="5">&nbsp;</td>
+    </tr>
+    </tfoot>
     </table>
-</div>
 
 {% endif %}
 

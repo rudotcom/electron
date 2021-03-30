@@ -282,7 +282,7 @@ class Order(models.Model):
 
     PAYMENT_TYPE0 = 'cash_card'
     PAYMENT_TYPE1 = 'bankcard'
-    PAYMENT_TYPE2 = 'kiwi'
+    PAYMENT_TYPE2 = 'wallet'
 
     STATUS_CHOICES = (
         (STATUS_CART, 'Корзина'),
@@ -336,7 +336,7 @@ class Order(models.Model):
         verbose_name='Способ оплаты',
         choices=PAYMENT_CHOICES,
         null=True,
-        default=None
+        default=None,
     )
     comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)
     remark = models.CharField(max_length=255, verbose_name='Примечания от магазина',

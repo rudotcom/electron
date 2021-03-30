@@ -5,10 +5,9 @@
                 <li class="breadcrumb-item active">Заказ</li>
                   {% endblock %}
 {% block content %}
-<h3 class="text-center mb-5">Оформление заказа</h3>
-<div class="modal-content">
+<h4 class="text-center">Оформление заказа</h4>
 
-<table class="table">
+<table class="table-product-list">
   <thead>
     <tr>
       <th scope="col" colspan="2">Наименование</th>
@@ -34,26 +33,29 @@
             <td colspan="3">Подарок</td>
        {% endif %}
         </tr>
-        <tr>
+        <tr class="td-delivery">
             <td colspan="2">{{ order.get_delivery_type_display }}</td>
             <td colspan="3">{{ order.delivery_cost }} &#x20bd;</td>
         </tr>
+  </tbody>
+  <tfoot>
         <tr>
           <td colspan="2"></td>
           <td>Итого:</td>
           <td>{{ order.total_products }}</td>
           <td><strong>{{ order.final_price }} руб.</strong></td>
         </tr>
-  </tbody>
+  </tfoot>
 </table>
-<hr>
 {% if request.user.is_authenticated %}
-
+<div class="control-form">
   <form action="{% url 'make_order' %}" method="POST">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" class="btn btn-success mb-3" value="Оформить заказ">
+    {{ form_pay }}
+    <input type="submit" class="btn btn-success btn-block" value="Оформить заказ">
   </form>
+</div>
 {% else %}
 <p>Для оформления заказа:
   <a href="{% url 'login' %}">
@@ -61,5 +63,5 @@
   </a>
   <br>Нет аккаунта? <a href="{% url 'registration' %}">Зарегистрироваться</a></p>
 {% endif %}
-</div>
+
 {% endblock content %}

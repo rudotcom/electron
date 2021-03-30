@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.forms import RadioSelect
 
 from .mixins import RequiredFieldsMixin
 from .models import Order
@@ -20,9 +21,26 @@ class SelfOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = [
-            'last_name', 'first_name', 'phone', 'payment_type', 'comment',
+            'last_name', 'first_name', 'phone', 'comment',
         ]
         fields_required = ['last_name', 'first_name', 'phone']
+
+
+class Payment2RadioSelect(RadioSelect):
+    template_name = 'store/payment_type2.html'
+
+
+class Payment3RadioSelect(RadioSelect):
+    template_name = 'store/payment_type3.html'
+
+
+class PaymentForm(forms.Form):
+    payment_type = forms.ChoiceField(label='Способ оплаты', widget=Payment3RadioSelect(), choices=Order.PAYMENT_CHOICES)
+
+
+class OnlinePaymentForm(forms.Form):
+    payment_type = forms.ChoiceField(label='Способ оплаты', widget=Payment2RadioSelect(),
+                                     choices=Order.PAYMENT_CHOICES[1:])
 
 
 class CDEKOrderForm(RequiredFieldsMixin, forms.ModelForm):
