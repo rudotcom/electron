@@ -101,4 +101,36 @@
 </table>
         <p>*<a href="/delivery/" target="_blank">Условия доставки</a></p>
 {% endif %}
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#self" role="tab" aria-controls="home" aria-selected="true">Самовывоз</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#spb" role="tab" aria-controls="profile" aria-selected="false">Курьер по Санкт-Петербургу</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#ru" role="tab" aria-controls="contact" aria-selected="false">Почтой по России</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#w" role="tab" aria-controls="contact" aria-selected="false">За рубеж</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="self" role="tabpanel" aria-labelledby="home-tab">
+      Забрать заказ самовывозом из нашей мастерской можно бесплатно.
+  </div>
+  <div class="tab-pane fade" id="spb" role="tabpanel" aria-labelledby="profile-tab">
+      По Санкт-Петербургу мы осуществляем доставку до ближайшего к Вам пункта выдачи компанией «СДЭК» или курьером. Стоимость отправки до пункта выдачи составит 300р, время доставки: 1-2 рабочих дня, начиная со следующего дня, после оформления заказа.
+      <p>Доставка заказа курьером лично в руки, по городу Санкт-Петербургу: 450р.
+  </div>
+  <div class="tab-pane fade" id="ru" role="tabpanel" aria-labelledby="profile-tab">В любой другой город России, доставка осуществляется посредством почты, стоимость доставки 300р. Срок доставки по России в среднем составляет 7-14 дней. Сроки устанавливаются Почтой России и зависят от загруженности почты. После отправки, Вашей посылке будет присвоен трек-номер, с помощью которого на сайте или в приложении можно будет отследить передвижение посылки.
+  <p>При заказе от 2500р, доставка по СПб и России осуществляется бесплатно.
+
+</div>
+  <div class="tab-pane fade" id="w" role="tabpanel" aria-labelledby="contact-tab">Стоимость доставки заказа авиа почтой по миру: 900р. Сроки доставки зависят от загруженности почты. Месторасположение посылки можно будет отследить на сайте почты, по присвоенному посылке трек-номеру.
+
+</div>
+</div>
+
 {% endblock content %}

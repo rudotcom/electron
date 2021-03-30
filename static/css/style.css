@@ -624,7 +624,9 @@ button.tm-more-button {
   .tm-daily-menu-img { margin-bottom: 30px; }
   #google-map { margin-top: 50px; }
 }
-
+.tab-pane {background-color: #ffffff; padding: 20px;margin-bottom: 30px;border-radius: 6px 6px 0 0;}
+.tab-pane p {padding: 10px 0;}
+.nav-link {border-radius: 6px 6px 0 0;}
 @media screen and (max-width: 767px) {
   .tm-nav { display: none; }
   .tm-nav li a { padding-left: 35px; }
