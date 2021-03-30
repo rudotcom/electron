@@ -43,7 +43,7 @@
           </td>
         </tr>
     {% endfor %}
-        <tr>
+        <tr class="td-gift">
             {% if order.gift %}
             <td>{{ order.gift.title }} </td>
             <td class="tm-product-thumbnails">{{ order.gift.image_thumb }}</td>
@@ -61,7 +61,7 @@
           <td><strong>{{ order.total_price_net }} &#x20bd;</strong></td>
           <td>&nbsp;</td>
         </tr>
-    {% if order.delivery_cost %}
+    {% if order.delivery_type %}
         <tr class="td-delivery">
             <td colspan="4">{{ order.get_delivery_type_display }}</td>
             <td colspan="2">{{ order.delivery_cost }} &#x20bd;</td>

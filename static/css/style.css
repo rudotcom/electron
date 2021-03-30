@@ -384,7 +384,8 @@ input { color: #0E2231; font-size: 12px;}
       -ms-flex-pack: justify;
           justify-content: space-between;
 }
-.td-delivery td {    background-color: rgba(255,244,162,1); overflow:hidden; height: 70px;}
+.td-delivery td {background-color: rgb(255, 244, 162); overflow:hidden; height: 70px;}
+.td-gift td {background-color: rgba(255, 244, 162, .3); overflow:hidden; height: 70px;}
 .table-product-list {width: 100%; }
 .table-product-list tr:nth-child(even) {background: #fafafa;}
 .table-product-list tr:nth-child(odd) {background: #ffffff; border-right: #fafafa 1px solid;}
