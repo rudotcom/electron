@@ -67,11 +67,13 @@
 {% if order_to_pay.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order_to_pay.comment }}</div></div>{% endif %}
 {% if order_to_pay.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order_to_pay.get_payment_type_display }}</div></div>{% endif %}
 </div>
+ {% if order_to_pay.payment_type != 'cash_card' %}
               <form action="{% url 'bank_pay' %}" method="POST">
                 <input type="hidden" name="order" value="{{ order_to_pay.id }}">
                 {% csrf_token %}
-                <input type="submit" class="btn btn-success btn-block" value="Оплатить">
+                <input type="submit" class="btn btn-success btn-block" value="Оплатить заказ">
               </form>
+ {% endif %}
           </div>
         </div>
 

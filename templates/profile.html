@@ -93,7 +93,7 @@
                                   <tfoot>
                                    <tr>
                                         <td colspan="2">
-                {% if order.is_paid %}
+                {% if order.is_paid%}
                 Оплачен
                 {% elif order.payment_type != 'cash_card' %}
                 <a href="{%  url 'order_pay' order.id %}"><button class="btn btn-danger">Оплатить заказ</button></a>

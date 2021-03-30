@@ -416,6 +416,9 @@ select {
     border-radius: 10px;
 }
 .payment-type div:hover {background-color: #fff2d9}
+.order_body {
+    padding: 50px 20px;
+}
 /* http://stackoverflow.com/questions/488830/ol-with-numbers-another-color */
 ol { counter-reset: item }
 ol li { display: block }
