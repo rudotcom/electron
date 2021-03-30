@@ -351,7 +351,6 @@ class MakeOrderView(CartMixin, View):
         customer = Customer.objects.get(user=user.id, session=session)
         order = Order.objects.get(owner=customer, status='cart')
 
-        print('EEEE', form_pay.errors)
         if form.is_valid() and form_pay.is_valid():
             if 'first_name' in form.cleaned_data.keys():
                 order.first_name = form.cleaned_data['first_name']
@@ -389,8 +388,7 @@ class MakeOrderView(CartMixin, View):
             if order.delivery_type.startswith('delivery'):
                 teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
 
-            # print(teleg)
-            # send_telegram(teleg)
+            send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
 
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
