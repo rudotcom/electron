@@ -61,6 +61,7 @@
           <td><strong>{{ order.total_price_net }} &#x20bd;</strong></td>
           <td>&nbsp;</td>
         </tr>
+    {% if order.delivery_cost %}
         <tr class="td-delivery">
             <td colspan="4">{{ order.get_delivery_type_display }}</td>
             <td colspan="2">{{ order.delivery_cost }} &#x20bd;</td>
@@ -72,6 +73,7 @@
           <td><strong>{{ order.total_price_gross }} &#x20bd;</strong></td>
           <td>&nbsp;</td>
         </tr>
+    {% endif %}
     </tbody>
     <tfoot>
         <tr>
