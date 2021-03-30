@@ -298,7 +298,6 @@ class CheckoutView(CartMixin, View):
         self.order.delivery_type = request.POST.get('delivery_type')
         self.order.save()
 
-        categories = Category.objects.all()
         if self.order.delivery_type == 'self':
             form = SelfOrderForm()
             form_pay = PaymentForm()
@@ -315,6 +314,8 @@ class CheckoutView(CartMixin, View):
             form = PostWorldOrderForm()
             form_pay = OnlinePaymentForm()
 
+        print(self.order.final_price)
+        categories = Category.objects.all()
         context = {
             'order': self.order,
             'categories': categories,

@@ -365,39 +365,12 @@ class Order(models.Model):
     get_fio.short_description = 'Ф.И.О.'
 
     def save(self, *args, **kwargs):
-        # Пересчитать сумму в корзине
-        if self.id:
-            cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
-            if cart_data.get('final_price__sum'):
-                self.final_price = cart_data['final_price__sum'] + self.delivery_cost
-            else:
-                self.final_price = 0
-            self.total_products = cart_data['id__count']
-        else:
-            self.final_price = 0
-            self.total_products = 0
+        # Если сумма меньше бонусной, удалить подарок
 
-        """
-        Если сумма меньше бонусной, удалить подарок
-        Если больше и подарка в корзине нет, перенести подарок из корзины в ячейку order.gift
-        """
         if self.final_price < FREE_GIFT:
             self.gift = None
-        # elif not self.gift:
-        #     # Найти товар в корзине, уменьшить количество на 1 и создать подарок в заказе
-        #     for order_product in self.products.all():
-        #         if order_product.product.gift:
-        #             qty = order_product.qty
-        #             if qty > 1:
-        #                 order_product.qty -= 1
-        #                 order_product.save()
-        #             else:
-        #                 self.products.remove(order_product)
-        #                 order_product.delete()
-        #             self.gift = order_product.product
-        #             break
 
-        # Пересчитать стоимость доставки в зависимости от суммы корзины
+        # Пересчитать стоимость доставки
         if self.delivery_type == self.DELIVERY_TYPE_SELF:
             self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_SPB:  # spb
@@ -417,5 +390,17 @@ class Order(models.Model):
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_WORLD:  # World
             self.delivery_cost = DELIVERY_WORLD_COST
+
+        # Пересчитать сумму в корзине
+        if self.id:
+            cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
+            if cart_data.get('final_price__sum'):
+                self.final_price = cart_data['final_price__sum'] + self.delivery_cost
+            else:
+                self.final_price = 0
+            self.total_products = cart_data['id__count']
+        else:
+            self.final_price = 0
+            self.total_products = 0
 
         super().save(*args, **kwargs)
