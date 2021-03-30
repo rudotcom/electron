@@ -15,7 +15,7 @@ then
 else
   virtualenv -p python venv
   source venv/bin/activate
-  pip3 install -r requirements.txt
+#  pip3 install -r requirements.txt
   echo "Python venv has been installed with reqirements.txt"
 fi
 
