@@ -56,9 +56,20 @@
         </tr>
         <tr>
           <td colspan="2">&nbsp;</td>
-          <td>Итого:</td>
+          <td>Всего товаров:</td>
           <td>{{ order.total_products }}</td>
-          <td><strong>{{ order.final_price }} &#x20bd;</strong></td>
+          <td><strong>{{ order.total_price_net }} &#x20bd;</strong></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr class="td-delivery">
+            <td colspan="4">{{ order.get_delivery_type_display }}</td>
+            <td colspan="2">{{ order.delivery_cost }} &#x20bd;</td>
+        </tr>
+        <tr>
+          <td colspan="2">&nbsp;</td>
+          <td>Итого:</td>
+          <td>&nbsp;</td>
+          <td><strong>{{ order.total_price_gross }} &#x20bd;</strong></td>
           <td>&nbsp;</td>
         </tr>
     </tbody>

@@ -190,7 +190,7 @@ class AddToCartView(CartMixin, View):
 
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
-        if product.gift and not self.order.gift and self.order.final_price >= FREE_GIFT:
+        if product.gift and not self.order.gift and self.order.total_price_net >= FREE_GIFT:
             self.order.gift = product
             self.order.save()
             messages.add_message(request, messages.INFO,
@@ -274,12 +274,11 @@ class CartView(CartMixin, View):
         categories = Category.objects.all()
         form = CartForm(request.POST or None)
         if self.order:
-            self.order.delivery_type = 'self'
             self.order.save()
-            if self.order.final_price >= FREE_GIFT and not self.order.gift:
+            if self.order.total_price_net >= FREE_GIFT and not self.order.gift:
                 messages.add_message(request, messages.INFO,
                                      f'<a href=/gifts/><img src="/static/img/gift70.png"> Скорее выбери подарок!</a>\n '
-                                     f'Сумма товаров в корзине: {self.order.final_price}')
+                                     f'Сумма товаров в корзине: {self.order.total_price_net}')
 
         context = {
             'bonus_sum': FREE_GIFT,
@@ -314,7 +313,6 @@ class CheckoutView(CartMixin, View):
             form = PostWorldOrderForm()
             form_pay = OnlinePaymentForm()
 
-        print(self.order.final_price)
         categories = Category.objects.all()
         context = {
             'order': self.order,
@@ -384,7 +382,7 @@ class MakeOrderView(CartMixin, View):
                 teleg += f"- {item}, {item.qty} шт\n"
             if order.gift:
                 teleg += f"- Подарок: {order.gift}\n"
-            teleg += f"{order.final_price}\n"
+            teleg += f"{order.total_price_gross}\n"
             teleg += f"{dict(order.DELIVERY_TYPE_CHOICES)[order.delivery_type]}\n"
             if order.delivery_type.startswith('delivery'):
                 teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"

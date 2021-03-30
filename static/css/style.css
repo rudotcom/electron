@@ -384,7 +384,7 @@ input { color: #0E2231; font-size: 12px;}
       -ms-flex-pack: justify;
           justify-content: space-between;
 }
-.td-delivery td {background-color: #f2a1ff; height: 30px;}
+.td-delivery td {    background-color: rgba(255,244,162,1); height: 30px;}
 .table-product-list {width: 100%; }
 .table-product-list tr:nth-child(even) {background: #fafafa;}
 .table-product-list tr:nth-child(odd) {background: #ffffff; border-right: #fafafa 1px solid;}

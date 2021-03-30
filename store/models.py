@@ -314,7 +314,8 @@ class Order(models.Model):
     owner = models.ForeignKey(Customer, null=True, verbose_name='Покупатель', on_delete=models.CASCADE)
     products = models.ManyToManyField(OrderProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(verbose_name='Товары', default=0)
-    final_price = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Общая сумма')
+    total_price_net = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Сумма товаров')
+    total_price_gross = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Общая сумма')
     gift = models.ForeignKey(Product, null=True, verbose_name='Подарок', on_delete=models.DO_NOTHING)
 
     status = models.CharField(
@@ -366,25 +367,24 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         # Если сумма меньше бонусной, удалить подарок
-
-        if self.final_price < FREE_GIFT:
+        if self.total_price_net < FREE_GIFT:
             self.gift = None
 
         # Пересчитать стоимость доставки
         if self.delivery_type == self.DELIVERY_TYPE_SELF:
             self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_SPB:  # spb
-            if self.final_price < FREE_DELIVERY:
+            if self.total_price_net < FREE_DELIVERY:
                 self.delivery_cost = DELIVERY_COURIER_COST
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_CDEKSPB:  # CDEK spb
-            if self.final_price < FREE_DELIVERY:
+            if self.total_price_net < FREE_DELIVERY:
                 self.delivery_cost = DELIVERY_CDEK_COST
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_RU:  # RU
-            if self.final_price < FREE_DELIVERY:
+            if self.total_price_net < FREE_DELIVERY:
                 self.delivery_cost = DELIVERY_RU_COST
             else:
                 self.delivery_cost = 0
@@ -392,15 +392,16 @@ class Order(models.Model):
             self.delivery_cost = DELIVERY_WORLD_COST
 
         # Пересчитать сумму в корзине
-        if self.id:
+        if self.id and self.products.count():
             cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
-            if cart_data.get('final_price__sum'):
-                self.final_price = cart_data['final_price__sum'] + self.delivery_cost
-            else:
-                self.final_price = 0
+            self.total_price_net = cart_data.get('final_price__sum')
             self.total_products = cart_data['id__count']
+            self.total_price_gross = self.total_price_net + self.delivery_cost
         else:
-            self.final_price = 0
+            self.total_price_net = 0
+            self.total_price_gross = 0
             self.total_products = 0
+            self.delivery_type = None
+            self.delivery_cost = 0
 
         super().save(*args, **kwargs)
