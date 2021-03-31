@@ -18,7 +18,10 @@ from Introvert import settings
 from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
     PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm, PaymentForm, OnlinePaymentForm
 from .mixins import CartMixin
-from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, FREE_GIFT, Article
+from .models import (
+    FREE_DELIVERY, FREE_GIFT, DELIVERY_CDEK_COST, DELIVERY_COURIER_COST, DELIVERY_RU_COST, DELIVERY_WORLD_COST,
+    Category, SubCategory, Customer, OrderProduct, Product, Order, Article,
+)
 import telepot
 import pymorphy2
 
@@ -291,6 +294,12 @@ class CartView(CartMixin, View):
             'form': form,
             'page_role': 'cart',
             'articles': self.articles,
+            'free_delivery': FREE_DELIVERY,
+            'delivery_cdek_cost': DELIVERY_CDEK_COST,
+            'delivery_courier_cost': DELIVERY_COURIER_COST,
+            'delivery_ru_cost': DELIVERY_RU_COST,
+            'delivery_world_cost': DELIVERY_WORLD_COST,
+
         }
         return render(request, 'cart.html', context)
 
