@@ -7,6 +7,7 @@ class CartMixin(View):
 
     def __init__(self):
         super().__init__()
+        self.articles = Article.objects.all()
 
     def dispatch(self, request, *args, **kwargs):
 
@@ -14,7 +15,6 @@ class CartMixin(View):
             session = request.COOKIES.get('customersession')
             customer = Customer.objects.get(session=session)
             self.order = Order.objects.get(owner=customer, status='cart')
-            self.articles = Article.objects.all()
 
         except:
             self.order = None

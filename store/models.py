@@ -405,6 +405,7 @@ class Article(models.Model):
     class Meta:
         verbose_name = 'Страница'
         verbose_name_plural = 'Страницы'
+        ordering = ('id',)
 
     title = models.CharField(max_length=255, verbose_name='Заголовок')
     name = models.CharField(max_length=50, verbose_name='Пункт меню', null=False, blank=True)
