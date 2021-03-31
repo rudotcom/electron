@@ -28,7 +28,6 @@ class MaxDimentionErrorException(Exception):
 
 
 class Category(models.Model):
-
     class Meta:
         verbose_name = 'Группа'
         verbose_name_plural = '[ Группы ]'
@@ -60,7 +59,6 @@ class SubCategoryManager(models.Manager):
 
 
 class SubCategory(models.Model):
-
     class Meta:
         verbose_name = 'Подгруппа'
         verbose_name_plural = '[ Подгруппы ]'
@@ -71,6 +69,7 @@ class SubCategory(models.Model):
                                  on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     objects = SubCategoryManager()
+
     # quantity = models.IntegerField(null=True)
 
     def __str__(self):
@@ -93,7 +92,6 @@ def path_and_rename(instance, filename):
 
 
 class Product(models.Model):
-
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = '[ 2. Товары ]'
@@ -176,7 +174,6 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
-
     class Meta:
         verbose_name = 'Изображение товара'
         verbose_name_plural = 'Изображения товара'
@@ -206,7 +203,6 @@ class ProductImage(models.Model):
         img.thumbnail(Product.PRODUCT_THUMB)
         img.save(os.path.join(settings.MEDIA_ROOT, 'thumb', filename))
 
-
     def image_thumb(self):
         return mark_safe('<img src="/media/thumb/%s" height="50" />' % self.image)
 
@@ -214,7 +210,6 @@ class ProductImage(models.Model):
 
 
 class Customer(models.Model):
-
     class Meta:
         verbose_name = 'Сессия'
         verbose_name_plural = '[ Сессии ]'
@@ -233,7 +228,6 @@ class Customer(models.Model):
 
 
 class OrderProduct(models.Model):
-
     class Meta:
         verbose_name = 'Товар заказа'
         verbose_name_plural = 'Товары заказа'
@@ -259,7 +253,6 @@ class OrderProduct(models.Model):
 
 
 class Order(models.Model):
-
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = '[ 1. Заказы ]'
@@ -363,6 +356,7 @@ class Order(models.Model):
 
     def get_fio(self):
         return f'{self.last_name} {self.first_name[0:1]}.{self.patronymic[0:1]}'
+
     get_fio.short_description = 'Ф.И.О.'
 
     def save(self, *args, **kwargs):
@@ -405,3 +399,20 @@ class Order(models.Model):
             self.delivery_cost = 0
 
         super().save(*args, **kwargs)
+
+
+class Article(models.Model):
+    class Meta:
+        verbose_name = 'Страница'
+        verbose_name_plural = 'Страницы'
+
+    title = models.CharField(max_length=255, verbose_name='Заголовок')
+    name = models.CharField(max_length=50, verbose_name='Пункт меню', null=False, blank=True)
+    slug = models.SlugField(unique=True, null=False)
+    content = models.TextField(verbose_name='Текст страницы', null=True)
+
+    def get_absolute_url(self):
+        return reverse('article', kwargs={'slug': self.slug})
+
+    def __str__(self):
+        return self.title

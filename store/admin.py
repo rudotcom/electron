@@ -2,9 +2,6 @@ from datetime import datetime
 from django import forms
 from PIL import Image
 from django.contrib import admin
-from django.contrib.flatpages.admin import FlatPageAdmin
-from django.contrib.flatpages.models import FlatPage
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.forms import ModelForm, ValidationError
@@ -12,7 +9,7 @@ from django.template.loader import render_to_string
 from django.utils.html import mark_safe
 from ckeditor.widgets import CKEditorWidget
 
-from store.models import Category, SubCategory, Product, ProductImage, Order, OrderProduct, User, Customer
+from store.models import Category, SubCategory, Product, ProductImage, Order, OrderProduct, User, Customer, Article
 
 
 class ProductAdminForm(ModelForm):
@@ -175,38 +172,27 @@ class ProductImageAdmin(admin.ModelAdmin):
     ordering = ('product',)
 
 
-class FlatPageAdminForm(forms.ModelForm):
+class ArticleAdminForm(forms.ModelForm):
     title = forms.CharField(label='Заголовок', max_length=200)
     content = forms.CharField(label='Текст страницы', widget=CKEditorWidget())
 
 
-# Define a new FlatPageAdmin
-class FlatPageAdmin(FlatPageAdmin):
-    form = FlatPageAdminForm
+class ArticleAdmin(admin.ModelAdmin):
+    form = ArticleAdminForm
 
     fieldsets = (
-        (None, {'fields': ('url', 'title', 'content',)}),
-        (_('Advanced options'), {
-            'classes': ('collapse',),
-            'fields': (
-                'enable_comments',
-                'registration_required',
-                'template_name',
-                'sites',
-            ),
-        }),
+        (None, {'fields': ('slug', 'name', 'title', 'content',)}),
     )
+    list_display = ('name', 'title', 'slug',)
 
 
-# Re-register FlatPageAdmin
-admin.site.unregister(FlatPage)
-admin.site.register(FlatPage, FlatPageAdmin)
 admin.site.site_header = "Панель управления магазина INTROVERT"
 admin.site.unregister(Group)
 admin.site.register(Category)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(Article, ArticleAdmin)
 
 # admin.site.register(ProductImage, ProductImageAdmin)
 # admin.site.register(Customer, CustomerAdmin)

@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login, authenticate
-from django.contrib.flatpages.models import FlatPage
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
@@ -19,7 +18,7 @@ from Introvert import settings
 from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
     PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm, PaymentForm, OnlinePaymentForm
 from .mixins import CartMixin
-from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, FREE_GIFT
+from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, FREE_GIFT, Article
 import telepot
 import pymorphy2
 
@@ -72,6 +71,7 @@ class BaseView(CartMixin, View):
             'products': popular_products,
             'order': self.order,
             'page_role': 'products',
+            'articles': self.articles,
         }
         return render(request, 'base.html', context)
 
@@ -87,6 +87,7 @@ class GiftListView(CartMixin, View):
             'products': gift_products,
             'order': self.order,
             'page_role': 'gifts',
+            'articles': self.articles,
         }
         return render(request, 'gift_list.html', context)
 
@@ -106,6 +107,7 @@ class ProductDetailView(CartMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['categories'] = self.get_object().category.__class__.objects.all()
         context['order'] = self.order
+        context['articles'] = self.articles
 
         return context
 
@@ -128,6 +130,7 @@ class SubCategoryDetailView(CartMixin, DetailView):
         context['subcategories'] = self.model.objects.filter(category=category)
         context['subcategory_name'] = subcategory.name
         context['subcategory_products'] = subcategory.product_set.all()
+        context['articles'] = self.articles
         return context
 
 
@@ -146,6 +149,7 @@ class CategoryDetailView(CartMixin, DetailView):
         context['category_name'] = category.name
         context['subcategories'] = SubCategory.objects.filter(category=category)
         context['category_products'] = category.product_set.all()
+        context['articles'] = self.articles
         return context
 
 
@@ -286,6 +290,7 @@ class CartView(CartMixin, View):
             'categories': categories,
             'form': form,
             'page_role': 'cart',
+            'articles': self.articles,
         }
         return render(request, 'cart.html', context)
 
@@ -319,6 +324,7 @@ class CheckoutView(CartMixin, View):
             'categories': categories,
             'form': form,
             'form_pay': form_pay,
+            'articles': self.articles,
         }
 
         return render(request, 'checkout.html', context)
@@ -424,6 +430,7 @@ class PayView(CartMixin, View):
                 'form': form,
                 'order_to_pay': order_to_pay,
                 'categories': categories,
+                'articles': self.articles,
             }
         )
 
@@ -471,7 +478,8 @@ class LoginView(CartMixin, View):
         context = {
             'form': form,
             'order': self.order,
-            'categories': categories
+            'categories': categories,
+            'articles': self.articles,
         }
         return render(request, 'login.html', context)
 
@@ -486,6 +494,7 @@ class RegistrationView(CartMixin, View):
             'categories': categories,
             'order': self.order,
             'page_role': 'registration',
+            'articles': self.articles,
         }
         return render(request, 'registration.html', context)
 
@@ -513,7 +522,8 @@ class RegistrationView(CartMixin, View):
         context = {
             'form': form,
             'categories': categories,
-            'order': self.order
+            'order': self.order,
+            'articles': self.articles,
         }
         return render(request, 'registration.html', context)
 
@@ -535,23 +545,25 @@ class ProfileView(CartMixin, View):
                 'orders': orders,
                 'order': self.order,
                 'categories': categories,
-                'page_role': 'profile'
+                'page_role': 'profile',
+                'articles': self.articles,
             }
         )
 
 
-class AboutView(CartMixin, View):
-    model = FlatPage
+class ArticleView(CartMixin, DetailView):
+    model = Article
+    context_object_name = 'article'
+    template_name = 'article_detail.html'
+    slug_url_kwarg = 'slug'
 
-    def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['order'] = self.order
+        context['articles'] = self.articles
 
-        context = {
-            'categories': categories,
-            'order': self.order,
-            'flatpage': self,
-        }
-        return render(request, 'flatpages/default.html', context)
+        return context
 
 
 class EmailView(CartMixin, View):

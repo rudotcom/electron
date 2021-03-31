@@ -98,6 +98,11 @@
             {% endif %}
           {% endfor %}
         </ul>
+
+              <ul class="article-menu">
+                {% include 'article_menu.html' %}
+              </ul>
+
       </div>
       <!-- /.col-lg-3 -->
 
@@ -121,12 +126,9 @@
         <div class="container">
           <div class="row margin-bottom-60">
             <nav class="col-lg-3 col-md-3 tm-footer-nav tm-footer-div">
-              <ul>
-                <li><a href="/">Товары</a></li>
-                <li><a href="/contact/">Контакты</a></li>
-                <li><a href="/delivery/">Доставка</a></li>
-                <li><a href="/promo/">Акции</a></li>
-              </ul>
+                <ul>
+{% include 'article_menu.html' %}
+                </ul>
             </nav>
             <div class="col-lg-5 col-md-5 tm-footer-div">
               <h3 class="tm-footer-div-title">О нас</h3>

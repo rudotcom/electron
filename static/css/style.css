@@ -9,6 +9,9 @@ a {
 p { text-align: justify; }
 * { font-family: 'Open Sans', sans-serif; }
 .container { max-width: 1180px; }
+.article-menu {
+    margin-top: 100px;
+}
 .tm-handwriting-font { font-family: 'Damion', cursive; }
 .tm-top-header {
     /*position: fixed;*/
@@ -117,7 +120,7 @@ input { color: #0E2231; font-size: 12px;}
 .category_menu ul {
   list-style: none;
 }
-.category-top a {
+.category-top a, .article-menu a {
     font-size: medium;
     display: block;
     padding: .45rem 0.75rem;

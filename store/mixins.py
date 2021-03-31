@@ -1,9 +1,12 @@
 from django.views.generic import View
 
-from .models import Order, Customer
+from .models import Order, Customer, Article
 
 
 class CartMixin(View):
+
+    def __init__(self):
+        super().__init__()
 
     def dispatch(self, request, *args, **kwargs):
 
@@ -11,6 +14,7 @@ class CartMixin(View):
             session = request.COOKIES.get('customersession')
             customer = Customer.objects.get(session=session)
             self.order = Order.objects.get(owner=customer, status='cart')
+            self.articles = Article.objects.all()
 
         except:
             self.order = None
@@ -18,7 +22,7 @@ class CartMixin(View):
         return super().dispatch(request, *args, **kwargs)
 
 
-class RequiredFieldsMixin():
+class RequiredFieldsMixin:
 
     def __init__(self, *args, **kwargs):
 
