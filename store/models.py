@@ -30,7 +30,7 @@ class MaxDimentionErrorException(Exception):
 class Category(models.Model):
     class Meta:
         verbose_name = 'Группа'
-        verbose_name_plural = '[ Группы ]'
+        verbose_name_plural = 'Группы'
         ordering = ('id',)
 
     name = models.CharField(max_length=255, verbose_name='Имя категории')
@@ -61,7 +61,7 @@ class SubCategoryManager(models.Manager):
 class SubCategory(models.Model):
     class Meta:
         verbose_name = 'Подгруппа'
-        verbose_name_plural = '[ Подгруппы ]'
+        verbose_name_plural = 'Подгруппы'
         ordering = ('category', 'name')
 
     name = models.CharField(max_length=255, verbose_name='Подгруппа')
@@ -94,7 +94,7 @@ def path_and_rename(instance, filename):
 class Product(models.Model):
     class Meta:
         verbose_name = 'Товар'
-        verbose_name_plural = '[ 2. Товары ]'
+        verbose_name_plural = '2. Товары'
         ordering = ('subcategory', 'title')
 
     PRODUCT_BIG = (1100, 3000)
@@ -255,7 +255,7 @@ class OrderProduct(models.Model):
 class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
-        verbose_name_plural = '[ 1. Заказы ]'
+        verbose_name_plural = '1. Заказы'
 
     STATUS_CART = 'cart'
     STATUS_NEW = 'new'
