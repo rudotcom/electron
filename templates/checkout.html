@@ -30,7 +30,9 @@
         {% if order.gift %}
             <td>{{ order.gift.title }} </td>
             <td class="tm-product-thumbnails">{{ order.gift.image_thumb }}</td>
-            <td colspan="3">Подарок</td>
+            <td>{{ order.gift.price }} &#x20bd;</td>
+            <td></td>
+            <td>Подарок</td>
        {% endif %}
         </tr>
         <tr class="td-delivery">
