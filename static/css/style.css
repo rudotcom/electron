@@ -411,7 +411,7 @@ select {
   border: 0;
   border-radius: 4px;
 }
-
+.help-block {font-size: smaller; color: #949494}
 .payment-type {display: flex; align-content: center;}
 .payment-type div label {cursor:pointer;}
 .payment-type div {

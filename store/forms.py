@@ -141,7 +141,7 @@ class LoginForm(forms.ModelForm):
 class RegistrationForm(forms.ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput)
     password = forms.CharField(widget=forms.PasswordInput)
-    email = forms.EmailField(required=True)
+    email = forms.CharField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -152,11 +152,6 @@ class RegistrationForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        # domain = email.split('.')[-1]
-        # if domain in ['com', 'net']:
-        #     raise forms.ValidationError(
-        #         f'Регистрация для домена {domain} невозможна'
-        #     )
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 f'Данный email уже зарегистрирован в системе'
