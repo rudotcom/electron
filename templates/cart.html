@@ -47,9 +47,12 @@
             {% if order.gift %}
             <td>{{ order.gift.title }} </td>
             <td class="tm-product-thumbnails">{{ order.gift.image_thumb }}</td>
-            <td colspan="5">Подарок</td>
-            {% else %}
-            <td colspan="7">
+            <td>{{ order.gift.price }}</td>
+            <td>&nbsp;</td>
+            <td>0,00&#x20bd;</td>
+             <td>Подарок</td>
+           {% else %}
+            <td colspan="6">
             <p><a href="{% url 'gifts' %}">Выбери подарок при сумме заказа от {{ bonus_sum }} руб.</a></p>
             </td>
        {% endif %}
