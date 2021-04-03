@@ -110,6 +110,8 @@
 {% if order.settlement %}<div><div class="order-label">Населенный пункт:</div><div class="order-data">{{ order.settlement }}</div></div>{% endif %}
 {% if order.address %}<div><div class="order-label">Адрес:</div><div class="order-data">{{ order.address }}</div></div>{% endif %}
 {% if order.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order.comment }}</div></div>{% endif %}
+<div><div class="order-label">Статус:</div><div>{{ order.get_status_display }}</div></div>
+{% if order.tracking %}<div><div class="order-label">Трекинг:</div><div class="order-data">{{ order.tracking }}</div></div>{% endif %}
 </div>
                           </div>
                         </div>
