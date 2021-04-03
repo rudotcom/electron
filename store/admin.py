@@ -137,7 +137,7 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    fields = (('last_name', 'first_name', 'patronymic'), 'owner', 'created_at', 'phone', 'delivery_type', 'postal_code',
+    fields = ('last_name', ('first_name', 'patronymic'), 'owner', 'created_at', 'phone', 'delivery_type', 'postal_code',
               'settlement', 'address', 'comment', 'total_price_net', 'delivery_cost', ('total_price_gross', 'is_paid'),
               'payment_type', 'status',
               'tracking', 'remark', 'gift',)
