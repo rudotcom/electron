@@ -9,7 +9,8 @@ from django.template.loader import render_to_string
 from django.utils.html import mark_safe
 from ckeditor.widgets import CKEditorWidget
 
-from store.models import Category, SubCategory, Product, ProductImage, Order, OrderProduct, User, Customer, Article
+from store.models import Category, SubCategory, Product, ProductImage, Order, OrderProduct, User, Customer, Article, \
+    Parameter
 
 
 class ProductAdminForm(ModelForm):
@@ -126,7 +127,6 @@ def admin_order_shipped(modeladmin, request, queryset):
 
 
 class OrderItemInline(admin.TabularInline):
-
     model = OrderProduct
     fields = ['product', 'image_thumb', 'qty', 'final_price', ]
     readonly_fields = ['product', 'image_thumb', 'qty', 'final_price', ]
@@ -137,11 +137,12 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-
     fields = (('last_name', 'first_name', 'patronymic'), 'owner', 'created_at', 'phone', 'delivery_type', 'postal_code',
-              'settlement', 'address', 'comment', 'total_price_net', 'delivery_cost', ('total_price_gross', 'is_paid'), 'payment_type', 'status',
+              'settlement', 'address', 'comment', 'total_price_net', 'delivery_cost', ('total_price_gross', 'is_paid'),
+              'payment_type', 'status',
               'tracking', 'remark', 'gift',)
-    readonly_fields = ['created_at', 'delivery_type', 'delivery_cost', 'comment', 'owner', 'gift', 'total_price_net', 'total_price_gross']
+    readonly_fields = ['created_at', 'delivery_type', 'delivery_cost', 'comment', 'owner', 'gift', 'total_price_net',
+                       'total_price_gross']
     list_display = ('id', 'delivery_type', 'status', 'payment_type', 'is_paid', 'total_products', 'total_price_gross',
                     'get_fio', 'created_at')
     list_display_links = ('id', 'delivery_type', 'status')
@@ -186,6 +187,18 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display = ('name', 'title', 'slug',)
 
 
+class ParameterAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {'fields': ('name', 'value', 'meaning',)}),
+    )
+    readonly_fields = ['name', ]
+    list_display = ('name', 'value',)
+
+    # убрать кнопку "Удалить"
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 admin.site.site_header = "Панель управления магазина INTROVERT"
 admin.site.unregister(Group)
 admin.site.register(Category)
@@ -193,7 +206,7 @@ admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Article, ArticleAdmin)
+admin.site.register(Parameter, ParameterAdmin)
 
 # admin.site.register(ProductImage, ProductImageAdmin)
 # admin.site.register(Customer, CustomerAdmin)
-

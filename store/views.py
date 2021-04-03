@@ -18,10 +18,8 @@ from Introvert import settings
 from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
     PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm, PaymentForm, OnlinePaymentForm
 from .mixins import CartMixin
-from .models import (
-    FREE_DELIVERY, FREE_GIFT, DELIVERY_CDEK_COST, DELIVERY_COURIER_COST, DELIVERY_RU_COST, DELIVERY_WORLD_COST,
-    Category, SubCategory, Customer, OrderProduct, Product, Order, Article,
-)
+from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, Article, parameter
+
 import telepot
 import pymorphy2
 
@@ -85,7 +83,7 @@ class GiftListView(CartMixin, View):
         categories = Category.objects.all()
         gift_products = Product.objects.filter(gift=True)
         context = {
-            'bonus_sum': FREE_GIFT,
+            'bonus_sum': parameter['FREE_GIFT'],
             'categories': categories,
             'products': gift_products,
             'order': self.order,
@@ -197,7 +195,7 @@ class AddToCartView(CartMixin, View):
 
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
-        if product.gift and not self.order.gift and self.order.total_price_net >= FREE_GIFT:
+        if product.gift and not self.order.gift and self.order.total_price_net >= parameter['FREE_GIFT']:
             self.order.gift = product
             self.order.save()
             messages.add_message(request, messages.INFO,
@@ -282,23 +280,23 @@ class CartView(CartMixin, View):
         form = CartForm(request.POST or None)
         if self.order:
             self.order.save()
-            if self.order.total_price_net >= FREE_GIFT and not self.order.gift:
+            if self.order.total_price_net >= parameter['FREE_GIFT'] and not self.order.gift:
                 messages.add_message(request, messages.INFO,
                                      f'<a href=/gifts/><img src="/static/img/gift70.png"> Скорее выбери подарок!</a>\n '
                                      f'Сумма товаров в корзине: {self.order.total_price_net}')
 
         context = {
-            'bonus_sum': FREE_GIFT,
+            'bonus_sum': parameter['FREE_GIFT'],
             'order': self.order,
             'categories': categories,
             'form': form,
             'page_role': 'cart',
             'articles': self.articles,
-            'free_delivery': FREE_DELIVERY,
-            'delivery_cdek_cost': DELIVERY_CDEK_COST,
-            'delivery_courier_cost': DELIVERY_COURIER_COST,
-            'delivery_ru_cost': DELIVERY_RU_COST,
-            'delivery_world_cost': DELIVERY_WORLD_COST,
+            'free_delivery': parameter['FREE_DELIVERY'],
+            'delivery_cdek_cost': parameter['DELIVERY_CDEK_COST'],
+            'delivery_courier_cost': parameter['DELIVERY_COURIER_COST'],
+            'delivery_ru_cost': parameter['DELIVERY_RU_COST'],
+            'delivery_world_cost': parameter['DELIVERY_WORLD_COST'],
 
         }
         return render(request, 'cart.html', context)

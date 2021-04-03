@@ -11,12 +11,34 @@ from django.utils.html import mark_safe
 from Introvert import settings
 
 User = get_user_model()
-FREE_DELIVERY = 2500  # Сумма, при которой доставка по РФ бесплатна
-FREE_GIFT = 800  # Сумма, при которой добавляется возможность выбрать подарок
-DELIVERY_CDEK_COST = 300  # Доставка до ближайшего к Вам пункта выдачи СДЭК (по СПб)
-DELIVERY_COURIER_COST = 450  # Доставка заказа курьером лично в руки, по городу Санкт-Петербургу
-DELIVERY_RU_COST = 300  # В любой другой город России, доставка посредством почты, стоимость доставки 300₽
-DELIVERY_WORLD_COST = 900  # Стоимость доставки заказа авиа почтой по миру: 900₽.
+
+
+class Parameter(models.Model):
+    class Meta:
+        verbose_name = 'Параметр'
+        verbose_name_plural = 'Параметры'
+        ordering = ('name',)
+
+    name = models.CharField(max_length=255, verbose_name='Имя')
+    value = models.IntegerField(verbose_name='Значение')
+    meaning = models.TextField(verbose_name='Описание', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        parameter[self.name] = int(self.value)
+        super().save(*args, **kwargs)
+
+
+parameter = {
+    'FREE_GIFT': int(Parameter.objects.get(name='FREE_GIFT').value),
+    'FREE_DELIVERY': int(Parameter.objects.get(name='FREE_DELIVERY').value),
+    'DELIVERY_COURIER_COST': int(Parameter.objects.get(name='DELIVERY_COURIER_COST').value),
+    'DELIVERY_CDEK_COST': int(Parameter.objects.get(name='DELIVERY_CDEK_COST').value),
+    'DELIVERY_RU_COST': int(Parameter.objects.get(name='DELIVERY_RU_COST').value),
+    'DELIVERY_WORLD_COST': int(Parameter.objects.get(name='DELIVERY_WORLD_COST').value)
+}
 
 
 class MinDimentionErrorException(Exception):
@@ -252,6 +274,10 @@ class OrderProduct(models.Model):
     image_thumb.short_description = 'Изображение'
 
 
+def get_parameter(name):
+    return int(Parameter.objects.get(name=name).value)
+
+
 class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
@@ -360,30 +386,37 @@ class Order(models.Model):
     get_fio.short_description = 'Ф.И.О.'
 
     def save(self, *args, **kwargs):
+        free_gift = get_parameter('FREE_GIFT')
+        free_delivery = get_parameter('FREE_DELIVERY')
+
         # Если сумма меньше бонусной, удалить подарок
-        if self.total_price_net < FREE_GIFT:
+        if self.total_price_net < free_gift:
             self.gift = None
 
         # Пересчитать стоимость доставки
         if self.delivery_type == self.DELIVERY_TYPE_SELF:
             self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_SPB:  # spb
-            if self.total_price_net < FREE_DELIVERY:
-                self.delivery_cost = DELIVERY_COURIER_COST
+            if self.total_price_net < free_delivery:
+                delivery_courier_cost = int(Parameter.objects.get(name='DELIVERY_COURIER_COST').value)
+                self.delivery_cost = delivery_courier_cost
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_CDEKSPB:  # CDEK spb
-            if self.total_price_net < FREE_DELIVERY:
-                self.delivery_cost = DELIVERY_CDEK_COST
+            if self.total_price_net < free_delivery:
+                delivery_cdek_cost = int(Parameter.objects.get(name='DELIVERY_CDEK_COST').value)
+                self.delivery_cost = delivery_cdek_cost
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_RU:  # RU
-            if self.total_price_net < FREE_DELIVERY:
-                self.delivery_cost = DELIVERY_RU_COST
+            if self.total_price_net < free_delivery:
+                delivery_ru_cost = int(Parameter.objects.get(name='DELIVERY_RU_COST').value)
+                self.delivery_cost = delivery_ru_cost
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_WORLD:  # World
-            self.delivery_cost = DELIVERY_WORLD_COST
+            delivery_world_cost = int(Parameter.objects.get(name='DELIVERY_WORLD_COST').value)
+            self.delivery_cost = delivery_world_cost
 
         # Пересчитать сумму в корзине
         if self.id and self.products.count():
