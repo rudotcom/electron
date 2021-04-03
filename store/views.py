@@ -26,10 +26,6 @@ import pymorphy2
 User = get_user_model()
 morph = pymorphy2.MorphAnalyzer()
 
-group_id = -543527686
-telegram_token = os.getenv('telegram_token')
-telegramBot = telepot.Bot(telegram_token)  # token
-
 
 def reconcile_verb_gender(verb, item):
     """согласование рода глагола "добавлен", "удален" с наименованием товара """
@@ -52,7 +48,10 @@ def reconcile_verb_gender(verb, item):
 
 
 def send_telegram(text):
-    telegramBot.sendMessage(group_id, text, parse_mode="Markdown")
+    group_id = parameter['TELEGRAM_GROUP']
+    telegram_token = os.getenv('telegram_token')
+    telegram_bot = telepot.Bot(telegram_token)  # token
+    telegram_bot.sendMessage(group_id, text, parse_mode="Markdown")
 
 
 class MyQ(Q):
@@ -400,7 +399,7 @@ class MakeOrderView(CartMixin, View):
             if order.delivery_type.startswith('delivery'):
                 teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
 
-            send_telegram(teleg)
+            # send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
 
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
