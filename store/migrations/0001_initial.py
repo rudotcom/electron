@@ -5,6 +5,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 import store.models
+import store.utils
 
 
 class Migration(migrations.Migration):
@@ -106,7 +107,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255, verbose_name='Наименование')),
                 ('slug', models.SlugField(unique=True)),
-                ('image', models.ImageField(upload_to=store.models.path_and_rename, verbose_name='Изображение')),
+                ('image', models.ImageField(upload_to=store.utils.path_and_rename, verbose_name='Изображение')),
                 ('description', models.TextField(null=True, verbose_name='Описание')),
                 ('care', models.TextField(blank=True, null=True, verbose_name='Инструкция по уходу')),
                 ('price', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Цена')),

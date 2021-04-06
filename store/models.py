@@ -1,16 +1,16 @@
 import os
 from uuid import uuid4
 
+import telepot
 from PIL import Image
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import mark_safe
 
 from Introvert import settings
-
-User = get_user_model()
+from store.utils import path_and_rename
 
 
 class Parameter(models.Model):
@@ -31,21 +31,7 @@ class Parameter(models.Model):
         super().save(*args, **kwargs)
 
 
-parameter = {
-    'FREE_GIFT': int(Parameter.objects.get(name='FREE_GIFT').value),
-    'FREE_DELIVERY': int(Parameter.objects.get(name='FREE_DELIVERY').value),
-    'DELIVERY_COURIER_COST': int(Parameter.objects.get(name='DELIVERY_COURIER_COST').value),
-    'DELIVERY_CDEK_COST': int(Parameter.objects.get(name='DELIVERY_CDEK_COST').value),
-    'DELIVERY_RU_COST': int(Parameter.objects.get(name='DELIVERY_RU_COST').value),
-    'DELIVERY_WORLD_COST': int(Parameter.objects.get(name='DELIVERY_WORLD_COST').value)
-}
-
-
 class MinDimentionErrorException(Exception):
-    pass
-
-
-class MaxDimentionErrorException(Exception):
     pass
 
 
@@ -104,13 +90,6 @@ class SubCategory(models.Model):
     #     self.quantity = SubCategory.objects.get(self).product_set.count()
     #     self.save()
     #
-
-
-def path_and_rename(instance, filename):
-    ext = filename.split('.')[-1]
-    filename = f'{instance.category.slug}_{instance.slug}.{ext}'
-    os.remove(os.path.join(settings.MEDIA_ROOT, filename))
-    return f'{filename}'
 
 
 class Product(models.Model):
@@ -274,10 +253,6 @@ class OrderProduct(models.Model):
     image_thumb.short_description = 'Изображение'
 
 
-def get_parameter(name):
-    return int(Parameter.objects.get(name=name).value)
-
-
 class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
@@ -433,6 +408,13 @@ class Order(models.Model):
 
         super().save(*args, **kwargs)
 
+    @staticmethod
+    def send_telegram(text):
+        group_id = get_parameter('TELEGRAM_GROUP')
+        telegram_token = os.getenv('telegram_token')
+        telegram_bot = telepot.Bot(telegram_token)  # token
+        telegram_bot.sendMessage(group_id, text, parse_mode="Markdown")
+
 
 class Article(models.Model):
     class Meta:
@@ -450,3 +432,17 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+
+def get_parameter(name):
+    return int(Parameter.objects.get(name=name).value)
+
+
+parameter = {
+    'FREE_GIFT': get_parameter('FREE_GIFT'),
+    'FREE_DELIVERY': get_parameter('FREE_DELIVERY'),
+    'DELIVERY_COURIER_COST': get_parameter('DELIVERY_COURIER_COST'),
+    'DELIVERY_CDEK_COST': get_parameter('DELIVERY_CDEK_COST'),
+    'DELIVERY_RU_COST': get_parameter('DELIVERY_RU_COST'),
+    'DELIVERY_WORLD_COST': get_parameter('DELIVERY_WORLD_COST'),
+}

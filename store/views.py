@@ -1,10 +1,7 @@
-import os
-import random
-import string
 from datetime import datetime, timedelta
 
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.db import transaction
 from django.db.models import Q
@@ -19,39 +16,7 @@ from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEK
     PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm, PaymentForm, OnlinePaymentForm
 from .mixins import CartMixin
 from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, Article, parameter
-
-import telepot
-import pymorphy2
-
-User = get_user_model()
-morph = pymorphy2.MorphAnalyzer()
-
-
-def reconcile_verb_gender(verb, item):
-    """согласование рода глагола "добавлен", "удален" с наименованием товара """
-    phrase = item.split(' ')
-    word = phrase[0]
-    tag = str(morph.parse(word)[0].tag)
-    for form in morph.parse(word):
-        if 'nomn' in form.tag:
-            tag = form.tag
-            break
-
-    if 'plur' in tag:
-        return f'{verb}ы'
-    if 'masc' in tag:
-        return f'{verb}'
-    elif 'femn' in tag:
-        return f'{verb}a'
-    else:
-        return f'{verb}о'
-
-
-def send_telegram(text):
-    group_id = parameter['TELEGRAM_GROUP']
-    telegram_token = os.getenv('telegram_token')
-    telegram_bot = telepot.Bot(telegram_token)  # token
-    telegram_bot.sendMessage(group_id, text, parse_mode="Markdown")
+from .utils import reconcile_verb_gender, get_random_session
 
 
 class MyQ(Q):
@@ -169,10 +134,6 @@ class ProductSearchView(CartMixin, ListView):
             Q(title__icontains=query) | Q(description__icontains=query)
         )
         return object_list
-
-
-def get_random_session():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=36))
 
 
 class AddToCartView(CartMixin, View):
@@ -399,7 +360,7 @@ class MakeOrderView(CartMixin, View):
             if order.delivery_type.startswith('delivery'):
                 teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
 
-            send_telegram(teleg)
+            Order.send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
 
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
