@@ -98,8 +98,9 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
-    fields = ['category', 'name', 'slug']
-    list_display = ('name', 'category')
+    fields = ['category', 'name', 'count', 'slug']
+    list_display = ('name', 'category', 'count')
+    readonly_fields = ['count']
     list_filter = ['category']
     prepopulated_fields = {"slug": ("name",)}
 

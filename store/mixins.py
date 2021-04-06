@@ -14,7 +14,7 @@ class CartMixin(View):
         try:
             session = request.COOKIES.get('customersession')
             customer = Customer.objects.get(session=session)
-            self.order = Order.objects.get(owner=customer, status='cart')
+            self.order = Order.carts.get(owner=customer)
 
         except:
             self.order = None

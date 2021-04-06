@@ -77,8 +77,7 @@ class SubCategory(models.Model):
                                  on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     objects = SubCategoryManager()
-
-    # quantity = models.IntegerField(null=True)
+    count = models.IntegerField(null=True)
 
     def __str__(self):
         return "{} {}".format(self.category, self.name)
@@ -86,10 +85,10 @@ class SubCategory(models.Model):
     def get_absolute_url(self):
         return reverse('subcategory_detail', kwargs={'slug': self.slug})
 
-    # def save(self):
-    #     self.quantity = SubCategory.objects.get(self).product_set.count()
-    #     self.save()
-    #
+
+class RandomManager(models.Manager):
+    def get_query_set(self):
+        return super(RandomManager, self).get_query_set().order_by('?')
 
 
 class Product(models.Model):
@@ -138,6 +137,8 @@ class Product(models.Model):
     date_added = models.DateTimeField(auto_now_add=True, verbose_name='Добавлен')
     visits = models.IntegerField(default=0, verbose_name='👁', help_text='Количество просмотров')
     last_visit = models.DateTimeField(blank=True, null=True, verbose_name='Просмотрен')
+    objects = models.Manager()  # The default manager.
+    randoms = RandomManager()  # The random-specific manager.
 
     def __str__(self):
         return self.title
@@ -253,6 +254,16 @@ class OrderProduct(models.Model):
     image_thumb.short_description = 'Изображение'
 
 
+class ActiveOrderManager(models.Manager):
+    def get_queryset(self):
+        return super(ActiveOrderManager, self).get_queryset().exclude(status='cart')
+
+
+class CartManager(models.Manager):
+    def get_queryset(self):
+        return super(CartManager, self).get_queryset().filter(status='cart')
+
+
 class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
@@ -311,7 +322,6 @@ class Order(models.Model):
     total_price_net = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Сумма товаров')
     total_price_gross = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Общая сумма')
     gift = models.ForeignKey(Product, null=True, verbose_name='Подарок', on_delete=models.DO_NOTHING)
-
     status = models.CharField(
         max_length=100,
         verbose_name='Статус заказа',
@@ -348,6 +358,8 @@ class Order(models.Model):
     settlement = models.CharField(max_length=100, verbose_name='Населенный пункт', blank=True)
     address = models.CharField(max_length=1024, verbose_name='Адрес', blank=True)
     postal_code = models.CharField(max_length=30, verbose_name='Индекс', blank=True)
+    orders = ActiveOrderManager()
+    carts = CartManager()
 
     def __str__(self):
         return \

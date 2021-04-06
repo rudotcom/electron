@@ -27,13 +27,13 @@ class BaseView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
-        # products = Product.objects.all()
-        popular_products = Product.objects.all().order_by('-visits')
+        random_products = Product.randoms.all()
+        # popular_products = Product.objects.all().order_by('-visits')
         # recently_viewed_products = Product.objects.all().order_by('-last_visit')[0:4]
 
         context = {
             'categories': categories,
-            'products': popular_products,
+            'products': random_products,
             'order': self.order,
             'page_role': 'products',
             'articles': self.articles,
@@ -147,10 +147,10 @@ class AddToCartView(CartMixin, View):
             customer.user = user
         customer.save()
 
-        self.order, created = Order.objects.get_or_create(owner=customer, status='cart')
+        self.order, created = Order.carts.get_or_create(owner=customer)
         if created:
             # Это создание новой корзины. Удалить корзины старше 2 дней
-            old_carts = Order.objects.filter(status__exact='cart', created_at__lte=datetime.now() - timedelta(days=2))
+            old_carts = Order.carts.filter(created_at__lte=datetime.now() - timedelta(days=2))
             old_carts.delete()
 
         product_slug = kwargs.get('slug')
@@ -321,7 +321,7 @@ class MakeOrderView(CartMixin, View):
         session = request.COOKIES.get('customersession')
 
         customer = Customer.objects.get(user=user.id, session=session)
-        order = Order.objects.get(owner=customer, status='cart')
+        order = Order.carts.get(owner=customer)
 
         if form.is_valid() and form_pay.is_valid():
             if 'first_name' in form.cleaned_data.keys():
@@ -386,7 +386,7 @@ class PayView(CartMixin, View):
         form = PaymentMethodForm(request.POST or None)
         order_id = kwargs.get('order')
 
-        order_to_pay = Order.objects.get(id=order_id)
+        order_to_pay = Order.orders.get(id=order_id)
 
         categories = Category.objects.all()
         return render(
@@ -502,7 +502,7 @@ class ProfileView(CartMixin, View):
             return HttpResponseRedirect('/login/')
 
         owners = Customer.objects.filter(user=request.user)
-        orders = Order.objects.filter(~Q(status='cart'), owner__in=owners).order_by('-created_at')
+        orders = Order.orders.filter(owner__in=owners).order_by('-created_at')
 
         categories = Category.objects.all()
         return render(
@@ -541,7 +541,7 @@ class EmailView(CartMixin, View):
 
         order_id = kwargs.get('order')
 
-        pay_order = Order.objects.get(id=order_id)
+        pay_order = Order.orders.get(id=order_id)
 
         return render(
             request,
