@@ -435,7 +435,7 @@ class Article(models.Model):
         ordering = ('id',)
 
     title = models.CharField(max_length=255, verbose_name='Заголовок')
-    name = models.CharField(max_length=50, verbose_name='Пункт меню', null=False, blank=True)
+    name = models.CharField(max_length=50, verbose_name='Пункт меню', null=False, blank=False)
     slug = models.SlugField(unique=True, null=False)
     content = models.TextField(verbose_name='Текст страницы', null=True)
 
