@@ -1,4 +1,5 @@
-            <div class="tm-popular-item">
+ {% load static %}
+           <div class="tm-popular-item">
                 <div class="tm-item-image">
               <a href="{{ product.get_absolute_url }}"><img src="/media/card/{{ product.image.name }}" alt="{{ product.title }}" class="tm-popular-item-img"></a>
                 </div>
@@ -33,7 +34,7 @@
                 </div>
                     {% endif %}
                 <div class="tag-container order-now-container">
-                    <a href="{% url 'add_to_cart' slug=product.slug %}"><i class="fa fa-shopping-cart"></i></a>
+                    <a href="{% url 'add_to_cart' slug=product.slug %}"><img src="{% static "img/vector_cart.svg" %}" height="50"></a>
                 </div>
               </div>
             </div>
