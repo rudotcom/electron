@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+ {% load static %}
 {% block title %}{{ product.title }}{% endblock %}
 
                   {% block breadcrumbs %}
@@ -41,7 +42,7 @@
 
         </div>
        {% if product.quantity %}
-       <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-warning">В корзину <i class="fa fa-shopping-cart"></i></button></a>
+       <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-warning">В корзину <img src="{% static "img/vector_cart.svg" %}" height="18"></button></a>
        {% else %}
          <p>Нет в наличии</p>
        {% endif %}

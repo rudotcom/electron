@@ -73,7 +73,8 @@
 
 
     <div class="container tm-main-section light-gray-bg">
-          <div>
+       <div class="page-content">
+         <div>
               <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная</a></li>
                   {% block breadcrumbs %}
@@ -81,6 +82,8 @@
                   {% endblock %}
               </ul>
           </div>
+               <div class="row">
+
       <div class="category_menu">
         <ul>
           {% for category in categories %}
@@ -107,11 +110,9 @@
       <!-- /.col-lg-3 -->
 
 
-      <div class="page-content">
 
         {% block content %}
 
-        <div class="row">
           {% for product in products %}
             {% include 'item_card.html' %}
           {% endfor %}

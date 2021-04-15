@@ -7,3 +7,5 @@ __pycache__
 /media/
 /venv/
 .env
+/static mine/
+/store_mine/
