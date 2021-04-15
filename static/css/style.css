@@ -110,6 +110,7 @@ input { color: #0E2231; font-size: 12px;}
 
 /* Main content */
 .category_menu {
+    display: block;
     float: left;
     margin-right: 20px;
 }
