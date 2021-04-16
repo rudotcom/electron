@@ -68,7 +68,7 @@
     {% if order.delivery_type %}
         <tr class="td-delivery">
             <td colspan="4">{{ order.get_delivery_type_display }}</td>
-            <td colspan="2">{{ order.delivery_cost }} &#x20bd;</td>
+            <td colspan="2">{{ order.delivery_cost|floatformat:"2" }} &#x20bd;</td>
         </tr>
         <tr>
           <td colspan="2">&nbsp;</td>
