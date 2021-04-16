@@ -298,7 +298,7 @@ select {
     color: #c9c9c9;
 }
 .tm-social-icon {padding: 0 9px;}
-
+.toast {position: absolute; right: 30px;}
 
 
 
