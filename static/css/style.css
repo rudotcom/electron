@@ -29,8 +29,8 @@ ul {
  .tm-site-name {
   vertical-align: bottom;
 }
-.tm-logo-container { padding: 16px 0; width:150px;margin-right: 10px;}
-.tm-logo-container img {padding: 0 16px; background: #3c3f41; }
+.tm-logo-container { padding: 16px 0; width:150px;margin-right: 10px; margin-top: 2px;}
+.tm-logo-container img {padding: 0 12px; background: #3c3f41; }
 .tm-nav {
   white-space: nowrap;
   display: -webkit-box;
