@@ -6,6 +6,7 @@
                   {% endblock %}
 
 {% block content %}
+
     <div class="alert alert-warning" role="alert">
       При сумме товаров в корзине от {{ bonus_sum }} руб Вы можете добавить в корзину любой из этих подарков абсолютно бесплатно!
     </div>
@@ -13,6 +14,5 @@
       {% for product in products %}
         {% include 'item_card.html' %}
       {% endfor %}
-
 
 {% endblock content %}
