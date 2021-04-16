@@ -20,7 +20,7 @@ ul {
   margin: 0; 
   padding: 0;
 }
-.container { overflow: hidden;}
+.container { overflow: hidden; max-width: 1160px;}
 
 .tm-top-header {
   color: #eeeeee;
@@ -297,7 +297,7 @@ select {
     text-decoration: line-through #ff0051;
     color: #c9c9c9;
 }
-
+.tm-social-icon {padding: 0 9px;}
 
 
 
