@@ -1,18 +1,16 @@
  {% load static %}
            <div class="tm-popular-item">
-                <div class="tm-item-image">
-              <a href="{{ product.get_absolute_url }}"><img src="/media/card/{{ product.image.name }}" alt="{{ product.title }}" class="tm-popular-item-img"></a>
+                <div class="tm-item-image" style="background-image: url(/media/card/{{ product.image.name }})">
+              <a href="{{ product.get_absolute_url }}"><div>&nbsp;</div></a>
                 </div>
               <div class="tm-popular-item-description">
-                <div class="tag-container title-container">
-                    <div><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></div>
-                    <hr class="tm-popular-item-hr">
+                <div class="tag-container title-tag">
+                    <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
                 </div>
 
-                 <div class="tag-container price-container">
+                 <div class="tag-container price-tag">
                    {% if product.quantity %}
                     <div>{% if product.price_discount %}
-                        <strike>{{ product.price|floatformat:"0" }}&#x20bd;</strike><br>
                          {{ product.price_discount|floatformat:"0" }}&#x20bd;
                        {% else %}
                          {{ product.price|floatformat:"0" }}&#x20bd;
@@ -22,19 +20,19 @@
 					 <p>Нет в наличии</p>
 				   {% endif %}
                  </div>
+                <div class="tag-container cart-tag">
+                    <a href="{% url 'add_to_cart' slug=product.slug %}" title="Положить в корзину"><img src="{% static "img/vector_cart.svg" %}" height="50"></a>
+                </div>
 
                     {% if product.new %}
-                <div class="tag-container new-container" title="Новинка!">
-                    <a href="{% url 'add_to_cart' slug=product.slug %}"><i class="fa fa-star"></i></a>
+                <div class="tag-container new-tag" title="Новинка!">
+                    <i class="fa fa-star"></i>
                 </div>
                     {% endif %}
                     {% if product.bestseller %}
-                <div class="tag-container hit-container" title="Хит продаж!">
-                    <a href="{% url 'add_to_cart' slug=product.slug %}"><i class="fa fa-bomb"></i></a>
+                <div class="tag-container hit-tag" title="Хит продаж!">
+                    <i class="fa fa-bomb"></i>
                 </div>
                     {% endif %}
-                <div class="tag-container order-now-container">
-                    <a href="{% url 'add_to_cart' slug=product.slug %}"><img src="{% static "img/vector_cart.svg" %}" height="50"></a>
-                </div>
               </div>
             </div>

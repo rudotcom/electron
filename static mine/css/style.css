@@ -304,18 +304,18 @@ input { color: #0E2231; font-size: 12px;}
 .tag-container a:hover {
     color: #9B703F;
 }
-.order-now-container {
+.cart-tag {
   bottom: -80px;
   left: 224px;
 }
-.hit-container {
+.hit-tag {
     bottom: -80px;
   left: 136px;
 }
-.new-container {
+.new-tag {
     bottom: -80px;
 }
-.price-container {
+.price-tag {
   top: -342px;
     right: 10px;
     color: #daa520;
@@ -323,13 +323,13 @@ input { color: #0E2231; font-size: 12px;}
     font-weight: 700;
   text-shadow: -1px 0 #b68c26, 0 1px #b68c26, 1px 0 #b68c26, 0 -1px #b68c26;
 }
-.title-container {
+.title-tag {
     left: 8px;
     font-size: 18px;
     font-weight: 700;
     width: 92%;
 }
-.title-container a {
+.title-tag a {
   text-decoration: none;
   text-shadow: -1px 0 #c9c9c9, 0 1px #c9c9c9, 1px 0 #c9c9c9, 0 -1px #c9c9c9;
 }

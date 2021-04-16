@@ -23,6 +23,18 @@ class MyQ(Q):
     default = 'OR'
 
 
+class WelcomeView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+
+        context = {
+            'order': self.order,
+            'articles': self.articles,
+            'page_role': 'welcome',
+        }
+        return render(request, 'welcome.html', context)
+
+
 class BaseView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
@@ -60,7 +72,7 @@ class GiftListView(CartMixin, View):
 class ProductDetailView(CartMixin, DetailView):
     model = Product
     context_object_name = 'product'
-    template_name = 'product_detail.html'
+    template_name = 'item_detail.html'
     slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):
@@ -420,6 +432,7 @@ class LoginView(CartMixin, View):
             'categories': categories,
             'order': self.order,
             'page_role': 'login',
+            'articles': self.articles,
         }
         return render(request, 'login.html', context)
 

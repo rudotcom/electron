@@ -6,10 +6,7 @@
                 <li class="breadcrumb-item active">{{ category.name }}</li>
                   {% endblock %}
 {% block content %}
-    <div class="row">
       {% for product in category_products %}
         {% include 'item_card.html' %}
       {% endfor %}
-    </div>
-
 {% endblock content %}

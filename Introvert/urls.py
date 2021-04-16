@@ -25,12 +25,13 @@ from store.views import (
     GiftListView,
     ArticleView,
 
-    EmailView,
+    EmailView, WelcomeView,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', BaseView.as_view(), name='base'),
+    path('', WelcomeView.as_view(), name='welcome'),
+    path('store/', BaseView.as_view(), name='store'),
     path('about/<str:slug>/', ArticleView.as_view(), name='article'),
     path('search/', ProductSearchView.as_view(), name='search'),
     path('product/<str:slug>/', ProductDetailView.as_view(), name='product_detail'),

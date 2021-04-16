@@ -60,7 +60,7 @@ class GiftListView(CartMixin, View):
 class ProductDetailView(CartMixin, DetailView):
     model = Product
     context_object_name = 'product'
-    template_name = 'product_detail.html'
+    template_name = 'item_detail.html'
     slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):

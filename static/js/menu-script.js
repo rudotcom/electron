@@ -1,9 +1,3 @@
-/**
- *	www.templatemo.com
- */
-
-/* HTML document is loaded. DOM is ready.
------------------------------------------*/
 $(document).ready(function(){
 
 	// Mobile menu
@@ -14,8 +8,15 @@ $(document).ready(function(){
 	$( window ).resize(function() {
 		if($( window ).width() > 767) {
 			$('.tm-nav').show();
+			$('.group-farm').css('margin-left', 400);
+		
+		} else if ($( window ).width() > 500) {
+			$('.tm-nav').show();
+			$('.group-farm').css('margin-left', 200);
+		
 		} else {
 			$('.tm-nav').hide();
+			$('.group-farm').css('margin-left', 0);
 		}
 	});
 
@@ -37,10 +38,11 @@ $(document).ready(function(){
     }
   });
 
+    $(".hide-toast").click(function(){
+        $(".toast").toast('hide');
+    });
 });
-
-$(window).load(function() {
-	// Remove preloader
-	// https://ihatetomatoes.net/create-custom-preloading-screen/
-	$('body').addClass('loaded');
-});
+$('#myTab a').on('click', function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})

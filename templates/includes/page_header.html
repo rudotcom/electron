@@ -72,9 +72,9 @@
       </div>
 {% endif %}
 
-          {% if page_role != 'welcome' %}
+{% if page_role != 'welcome' %}
      <section class="tm-welcome-section">
-      <div class="container">
+      <div class="container tm-position-relative">
               <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'store' %}">Главная</a></li>
                   {% block breadcrumbs %}
@@ -85,24 +85,3 @@
     </section>
 {% endif %}
 
-
-     <section class="tm-welcome-section">
-      <div class="container tm-position-relative">
-
-
-{% include 'includes/left_menu.html' %}
-
-
-    <div class="row page">
-{% block content %}
-  {% for product in products %}
-    {% include 'item_card.html' %}
-  {% endfor %}
-{% endblock content %}
-    </div>
-
-
-      </div>
-    </section>
-
-{% include 'includes/page_footer.html' %}
