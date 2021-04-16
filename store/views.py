@@ -58,6 +58,10 @@ class GiftListView(CartMixin, View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         gift_products = Product.objects.filter(gift=True)
+        if self.order.gift:
+            messages.add_message(request, messages.INFO,
+                                 f'К Вашему заказу уже был добавлен подарок: {self.order.gift.title}')
+
         context = {
             'bonus_sum': parameter['FREE_GIFT'],
             'categories': categories,
