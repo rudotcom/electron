@@ -40,7 +40,7 @@
           </td>
             <td>{{ item.final_price }}&#x20bd;</td>
           <td>
-            <a href="{% url 'delete_from_cart' slug=item.product.slug %}"><button class="btn btn-light">Удалить</button></a>
+            <a href="{% url 'delete_from_cart' slug=item.product.slug %}" title="Удалить"><button class="btn btn-light"><i class="fa fa-trash-o" aria-hidden="true"></i></button></a>
           </td>
         </tr>
     {% endfor %}
