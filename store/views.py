@@ -58,7 +58,7 @@ class GiftListView(CartMixin, View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         gift_products = Product.objects.filter(gift=True)
-        if self.order.gift:
+        if self.order and self.order.gift:
             messages.add_message(request, messages.INFO,
                                  f'К Вашему заказу уже был добавлен подарок: {self.order.gift.title}')
 
@@ -261,7 +261,7 @@ class CartView(CartMixin, View):
                                      f'<a href=/gifts/><img src="/static/img/gift70.png"> Скорее выбери подарок!</a>\n '
                                      f'Сумма товаров в корзине: {self.order.total_price_net}')
 
-        if not self.order.products.count():
+        if not self.order or not self.order.products.count():
             messages.add_message(request, messages.INFO,
                                  'Ваша корзина пуста!<br><a href=/store/>Посмотрите наши товары</a>')
 

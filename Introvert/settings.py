@@ -28,11 +28,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_KEY') or sys.exit('DJANGO_KEY environment variable is not set.')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 SITE_URL = 'introvert.com.ru'
+ONION_URL = 'introvertb3tadwu.onion'
 
 ALLOWED_HOSTS = [
     'localhost',
+    ONION_URL,
 ]
 
 
