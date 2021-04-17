@@ -261,6 +261,10 @@ class CartView(CartMixin, View):
                                      f'<a href=/gifts/><img src="/static/img/gift70.png"> Скорее выбери подарок!</a>\n '
                                      f'Сумма товаров в корзине: {self.order.total_price_net}')
 
+        if not self.order.products.count():
+            messages.add_message(request, messages.INFO,
+                                 'Ваша корзина пуста!<br><a href=/store/>Посмотрите наши товары</a>')
+
         context = {
             'bonus_sum': parameter['FREE_GIFT'],
             'order': self.order,
