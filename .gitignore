@@ -2,10 +2,10 @@
 db.sqlite3
 __pycache__
 .idea/
+/static/
 /static/admin/
 /static/ckeditor/
 /media/
 /venv/
 .env
-/static mine/
-/store_mine/
+
