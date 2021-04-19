@@ -20,9 +20,11 @@
 					 <p>Нет в наличии</p>
 				   {% endif %}
                  </div>
+                   {% if product.quantity %}
                 <div class="tag-container cart-tag">
                     <a href="{% url 'add_to_cart' slug=product.slug %}" title="Положить в корзину"><img src="{% static "img/vector_cart.svg" %}" height="50"></a>
                 </div>
+                    {% endif %}
 
                     {% if product.new %}
                 <div class="tag-container new-tag" title="Новинка!">

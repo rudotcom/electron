@@ -34,14 +34,18 @@
                 <td scope="row">{{ order.created_at }}</td>
                 <td scope="row">{{ order.get_delivery_type_display }}</td>
                 <td>{{ order.get_status_display }}</td>
-                <td>{{ order.final_price }}</td>
+                <td>{{ order.total_price_gross }}</td>
                 <td>
                 {% if order.is_paid %}
                 Оплачен
                 {% elif order.payment_type == 'cash_card' %}
                     Оплата в мастерской
                 {% else %}
-                <a href="{%  url 'order_pay' order.id %}"><button class="btn btn-danger">Оплатить</button></a>
+                  <form action="{% url 'bank_payment' %}" method="POST">
+                    <input type="hidden" name="order" value="{{ order.id }}">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-success btn-block" value="Оплатить">
+                  </form>
                 {% endif %}
                     <!-- Modal -->
                     <div class="modal fade" id="Modal-{{ order.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -89,13 +93,17 @@
                 {% if order.is_paid%}
                 Оплачен
                 {% elif order.payment_type != 'cash_card' %}
-                <a href="{%  url 'order_pay' order.id %}"><button class="btn btn-danger">Оплатить заказ</button></a>
+              <form action="{% url 'bank_payment' %}" method="POST">
+                <input type="hidden" name="order" value="{{ order.id }}">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-success btn-block" value="Оплатить">
+              </form>
                 {% endif %}
 
                                         </td>
                                         <td>Итого:</td>
                                         <td>{{ order.total_products }}</td>
-                                        <td><strong>{{ order.final_price }} &#x20bd;</strong></td>
+                                        <td><strong>{{ order.total_price_gross }} &#x20bd;</strong></td>
                                     </tr>
                                   </tfoot>
                               </table>

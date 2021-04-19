@@ -146,6 +146,10 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('product_detail', kwargs={'slug': self.slug})
 
+    def save_stock(self, minus, *args, **kwargs):
+        self.quantity -= minus
+        super().save(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         image = self.image
         img = Image.open(image)
@@ -321,7 +325,8 @@ class Order(models.Model):
     total_products = models.PositiveIntegerField(verbose_name='Товары', default=0)
     total_price_net = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Сумма товаров')
     total_price_gross = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Общая сумма')
-    gift = models.ForeignKey(Product, null=True, verbose_name='Подарок', on_delete=models.DO_NOTHING)
+    gift = models.ForeignKey(Product, null=True, verbose_name='Подарок', on_delete=models.DO_NOTHING,
+                             related_name='related_gift')
     status = models.CharField(
         max_length=100,
         verbose_name='Статус заказа',
@@ -422,6 +427,28 @@ class Order(models.Model):
             self.delivery_cost = 0
 
         super().save(*args, **kwargs)
+
+    def init_payment(self, payment) -> bool:
+        if self.payment_status == 'paid':
+            return False
+        self.payment_id = payment.id
+        self.payment_status = payment.status
+        self.payment_time = payment.created_at
+        self.save()
+        return True
+
+    def __stock_minus(self):
+        # Уменьшить остатки товаров при выполнении заказа
+        if self.gift:
+            Product.objects.get(id=self.gift_id).save_stock(1)
+        for product in self.related_products.all():
+            Product.objects.get(id=product.product_id).save_stock(product.qty)
+
+    def payment_successful(self):
+        self.payment_status = 'paid'
+        self.is_paid = True
+        self.save()
+        self.__stock_minus()
 
     @staticmethod
     def send_telegram(text):

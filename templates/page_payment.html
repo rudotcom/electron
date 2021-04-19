@@ -55,9 +55,9 @@
                   </tfoot>
               </table>
               <hr>
-              <h4 class="text-center">Дополнительная информация</h4>
-<div class="order_body">
+
 {% if order_to_pay.delivery_type %}<div><div class="order-label">&nbsp;</div><div class="order-data">{{ order_to_pay.get_delivery_type_display }}</div></div>{% endif %}
+<div class="order_body">
 {% if order_to_pay.first_name or order_to_pay.last_name %}<div><div class="order-label">Получатель:</div><div class="order-data">{{ order_to_pay.first_name }}&nbsp;{{ order_to_pay.last_name }}&nbsp;{{ order_to_pay.patronymic }}</div></div>{% endif %}
 {% if order_to_pay.tracking %}<div><div class="order-label">Трекинг номер:</div><div class="order-data"><a href="https://www.cdek.ru/ru/tracking">{{ order_to_pay.tracking }}</a></div></div>{% endif %}
 {% if order_to_pay.phone %}<div><div class="order-label">Телефон:</div><div class="order-data">{{ order_to_pay.phone }}</div></div>{% endif %}

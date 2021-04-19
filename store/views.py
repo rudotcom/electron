@@ -441,10 +441,10 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
         order_id = request.POST.get('order')
         order_to_pay = Order.orders.get(id=order_id)
 
-        Configuration.account_id = 801207
-        # Configuration.account_id = 794799
+        # Configuration.account_id = os.getenv('yoo_shop_id')
         # Configuration.secret_key = os.getenv('yoo_key')
-        Configuration.secret_key = 'test_4f_hjN-J3L7Z0QdmpQS6JpqdWmtsp0gX2FAiWhKrwck'
+        Configuration.account_id = os.getenv('test_yoo_shop_id')
+        Configuration.secret_key = os.getenv('test_yoo_key')
 
         payment = Payment.create({
             "amount": {
@@ -458,13 +458,15 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             "capture": True,
             "description": f"Заказ №{order_to_pay.id}"
         })
-        order_to_pay.payment_id = payment.id
-        order_to_pay.payment_status = payment.status
-        order_to_pay.payment_time = payment.created_at
-        order_to_pay.save()
-        # print(payment.__dict__)
 
-        return HttpResponseRedirect(payment.confirmation.confirmation_url)
+        # print(payment.__dict__)
+        if order_to_pay.init_payment(payment):
+            return HttpResponseRedirect(payment.confirmation.confirmation_url)
+        else:
+            # если заказ уже оплачен (False)
+            messages.add_message(request, messages.ERROR,
+                                 'Произошла странная ошибка! \nЭтот заказ уже оплачен!')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class BankPaymentSuccessView(LoginRequiredMixin, CartMixin, View):
