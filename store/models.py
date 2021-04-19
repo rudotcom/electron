@@ -319,7 +319,15 @@ class Order(models.Model):
         (PAYMENT_TYPE2, 'Kiwi кошелёк / Paypal'),
     )
 
-    # user = models.ForeignKey(User, verbose_name='Автор', related_name='related_orders', on_delete=models.CASCADE)
+    YOO_STATUS_CHOICES = (
+        ('succeeded', 'Оплачен'),
+        ('pending', 'Ожидание оплаты'),
+        ('waiting_for_capture', 'Холдирован'),
+        ('canceled', 'Отменен'),
+        ('expired_on_confirmation', 'Протух'),
+        ('expired_on_capture', 'Не востребован'),
+    )
+
     owner = models.ForeignKey(Customer, null=True, verbose_name='Покупатель', on_delete=models.CASCADE)
     products = models.ManyToManyField(OrderProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(verbose_name='Товары', default=0)
@@ -349,7 +357,8 @@ class Order(models.Model):
         default=None,
     )
     payment_id = models.CharField(max_length=50, null=True, default=None, verbose_name='Юkassa: ID платежа')
-    payment_status = models.CharField(max_length=25, null=True, default=None, verbose_name='Статус платежа')
+    payment_status = models.CharField(max_length=25, null=True, default=None, verbose_name='Статус платежа',
+                                      choices=YOO_STATUS_CHOICES)
     payment_time = models.DateTimeField(verbose_name='Дата платежа', null=True, default=None)
     comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)
     remark = models.CharField(max_length=255, verbose_name='Примечания от магазина',
@@ -429,7 +438,7 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def init_payment(self, payment) -> bool:
-        if self.payment_status == 'paid':
+        if self.payment_status == 'succeeded':
             return False
         self.payment_id = payment.id
         self.payment_status = payment.status
