@@ -343,6 +343,7 @@ class Order(models.Model):
         null=True,
         default=None,
     )
+    payment_id = models.CharField(max_length=50, null=True, default=None, verbose_name='id платежа в Юkassa')
     comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)
     remark = models.CharField(max_length=255, verbose_name='Примечания от магазина',
                               null=True, blank=True, help_text='Служебные примечания, клиенту недоступны')

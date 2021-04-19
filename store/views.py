@@ -1,6 +1,8 @@
+import os
 from datetime import datetime, timedelta
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.db import transaction
@@ -17,6 +19,8 @@ from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEK
 from .mixins import CartMixin
 from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, Article, parameter
 from .utils import reconcile_verb_gender, get_random_session
+
+from yookassa import Configuration, Payment
 
 
 class MyQ(Q):
@@ -317,7 +321,7 @@ class CheckoutView(CartMixin, View):
         return render(request, 'checkout.html', context)
 
 
-class MakeOrderView(CartMixin, View):
+class MakeOrderView(LoginRequiredMixin, CartMixin, View):
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -380,7 +384,7 @@ class MakeOrderView(CartMixin, View):
             if order.delivery_type.startswith('delivery'):
                 teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
 
-            Order.send_telegram(teleg)
+            # Order.send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
 
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
@@ -394,14 +398,12 @@ class MakeOrderView(CartMixin, View):
         return HttpResponseRedirect('/checkout/')
 
 
-class PayView(CartMixin, View):
+class OrderPayView(LoginRequiredMixin, CartMixin, View):
     """
     TODO: Не показывать чужие заказы. Проверять принадлежит ли заказ юзеру.
     """
 
     def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect('/login/')
 
         form = PaymentMethodForm(request.POST or None)
         order_id = kwargs.get('order')
@@ -422,12 +424,66 @@ class PayView(CartMixin, View):
         )
 
 
-class BankPayView(CartMixin, View):
+class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
     def post(self, request, *args, **kwargs):
+
         order_id = request.POST.get('order')
-        print(request.POST)
-        return HttpResponse('<a href=/>Home</a><br>Форма платежной системы. Bank Payment. Order ' + str(order_id))
+        order_to_pay = Order.orders.get(id=order_id)
+
+        Configuration.account_id = 794799
+        Configuration.secret_key = os.getenv('yoo_key')
+
+        payment = Payment.create({
+            "amount": {
+                "value": "100.00",
+                "currency": "RUB"
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": "https://{settings.SITE_URL}/store"
+            },
+            "capture": True,
+            "description": f"Заказ №{order_id}"
+        })
+
+        categories = Category.objects.all()
+        context = {
+            'categories': categories,
+            'order': self.order,
+            'order_to_pay': order_to_pay,
+            'page_role': 'registration',
+            'articles': self.articles,
+        }
+        return render(request, 'bank_payment.html', context)
+
+
+class BankPaymentSuccessView(LoginRequiredMixin, CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+
+        categories = Category.objects.all()
+        context = {
+            'categories': categories,
+            'order': self.order,
+            'page_role': 'registration',
+            'articles': self.articles,
+        }
+        return render(request, 'bank_payment_success.html', context)
+
+
+class BankPaymentFailView(LoginRequiredMixin, CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+
+        categories = Category.objects.all()
+        context = {
+            'categories': categories,
+            'order': self.order,
+            'page_role': 'registration',
+            'articles': self.articles,
+        }
+        return render(request, 'bank_payment_fail.html', context)
 
 
 class LoginView(CartMixin, View):

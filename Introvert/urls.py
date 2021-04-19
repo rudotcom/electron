@@ -20,12 +20,12 @@ from store.views import (
     ProfileView,
     ProductSearchView,
     SubCategoryDetailView,
-    PayView,
-    BankPayView,
+    OrderPayView,
+    BankPaymentView,
     GiftListView,
     ArticleView,
 
-    EmailView, WelcomeView,
+    EmailView, WelcomeView, BankPaymentSuccessView, BankPaymentFailView,
 )
 
 urlpatterns = [
@@ -44,9 +44,11 @@ urlpatterns = [
     path('change-qty/<str:slug>/', ChangeQTYView.as_view(), name='change_qty'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('make-order/', MakeOrderView.as_view(), name='make_order'),
-    path('order_pay/<int:order>/', PayView.as_view(), name='order_pay'),
+    path('order_pay/<int:order>/', OrderPayView.as_view(), name='order_pay'),
     path('order_email/<int:order>/', EmailView.as_view(), name='order_email'),
-    path('bank_pay/', BankPayView.as_view(), name='bank_pay'),
+    path('bank_payment/', BankPaymentView.as_view(), name='bank_payment'),
+    path('bank_payment_success/', BankPaymentSuccessView.as_view(), name='bank_payment_success'),
+    path('bank_payment_fail/', BankPaymentFailView.as_view(), name='bank_payment_fail'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),
