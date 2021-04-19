@@ -436,26 +436,20 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
         payment = Payment.create({
             "amount": {
-                "value": "100.00",
+                "value": order_to_pay.total_price_gross,
                 "currency": "RUB"
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": "https://{settings.SITE_URL}/store"
+                "return_url": f"https://{settings.SITE_URL}/store"
             },
             "capture": True,
-            "description": f"Заказ №{order_id}"
+            "description": f"Заказ №{order_to_pay.id}"
         })
+        print(payment.confirmation.confirmation_url)
 
-        categories = Category.objects.all()
-        context = {
-            'categories': categories,
-            'order': self.order,
-            'order_to_pay': order_to_pay,
-            'page_role': 'registration',
-            'articles': self.articles,
-        }
-        return render(request, 'bank_payment.html', context)
+        return HttpResponseRedirect(payment.confirmation.confirmation_url)
+
 
 
 class BankPaymentSuccessView(LoginRequiredMixin, CartMixin, View):
