@@ -144,7 +144,7 @@ class OrderAdmin(admin.ModelAdmin):
               'tracking', 'remark', 'gift',)
     readonly_fields = ['created_at', 'delivery_type', 'delivery_cost', 'comment', 'owner', 'gift', 'total_price_net',
                        'total_price_gross', 'payment_id', 'payment_status', 'payment_time']
-    list_display = ('id', 'delivery_type', 'status', 'payment_type', 'is_paid', 'total_products', 'total_price_gross',
+    list_display = ('id', 'delivery_type', 'status', 'payment_status', 'is_paid', 'total_products', 'total_price_gross',
                     'get_fio', 'created_at')
     list_display_links = ('id', 'delivery_type', 'status')
     ordering = ('-created_at', 'owner', 'status', 'delivery_type',)

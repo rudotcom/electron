@@ -186,6 +186,9 @@ select {
 .order_body {
     padding: 50px 20px;
 }
+.order-label { font-weight: bold; width: 220px; float: left;white-space: nowrap;}
+.order-data { border-bottom: rgba(68,67,68,0.6) 1px solid;}
+
 .nav-link {border-radius: 6px 6px 0 0;}
 .tm-popular-item {
   float:left;
