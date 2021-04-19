@@ -431,7 +431,8 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
         order_id = request.POST.get('order')
         order_to_pay = Order.orders.get(id=order_id)
 
-        Configuration.account_id = 794799
+        Configuration.account_id = 801207
+        # Configuration.account_id = 794799
         Configuration.secret_key = os.getenv('yoo_key')
 
         payment = Payment.create({
@@ -441,7 +442,7 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": f"https://{settings.SITE_URL}/store"
+                "return_url": f"http://{settings.SITE_URL}/store"
             },
             "capture": True,
             "description": f"Заказ №{order_to_pay.id}"
@@ -449,7 +450,6 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
         print(payment.confirmation.confirmation_url)
 
         return HttpResponseRedirect(payment.confirmation.confirmation_url)
-
 
 
 class BankPaymentSuccessView(LoginRequiredMixin, CartMixin, View):
