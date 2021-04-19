@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_KEY') or sys.exit('DJANGO_KEY environment variable is not set.')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 SITE_URL = 'introvert.com.ru'
 ONION_URL = 'introvertb3tadwu.onion'
 
@@ -162,4 +162,4 @@ THUMBNAIL_SIZE = (70, 70)
 CKEDITOR_FORCE_JPEG_COMPRESSION = True
 CKEDITOR_IMAGE_QUALITY = 70
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
