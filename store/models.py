@@ -343,7 +343,9 @@ class Order(models.Model):
         null=True,
         default=None,
     )
-    payment_id = models.CharField(max_length=50, null=True, default=None, verbose_name='id платежа в Юkassa')
+    payment_id = models.CharField(max_length=50, null=True, default=None, verbose_name='Юkassa: ID платежа')
+    payment_status = models.CharField(max_length=25, null=True, default=None, verbose_name='Статус платежа')
+    payment_time = models.DateTimeField(verbose_name='Дата платежа', null=True, default=None)
     comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)
     remark = models.CharField(max_length=255, verbose_name='Примечания от магазина',
                               null=True, blank=True, help_text='Служебные примечания, клиенту недоступны')

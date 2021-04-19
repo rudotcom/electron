@@ -424,6 +424,16 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
         )
 
 
+class YooStatusView(View):
+    """
+    Получаем запрос от Юкассы при изменении статуса платежа клиента, выковыриваем оттуда статус и сохраняем в Заказ.
+    """
+    def post(self, request, *args, **kwargs):
+
+        print(request)
+        return HttpResponse('Thnx', content_type='text/plain')
+
+
 class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
     def post(self, request, *args, **kwargs):
@@ -433,7 +443,8 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
         Configuration.account_id = 801207
         # Configuration.account_id = 794799
-        Configuration.secret_key = os.getenv('yoo_key')
+        # Configuration.secret_key = os.getenv('yoo_key')
+        Configuration.secret_key = 'test_4f_hjN-J3L7Z0QdmpQS6JpqdWmtsp0gX2FAiWhKrwck'
 
         payment = Payment.create({
             "amount": {
@@ -447,7 +458,11 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             "capture": True,
             "description": f"Заказ №{order_to_pay.id}"
         })
-        print(payment.confirmation.confirmation_url)
+        order_to_pay.payment_id = payment.id
+        order_to_pay.payment_status = payment.status
+        order_to_pay.payment_time = payment.created_at
+        order_to_pay.save()
+        # print(payment.__dict__)
 
         return HttpResponseRedirect(payment.confirmation.confirmation_url)
 
