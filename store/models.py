@@ -19,8 +19,8 @@ class Parameter(models.Model):
         verbose_name_plural = 'Параметры'
         ordering = ('name',)
 
-    name = models.CharField(max_length=255, verbose_name='Имя')
     value = models.IntegerField(verbose_name='Значение')
+    name = models.CharField(max_length=255, verbose_name='Имя')
     meaning = models.TextField(verbose_name='Описание', null=True, blank=True)
 
     def __str__(self):
