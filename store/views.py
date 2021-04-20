@@ -21,6 +21,10 @@ from .models import Category, SubCategory, Customer, OrderProduct, Product, Orde
 from .utils import reconcile_verb_gender, get_random_session
 
 from yookassa import Configuration, Payment
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+import json
+from yookassa.domain.notification import WebhookNotification
 
 
 class MyQ(Q):
@@ -424,14 +428,24 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
         )
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class YooStatusView(View):
     """
     Получаем запрос от Юкассы при изменении статуса платежа клиента, выковыриваем оттуда статус и сохраняем в Заказ.
     """
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
 
-        print(request)
-        return HttpResponse('Thnx', content_type='text/plain')
+        event_json = json.loads(request.body)
+        # Cоздайте объект класса уведомлений в зависимости от события
+        try:
+            notification_object = WebhookNotification(event_json)
+            # Получите объекта платежа
+            payment = notification_object.object
+            order = Order.orders.get(payment_id=payment.id)
+            order.receive_payment(payment)
+            return HttpResponse(status=200)
+        except Exception:
+            return HttpResponse(status=500)
 
 
 class BankPaymentView(LoginRequiredMixin, CartMixin, View):
@@ -453,7 +467,7 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": f"http://{settings.SITE_URL}/store"
+                "return_url": f"http://{settings.SITE_URL}/profile/"
             },
             "capture": True,
             "description": f"Заказ №{order_to_pay.id}"
@@ -467,34 +481,6 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             messages.add_message(request, messages.ERROR,
                                  'Произошла странная ошибка! \nЭтот заказ уже оплачен!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-
-class BankPaymentSuccessView(LoginRequiredMixin, CartMixin, View):
-
-    def get(self, request, *args, **kwargs):
-
-        categories = Category.objects.all()
-        context = {
-            'categories': categories,
-            'order': self.order,
-            'page_role': 'registration',
-            'articles': self.articles,
-        }
-        return render(request, 'bank_payment_success.html', context)
-
-
-class BankPaymentFailView(LoginRequiredMixin, CartMixin, View):
-
-    def get(self, request, *args, **kwargs):
-
-        categories = Category.objects.all()
-        context = {
-            'categories': categories,
-            'order': self.order,
-            'page_role': 'registration',
-            'articles': self.articles,
-        }
-        return render(request, 'bank_payment_fail.html', context)
 
 
 class LoginView(CartMixin, View):

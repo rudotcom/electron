@@ -453,9 +453,10 @@ class Order(models.Model):
         for product in self.related_products.all():
             Product.objects.get(id=product.product_id).save_stock(product.qty)
 
-    def payment_successful(self):
-        self.payment_status = 'paid'
-        self.is_paid = True
+    def receive_payment(self, payment):
+        self.payment_status = payment.status
+        self.payment_time = payment.captured_at
+        self.is_paid = payment.paid
         self.save()
         self.__stock_minus()
 

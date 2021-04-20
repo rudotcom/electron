@@ -25,7 +25,7 @@ from store.views import (
     GiftListView,
     ArticleView,
 
-    EmailView, WelcomeView, BankPaymentSuccessView, BankPaymentFailView, YooStatusView,
+    EmailView, WelcomeView, YooStatusView,
 )
 
 urlpatterns = [
@@ -47,9 +47,7 @@ urlpatterns = [
     path('order_pay/<int:order>/', OrderPayView.as_view(), name='order_pay'),
     path('order_email/<int:order>/', EmailView.as_view(), name='order_email'),
     path('bank_payment/', BankPaymentView.as_view(), name='bank_payment'),
-    path('bank_payment_success/', BankPaymentSuccessView.as_view(), name='bank_payment_success'),
-    path('bank_payment_fail/', BankPaymentFailView.as_view(), name='bank_payment_fail'),
-    path('yoo_status/', YooStatusView.as_view(), name='yoo_status'),
+    path('.yoo_status/', YooStatusView.as_view(), name='yoo_status'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),
