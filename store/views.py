@@ -196,6 +196,9 @@ class AddToCartView(CartMixin, View):
                                                              f'<b>{order_product.product}</b> {added_verb} в корзину')
             else:
                 order_product.qty += 1
+                """
+                TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
+                """
                 order_product.save()
                 messages.add_message(
                     request,
@@ -240,6 +243,9 @@ class ChangeQTYView(CartMixin, View):
 
         if qty:
             order_product.qty = qty
+            """
+            TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
+            """
             messages.add_message(
                 request,
                 messages.INFO,
@@ -428,6 +434,9 @@ class YooStatusView(View):
 class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
     def post(self, request, *args, **kwargs):
+        """
+        TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
+        """
 
         order_id = request.POST.get('order')
         order_to_pay = Order.orders.get(id=order_id)
