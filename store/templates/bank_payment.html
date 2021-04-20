@@ -19,8 +19,8 @@
 <script>
 //Инициализация виджета. Все параметры обязательные.
 const checkout = new window.YooMoneyCheckoutWidget({
-    confirmation_token: '{{ confirmation_token }}', //Токен, который перед проведением оплаты нужно получить от ЮKassa
-    return_url: 'https://{{ settings.SITE_URL }}/store/', //Ссылка на страницу завершения оплаты
+    confirmation_token: '{{ confirmation_token }}',
+    return_url: 'https://{{ settings.SITE_URL }}/store/',
     error_callback: function(error) {
         //Обработка ошибок инициализации
     }

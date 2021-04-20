@@ -5,6 +5,7 @@ import telepot
 from PIL import Image
 from django.db import models
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import mark_safe
@@ -183,7 +184,7 @@ class Product(models.Model):
     def telega_stock(self):
         thumb = os.path.join(settings.MEDIA_ROOT, 'card', self.image.name)
         photo = open(thumb, 'rb')
-        text = f'{self.title}. Остаток: {self.quantity} шт'
+        text = f'{self.title}\nОстаток: {self.quantity} шт'
         group_id = get_parameter('TELEGRAM_GROUP')
         telegram_token = os.getenv('telegram_token')
         telegram_bot = telepot.Bot(telegram_token)  # token
@@ -471,12 +472,15 @@ class Order(models.Model):
         self.save()
         self.__stock_minus()
 
-    @staticmethod
-    def send_telegram(text):
+    def send_telegram(self):
+        delivery = f"{dict(self.DELIVERY_TYPE_CHOICES)[self.delivery_type]}\n"
+        address = f"{self.address}\n{self.settlement} {self.postal_code}\n" if self.delivery_type.startswith('delivery') else ''
+        html = render_to_string('order_telega.html', {'order': self, 'delivery': delivery, 'address': address})
+
         group_id = get_parameter('TELEGRAM_GROUP')
         telegram_token = os.getenv('telegram_token')
         telegram_bot = telepot.Bot(telegram_token)  # token
-        telegram_bot.sendMessage(group_id, text, parse_mode="Markdown")
+        telegram_bot.sendMessage(group_id, html, parse_mode="HTML")
 
 
 class Article(models.Model):

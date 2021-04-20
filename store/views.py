@@ -299,26 +299,20 @@ class CheckoutView(CartMixin, View):
 
         if self.order.delivery_type == 'self':
             form = SelfOrderForm()
-            form_pay = PaymentForm()
         elif self.order.delivery_type == 'delivery_spb':
             form = CourierOrderForm()
-            form_pay = OnlinePaymentForm()
         elif self.order.delivery_type == 'delivery_cdekspb':
             form = CDEKOrderForm()
-            form_pay = OnlinePaymentForm()
         elif self.order.delivery_type == 'delivery_ru':
             form = PostRuOrderForm()
-            form_pay = OnlinePaymentForm()
         elif self.order.delivery_type == 'delivery_world':
             form = PostWorldOrderForm()
-            form_pay = OnlinePaymentForm()
 
         categories = Category.objects.all()
         context = {
             'order': self.order,
             'categories': categories,
             'form': form,
-            'form_pay': form_pay,
             'articles': self.articles,
         }
 
@@ -331,19 +325,14 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
     def post(self, request, *args, **kwargs):
         if self.order.delivery_type == 'self':
             form = SelfOrderForm(request.POST or None)
-            form_pay = PaymentForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_spb':
             form = CourierOrderForm(request.POST or None)
-            form_pay = OnlinePaymentForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_cdekspb':
             form = CDEKOrderForm(request.POST or None)
-            form_pay = OnlinePaymentForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_ru':
             form = PostRuOrderForm(request.POST or None)
-            form_pay = OnlinePaymentForm(request.POST or None)
         elif self.order.delivery_type == 'delivery_world':
             form = PostWorldOrderForm(request.POST or None)
-            form_pay = OnlinePaymentForm(request.POST or None)
 
         user = User.objects.get(username=request.user)
         session = request.COOKIES.get('customersession')
@@ -351,7 +340,7 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
         customer = Customer.objects.get(user=user.id, session=session)
         order = Order.carts.get(owner=customer)
 
-        if form.is_valid() and form_pay.is_valid():
+        if form.is_valid():
             if 'first_name' in form.cleaned_data.keys():
                 order.first_name = form.cleaned_data['first_name']
             if 'last_name' in form.cleaned_data.keys():
@@ -368,27 +357,14 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
                 order.address = form.cleaned_data['address']
             if 'comment' in form.cleaned_data.keys():
                 order.comment = form.cleaned_data['comment']
-            if 'payment_type' in form_pay.cleaned_data.keys():
-                order.payment_type = form_pay.cleaned_data['payment_type']
 
             order.status = 'new'
             order.save()
+            if order.delivery_type == 'self':
+                order.send_telegram()  # Отправить заказ в телегу
 
             messages.add_message(request, messages.INFO,
                                  'Ваш заказ оформлен! \nСпасибо, что выбрали нас.')
-
-            teleg = 'Новый заказ introvert.com.ru\n'  # Текст для телеграма
-
-            for item in order.products.all():
-                teleg += f"- {item}, {item.qty} шт\n"
-            if order.gift:
-                teleg += f"- Подарок: {order.gift}\n"
-            teleg += f"Итого: {order.total_price_gross} р\n"
-            teleg += f"{dict(order.DELIVERY_TYPE_CHOICES)[order.delivery_type]}\n"
-            if order.delivery_type.startswith('delivery'):
-                teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
-
-            Order.send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
 
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
@@ -442,7 +418,8 @@ class YooStatusView(View):
             # Получите объекта платежа
             payment = notification_object.object
             order = Order.orders.get(payment_id=payment.id)
-            order.receive_payment(payment)
+            order.receive_payment(payment)  # Установить статусы заказа
+            order.send_telegram()  # Отправить заказ в телегу
             return HttpResponse(status=200)
         except Exception:
             return HttpResponse(status=500)
