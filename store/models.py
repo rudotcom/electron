@@ -458,19 +458,15 @@ class Order(models.Model):
         self.save()
         return True
 
-    def __stock_minus(self):
-        # Уменьшить остатки товаров при выполнении заказа
-        if self.gift:
-            Product.objects.get(id=self.gift_id).save_stock(1)
-        for product in self.related_products.all():
-            Product.objects.get(id=product.product_id).save_stock(product.qty)
-
     def receive_payment(self, payment):
         self.payment_status = payment.status
         self.payment_time = payment.captured_at
         self.is_paid = payment.paid
         self.save()
-        self.__stock_minus()
+        if self.gift:
+            Product.objects.get(id=self.gift_id).save_stock(1)
+        for product in self.related_products.all():
+            Product.objects.get(id=product.product_id).save_stock(product.qty)
 
     def send_telegram(self):
         delivery = f"{dict(self.DELIVERY_TYPE_CHOICES)[self.delivery_type]}\n"

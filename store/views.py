@@ -418,8 +418,8 @@ class YooStatusView(View):
             # Получите объекта платежа
             payment = notification_object.object
             order = Order.orders.get(payment_id=payment.id)
-            order.receive_payment(payment)  # Установить статусы заказа
             order.send_telegram()  # Отправить заказ в телегу
+            order.receive_payment(payment)  # Установить статусы заказа и изменить остатки
             return HttpResponse(status=200)
         except Exception:
             return HttpResponse(status=500)
