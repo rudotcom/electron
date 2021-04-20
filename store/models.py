@@ -148,6 +148,8 @@ class Product(models.Model):
 
     def save_stock(self, minus, *args, **kwargs):
         self.quantity -= minus
+        if self.quantity < 3:
+            self.telega_stock()
         super().save(*args, **kwargs)
 
     def save(self, *args, **kwargs):
@@ -177,6 +179,15 @@ class Product(models.Model):
         return mark_safe('<img src="/media/thumb/%s">' % self.image)
 
     image_thumb.short_description = 'Изображение'
+
+    def telega_stock(self):
+        thumb = os.path.join(settings.MEDIA_ROOT, 'card', self.image.name)
+        photo = open(thumb, 'rb')
+        text = f'{self.title}. Остаток: {self.quantity} шт'
+        group_id = get_parameter('TELEGRAM_GROUP')
+        telegram_token = os.getenv('telegram_token')
+        telegram_bot = telepot.Bot(telegram_token)  # token
+        telegram_bot.sendPhoto(group_id, photo, caption=text)
 
 
 class ProductImage(models.Model):

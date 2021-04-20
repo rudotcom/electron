@@ -388,7 +388,7 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
             if order.delivery_type.startswith('delivery'):
                 teleg += f"{order.address}\n{order.settlement} {order.postal_code}\n"
 
-            # Order.send_telegram(teleg)
+            Order.send_telegram(teleg)
             html = render_to_string('order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
 
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
