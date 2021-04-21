@@ -469,8 +469,10 @@ class Order(models.Model):
             Product.objects.get(id=product.product_id).save_stock(product.qty)
 
     def send_telegram(self):
-        delivery = f"{dict(self.DELIVERY_TYPE_CHOICES)[self.delivery_type]}\n"
-        address = f"{self.address}\n{self.settlement} {self.postal_code}\n" if self.delivery_type.startswith('delivery') else ''
+        delivery = f"{dict(self.DELIVERY_TYPE_CHOICES)[self.delivery_type]}"
+        address = ''
+        if self.delivery_type.startswith('delivery'):
+            address = f"{self.address}\n{self.settlement} {self.postal_code}"
         html = render_to_string('order_telega.html', {'order': self, 'delivery': delivery, 'address': address})
 
         group_id = get_parameter('TELEGRAM_GROUP')

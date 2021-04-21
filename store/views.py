@@ -264,6 +264,9 @@ class ChangeQTYView(CartMixin, View):
 
 
 class CartView(CartMixin, View):
+    """
+    TODO: СДЕЛАТЬ ПРОВЕРКУ НАЛИЧИЧЯ ТОВАРОА ЗДЕСЬ И ПЕРЕД ОПЛАТОЙ
+    """
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
