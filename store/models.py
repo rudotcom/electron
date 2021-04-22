@@ -332,6 +332,7 @@ class Order(models.Model):
     )
 
     YOO_STATUS_CHOICES = (
+        ('none', 'Не оплачен'),
         ('succeeded', 'Оплачен'),
         ('pending', 'Ожидание оплаты'),
         ('waiting_for_capture', 'Холдирован'),
@@ -369,7 +370,7 @@ class Order(models.Model):
         default=None,
     )
     payment_id = models.CharField(max_length=50, null=True, default=None, verbose_name='Юkassa: ID платежа')
-    payment_status = models.CharField(max_length=25, null=True, default=None, verbose_name='Статус платежа',
+    payment_status = models.CharField(max_length=25, null=False, default='none', verbose_name='Статус платежа',
                                       choices=YOO_STATUS_CHOICES)
     payment_time = models.DateTimeField(verbose_name='Дата платежа', null=True, default=None)
     comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)

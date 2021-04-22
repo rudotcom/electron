@@ -272,9 +272,6 @@ class ChangeQTYView(CartMixin, View):
 
 
 class CartView(CartMixin, View):
-    """
-    TODO: СДЕЛАТЬ ПРОВЕРКУ НАЛИЧИЧЯ ТОВАРОА ЗДЕСЬ И ПЕРЕД ОПЛАТОЙ
-    """
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
@@ -445,12 +442,18 @@ class YooStatusView(View):
 class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
     def post(self, request, *args, **kwargs):
-        """
-        TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
-        """
 
         order_id = request.POST.get('order')
         order_to_pay = Order.orders.get(id=order_id)
+
+        """
+        TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
+        """
+        for item in order_to_pay.related_products.all():
+            if item.qty > item.product.quantity:
+                # Создать сообщение, что товара уже недостаточно
+                item.qty = item.product.quantity
+        order_to_pay.save(*args, **kwargs)
 
         # Configuration.account_id = os.getenv('yoo_shop_id')
         # Configuration.secret_key = os.getenv('yoo_key')
