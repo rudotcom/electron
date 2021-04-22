@@ -450,6 +450,7 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def init_payment(self, payment) -> bool:
+        # Получить id платежа от Ю-касса и сохранить его в заказе
         if self.payment_status == 'succeeded':
             return False
         self.payment_id = payment.id
@@ -459,6 +460,7 @@ class Order(models.Model):
         return True
 
     def receive_payment(self, payment):
+        # Установка статуса оплаты по данным Ю-касса
         self.payment_status = payment.status
         self.payment_time = payment.captured_at
         self.is_paid = payment.paid
@@ -469,6 +471,7 @@ class Order(models.Model):
             Product.objects.get(id=product.product_id).save_stock(product.qty)
 
     def send_telegram(self):
+        # Отправка сообщения в телеграм канал о составе заказа
         delivery = f"{dict(self.DELIVERY_TYPE_CHOICES)[self.delivery_type]}"
         address = ''
         if self.delivery_type.startswith('delivery'):

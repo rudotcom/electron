@@ -195,16 +195,20 @@ class AddToCartView(CartMixin, View):
                 messages.add_message(request, messages.INFO, f'{order_product.product.image_thumb()} '
                                                              f'<b>{order_product.product}</b> {added_verb} в корзину')
             else:
-                order_product.qty += 1
-                """
-                TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
-                """
+                if order_product.product.quantity <= order_product.qty:
+                    message = f'{order_product.product.image_thumb()} Количество товара <b>{order_product}</b> ' \
+                              f'в корзине {order_product.qty} шт.<br> На складе больше нет, извините!'
+                    order_product.qty = order_product.product.quantity
+                else:
+                    order_product.qty += 1
+                    message = f'{order_product.product.image_thumb()} Количество товара <b>{order_product}</b> ' \
+                              f'изменено на {order_product.qty} шт.'
+
                 order_product.save()
                 messages.add_message(
                     request,
                     messages.INFO,
-                    f'{order_product.product.image_thumb()} '
-                    f'Количество товара <b>{order_product}</b> изменено на {order_product.qty} шт.'
+                    message
                 )
             self.order.save()
 
@@ -240,16 +244,20 @@ class ChangeQTYView(CartMixin, View):
             order=self.order, product=product
         )
         qty = int(request.POST.get('qty'))
+        over = False
+        if order_product.product.quantity < qty:
+            over = True
+            qty = order_product.product.quantity
 
         if qty:
             order_product.qty = qty
-            """
-            TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
-            """
+            message = f'{order_product.product.image_thumb()} Количество товара <b>{order_product}</b> изменено на {qty} шт.'
+            if over:
+                message += '<br>На складе больше нет, извините!'
             messages.add_message(
                 request,
                 messages.INFO,
-                f'{order_product.product.image_thumb()} Количество товара <b>{order_product}</b> изменено на {qty} шт.'
+                message
             )
             order_product.save()
         else:
