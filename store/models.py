@@ -477,7 +477,7 @@ class Order(models.Model):
         if self.delivery_type.startswith('delivery'):
             address = f"Адрес: {self.address}\n{self.settlement} {self.postal_code}"
         else:
-            address = "Самовывоз"
+            address = ""
         html = render_to_string('order_telega.html', {
             'order': self,
             'delivery': delivery,
