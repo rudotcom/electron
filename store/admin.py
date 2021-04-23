@@ -148,7 +148,7 @@ class OrderAdmin(admin.ModelAdmin):
                     'get_fio', 'created_at')
     list_display_links = ('id', 'delivery_type', 'status')
     ordering = ('-created_at', 'owner', 'status', 'delivery_type',)
-    list_filter = ('status', 'delivery_type', 'created_at',)
+    list_filter = ('status', 'payment_status', 'delivery_type', 'created_at',)
     inlines = [OrderItemInline]
 
     # def formfield_for_choice_field(self, db_field, request, **kwargs):
