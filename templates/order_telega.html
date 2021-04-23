@@ -1,5 +1,5 @@
 <a href="http://s346123.savps.ru/admin/store/order/{{ order.id }}/change/"><b>Заказ № {{ order.id }}</b></a>
-{{ order.payment.status|upper }}
+{{ payment_status|upper }}
 
 {% for item in order.products.all %}- <b>{{ item }}</b> {{ item.qty }} шт
 {% endfor %}

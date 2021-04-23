@@ -479,10 +479,17 @@ class Order(models.Model):
     def send_telegram(self):
         # Отправка сообщения в телеграм канал о составе заказа
         delivery = f"{dict(self.DELIVERY_TYPE_CHOICES)[self.delivery_type]}"
+        payment_status = f"{dict(self.YOO_STATUS_CHOICES)[self.payment_status]}"
         address = ''
+
         if self.delivery_type.startswith('delivery'):
             address = f"{self.address}\n{self.settlement} {self.postal_code}"
-        html = render_to_string('order_telega.html', {'order': self, 'delivery': delivery, 'address': address})
+        html = render_to_string('order_telega.html', {
+            'order': self,
+            'delivery': delivery,
+            'address': address,
+            'payment_status': payment_status,
+        })
 
         group_id = get_parameter('TELEGRAM_GROUP')
         telegram_token = os.getenv('telegram_token')
