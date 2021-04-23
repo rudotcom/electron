@@ -335,10 +335,7 @@ class Order(models.Model):
         ('none', 'Не оплачен'),
         ('succeeded', 'Оплачен'),
         ('pending', 'Ожидание оплаты'),
-        ('waiting_for_capture', 'Холдирован'),
         ('canceled', 'Отменен'),
-        ('expired_on_confirmation', 'Протух'),
-        ('expired_on_capture', 'Не востребован'),
     )
 
     owner = models.ForeignKey(Customer, null=True, verbose_name='Покупатель', on_delete=models.CASCADE)
