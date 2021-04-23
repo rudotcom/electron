@@ -1,5 +1,5 @@
 <a href="http://s346123.savps.ru/admin/store/order/{{ order.id }}/change/"><b>Заказ № {{ order.id }}</b></a>
-{{ payment_status|upper }}
+<b><u>{{ payment_status|upper }}</u></b>
 
 {% for item in order.products.all %}- <b>{{ item }}</b> {{ item.qty }} шт
 {% endfor %}
@@ -9,4 +9,4 @@
 Итого: {{ order.total_price_gross }} р
 
 Адрес:
-{{ address }}
+<i>{{ address }}</i>
