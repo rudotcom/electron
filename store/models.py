@@ -472,6 +472,8 @@ class Order(models.Model):
                 Product.objects.get(id=self.gift_id).save_stock(1)
             for product in self.related_products.all():
                 Product.objects.get(id=product.product_id).save_stock(product.qty)
+        elif self.payment_status in ['canceled', 'expired_on_confirmation', 'expired_on_capture', ]:
+            self.status = self.STATUS_CANCELED
 
     def send_telegram(self):
         # Отправка сообщения в телеграм канал о составе заказа

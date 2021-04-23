@@ -67,14 +67,19 @@
 {% if order_to_pay.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order_to_pay.comment }}</div></div>{% endif %}
 {% if order_to_pay.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order_to_pay.get_payment_type_display }}</div></div>{% endif %}
 </div>
- {% if order_to_pay.is_paid %}
-<div class="order-data">Оплачен</div>
- {% else %}
+
+{% if order_to_pay.payment_status == 'pending' %}
               <form action="{% url 'bank_payment' %}" method="POST">
                 <input type="hidden" name="order" value="{{ order_to_pay.id }}">
                 {% csrf_token %}
                 <input type="submit" class="btn btn-success btn-block" value="Перейти к оплате">
               </form>
+{% elif order_to_pay.is_paid %}
+        <div class="order-data">Оплачен</div>
+{% elif order_to_pay.status == 'canceled' %}
+        <div class="order-data">Отменён</div>
+{% else %}
+        <div class="order-data">В процессе платежа</div>
  {% endif %}
           </div>
         </div>
