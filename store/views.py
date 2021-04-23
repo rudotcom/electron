@@ -457,8 +457,8 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
         for item in order_to_pay.related_products.all():
             if item.qty > item.product.quantity:
                 """
-                TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
-                Создать сообщение, что товара уже недостаточно
+                Проверить наличие товара из корзины на складе перед оплатой.
+                Создать сообщение, что товара уже недостаточно и вернуть на страницу товара
                 """
                 item.qty = item.product.quantity
                 message = f'{item.product.image_thumb()} Количество товара <b>{item}</b> изменено на {item.qty} шт.' \

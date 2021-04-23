@@ -465,8 +465,8 @@ class Order(models.Model):
         self.payment_status = payment.status
         self.payment_time = payment.captured_at
         self.is_paid = payment.paid
-        self.save()
         if self.is_paid:
+            self.status = self.STATUS_IN_PROGRESS
             self.send_telegram()
             if self.gift:
                 Product.objects.get(id=self.gift_id).save_stock(1)
@@ -474,6 +474,7 @@ class Order(models.Model):
                 Product.objects.get(id=product.product_id).save_stock(product.qty)
         elif self.payment_status in ['canceled', 'expired_on_confirmation', 'expired_on_capture', ]:
             self.status = self.STATUS_CANCELED
+        self.save()
 
     def send_telegram(self):
         # Отправка сообщения в телеграм канал о составе заказа
