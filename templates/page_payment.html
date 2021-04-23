@@ -67,7 +67,7 @@
 {% if order_to_pay.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order_to_pay.comment }}</div></div>{% endif %}
 {% if order_to_pay.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order_to_pay.get_payment_type_display }}</div></div>{% endif %}
 </div>
-{{ order_to_pay.payment_status }}
+
 {% if order_to_pay.payment_status == 'none' or order_to_pay.payment_status == 'pending' %}
               <form action="{% url 'bank_payment' %}" method="POST">
                 <input type="hidden" name="order" value="{{ order_to_pay.id }}">
