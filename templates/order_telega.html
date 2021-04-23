@@ -4,7 +4,8 @@
 {% for item in order.products.all %}- <b>{{ item }}</b> {{ item.qty }} шт
 {% endfor %}
 {%  if order.gift %}- Подарок: <b>{{ order.gift }}</b>{% endif %}
+{{ delivery }}
+
 Итого: {{ order.total_price_gross }} р
 
-{{ delivery }}
 {{ address }}
