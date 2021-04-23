@@ -473,10 +473,11 @@ class Order(models.Model):
         # Отправка сообщения в телеграм канал о составе заказа
         delivery = f"{dict(self.DELIVERY_TYPE_CHOICES)[self.delivery_type]}"
         payment_status = f"{dict(self.YOO_STATUS_CHOICES)[self.payment_status]}"
-        address = ''
 
         if self.delivery_type.startswith('delivery'):
-            address = f"{self.address}\n{self.settlement} {self.postal_code}"
+            address = f"Адрес: {self.address}\n{self.settlement} {self.postal_code}"
+        else:
+            address = "Самовывоз"
         html = render_to_string('order_telega.html', {
             'order': self,
             'delivery': delivery,
