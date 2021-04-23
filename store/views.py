@@ -399,7 +399,6 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
         form = PaymentMethodForm(request.POST or None)
 
         user = User.objects.get(username=request.user)
-        session = request.COOKIES.get('customersession')
 
         order_id = kwargs.get('order')
 
@@ -492,7 +491,7 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": f"http://{settings.SITE_URL}/profile/"
+                "return_url": f"http://{settings.SITE_URL}/order_pay/{order_to_pay.id}/"
             },
             "capture": True,
             "description": f"Заказ №{order_to_pay.id}"
