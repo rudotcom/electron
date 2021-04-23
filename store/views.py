@@ -421,7 +421,10 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class YooStatusView(View):
     """
-    Получаем запрос от Юкассы при изменении статуса платежа клиента, выковыриваем оттуда статус и сохраняем в Заказ.
+    Получаем запрос от Юкассы при изменении статуса платежа клиента,
+    выковыриваем оттуда статус и сохраняем в Заказ.
+    Если статус "succeeded", отправляем телегу со статусом заказа и
+    уменьшаем остатки товаров на количество в заказе
     """
     def post(self, request):
 
@@ -432,8 +435,9 @@ class YooStatusView(View):
             # Получите объекта платежа
             payment = notification_object.object
             order = Order.orders.get(payment_id=payment.id)
-            order.send_telegram()  # Отправить заказ в телегу
-            order.receive_payment(payment)  # Установить статусы заказа и изменить остатки
+            # Установить статусы платежа и, если оплачен, изменить остатки и отправить состав заказа в телегу
+            order.register_payment(payment)
+
             return HttpResponse(status=200)
         except Exception:
             return HttpResponse(status=500)

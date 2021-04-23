@@ -460,16 +460,18 @@ class Order(models.Model):
         self.save()
         return True
 
-    def receive_payment(self, payment):
-        # Установка статуса оплаты по данным Ю-касса
+    def register_payment(self, payment):
+        # Установка статуса оплаты по данным Ю-касса и остатков товаров
         self.payment_status = payment.status
         self.payment_time = payment.captured_at
         self.is_paid = payment.paid
         self.save()
-        if self.gift:
-            Product.objects.get(id=self.gift_id).save_stock(1)
-        for product in self.related_products.all():
-            Product.objects.get(id=product.product_id).save_stock(product.qty)
+        if self.is_paid:
+            self.send_telegram()
+            if self.gift:
+                Product.objects.get(id=self.gift_id).save_stock(1)
+            for product in self.related_products.all():
+                Product.objects.get(id=product.product_id).save_stock(product.qty)
 
     def send_telegram(self):
         # Отправка сообщения в телеграм канал о составе заказа
