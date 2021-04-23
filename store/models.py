@@ -362,13 +362,6 @@ class Order(models.Model):
         default=None
     )
     delivery_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Стоимость доставки')
-    payment_type = models.CharField(
-        max_length=100,
-        verbose_name='Способ оплаты',
-        choices=PAYMENT_CHOICES,
-        null=True,
-        default=None,
-    )
     payment_id = models.CharField(max_length=50, null=True, default=None, verbose_name='Юkassa: ID платежа')
     payment_status = models.CharField(max_length=25, null=False, default='none', verbose_name='Статус платежа',
                                       choices=YOO_STATUS_CHOICES)

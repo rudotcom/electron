@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 
 from Introvert import settings
 from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
-    PostRuOrderForm, PostWorldOrderForm, PaymentMethodForm, SelfOrderForm, PaymentForm, OnlinePaymentForm
+    PostRuOrderForm, PostWorldOrderForm, SelfOrderForm
 from .mixins import CartMixin
 from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, Article, parameter
 from .utils import reconcile_verb_gender, get_random_session
@@ -396,8 +396,6 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
 
     def get(self, request, *args, **kwargs):
 
-        form = PaymentMethodForm(request.POST or None)
-
         user = User.objects.get(username=request.user)
 
         order_id = kwargs.get('order')
@@ -413,7 +411,6 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
             {
                 'show_pay_button': show_pay_button,
                 'order': self.order,
-                'form': form,
                 'order_to_pay': order_to_pay,
                 'categories': categories,
                 'articles': self.articles,

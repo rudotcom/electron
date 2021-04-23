@@ -169,7 +169,6 @@
 <div class="order_body">
 <div><div class="order-label">Заказ №</div><div class="order-data">{{ order.id }}</div></div>
 {% if order.first_name or order.last_name %}<div><div class="order-label">Получатель:</div><div class="order-data">{{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}</div></div>{% endif %}
-{% if order.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order.get_payment_type_display }}</div></div>{% endif %}
 {% if order.tracking %}<div><div class="order-label">Трекинг номер:</div><div class="order-data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></div></div>{% endif %}
 {% if order.phone %}<div><div class="order-label">Телефон:</div><div class="order-data">{{ order.phone }}</div></div>{% endif %}
 {% if order.postal_code %}<div><div class="order-label">Индекс:</div><div class="order-data">{{ order.postal_code }}</div></div>{% endif %}

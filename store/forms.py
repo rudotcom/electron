@@ -8,13 +8,6 @@ from .models import Order
 User = get_user_model()
 
 
-class PaymentMethodForm(forms.ModelForm):
-
-    class Meta:
-        model = Order
-        fields = ['payment_type', ]
-
-
 class SelfOrderForm(RequiredFieldsMixin, forms.ModelForm):
 
     class Meta:
@@ -104,7 +97,6 @@ class PostWorldOrderForm(RequiredFieldsMixin, forms.ModelForm):
             'settlement': 'Страна, Город (латинскими буквами)',
             'address': 'Адрес получателя (латинскими буквами)',
             'comment': 'Комментарий',
-            'payment_type': 'Тип оплаты',
         }
 
 

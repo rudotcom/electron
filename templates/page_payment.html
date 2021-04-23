@@ -65,7 +65,6 @@
 {% if order_to_pay.settlement %}<div><div class="order-label">Населенный пункт:</div><div class="order-data">{{ order_to_pay.settlement }}</div></div>{% endif %}
 {% if order_to_pay.address %}<div><div class="order-label">Адрес:</div><div class="order-data">{{ order_to_pay.address }}</div></div>{% endif %}
 {% if order_to_pay.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order_to_pay.comment }}</div></div>{% endif %}
-{% if order_to_pay.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order_to_pay.get_payment_type_display }}</div></div>{% endif %}
 </div>
 
 {% if show_pay_button %}
