@@ -36,17 +36,19 @@
                 <td>{{ order.get_status_display }}</td>
                 <td>{{ order.total_price_gross }}</td>
                 <td>
-                {% if order.is_paid %}
-                Оплачен
-                {% elif order.payment_type == 'cash_card' %}
-                    Оплата в мастерской
+                {% if order.payment_status == 'none' %}
+                              <form action="{% url 'bank_payment' %}" method="POST">
+                                <input type="hidden" name="order" value="{{ order.id }}">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-success btn-block" value="Перейти к оплате">
+                              </form>
+                {% elif order.is_paid %}
+                        <div class="order-data">Оплачен</div>
+                {% elif order.status == 'canceled' %}
+                        <div class="order-data">Отменён</div>
                 {% else %}
-                  <form action="{% url 'bank_payment' %}" method="POST">
-                    <input type="hidden" name="order" value="{{ order.id }}">
-                    {% csrf_token %}
-                    <input type="submit" class="btn btn-success btn-block" value="Оплатить">
-                  </form>
-                {% endif %}
+                        <div class="order-data">В процессе платежа</div>
+                 {% endif %}
                     <!-- Modal -->
                     <div class="modal fade" id="Modal-{{ order.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
@@ -90,15 +92,6 @@
                                   <tfoot>
                                    <tr>
                                         <td colspan="2">
-                {% if order.is_paid%}
-                Оплачен
-                {% elif order.payment_type != 'cash_card' %}
-              <form action="{% url 'bank_payment' %}" method="POST">
-                <input type="hidden" name="order" value="{{ order.id }}">
-                {% csrf_token %}
-                <input type="submit" class="btn btn-success btn-block" value="Оплатить">
-              </form>
-                {% endif %}
 
                                         </td>
                                         <td>Итого:</td>
@@ -121,7 +114,20 @@
 <div><div class="order-label">Статус:</div><div>{{ order.get_status_display }}</div></div>
 {% if order.tracking %}<div><div class="order-label">Трекинг:</div><div class="order-data">{{ order.tracking }}</div></div>{% endif %}
 </div>
-                          </div>
+                 {% if order.payment_status == 'none' %}
+                              <form action="{% url 'bank_payment' %}" method="POST">
+                                <input type="hidden" name="order" value="{{ order.id }}">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-success btn-block" value="Перейти к оплате">
+                              </form>
+                {% elif order.is_paid %}
+                        <div class="order-data">Оплачен</div>
+                {% elif order.status == 'canceled' %}
+                        <div class="order-data">Отменён</div>
+                {% else %}
+                        <div class="order-data">В процессе платежа</div>
+                 {% endif %}
+                         </div>
                         </div>
                       </div>
                     </div>
