@@ -393,22 +393,25 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
 
 
 class OrderPayView(LoginRequiredMixin, CartMixin, View):
-    """
-    TODO: Не показывать чужие заказы. Проверять принадлежит ли заказ юзеру.
-    """
 
     def get(self, request, *args, **kwargs):
 
         form = PaymentMethodForm(request.POST or None)
+
+        user = User.objects.get(username=request.user)
+        customer = Customer.objects.get(user=user.id)
         order_id = kwargs.get('order')
 
-        order_to_pay = Order.orders.get(id=order_id)
+        # Отображать заказ только если он принадлежит клиенту - текущему пользователю
+        order_to_pay = Order.orders.get(id=order_id, owner=customer)
+        show_pay_button = False if order_to_pay.payment_status in ['succeeded', 'waiting_for_capture'] else True
 
         categories = Category.objects.all()
         return render(
             request,
             'page_payment.html',
             {
+                'show_pay_button': show_pay_button,
                 'order': self.order,
                 'form': form,
                 'order_to_pay': order_to_pay,
@@ -450,11 +453,11 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
         order_id = request.POST.get('order')
         order_to_pay = Order.orders.get(id=order_id)
 
-        """
-        TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
-        """
         for item in order_to_pay.related_products.all():
             if item.qty > item.product.quantity:
+                """
+                TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
+                """
                 # Создать сообщение, что товара уже недостаточно
                 item.qty = item.product.quantity
         order_to_pay.save(*args, **kwargs)
