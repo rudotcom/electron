@@ -4,6 +4,7 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from django.views.generic.base import TemplateView
 
 from store.views import (
     BaseView,
@@ -74,6 +75,7 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(),
         name='password_reset_complete',
     ),
+    path('robots.txt', TemplateView.as_view(template_name="store/robots.txt", content_type="text/plain"),),
 ]
 
 if settings.DEBUG:
