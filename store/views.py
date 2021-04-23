@@ -399,11 +399,12 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
         form = PaymentMethodForm(request.POST or None)
 
         user = User.objects.get(username=request.user)
-        customer = Customer.objects.get(user=user.id)
+        session = request.COOKIES.get('customersession')
+
         order_id = kwargs.get('order')
 
         # Отображать заказ только если он принадлежит клиенту - текущему пользователю
-        order_to_pay = Order.orders.get(id=order_id, owner=customer)
+        order_to_pay = Order.orders.get(id=order_id, owner__user=user)
         show_pay_button = False if order_to_pay.payment_status in ['succeeded', 'waiting_for_capture'] else True
 
         categories = Category.objects.all()
@@ -457,10 +458,24 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             if item.qty > item.product.quantity:
                 """
                 TODO: ПРОВЕРИТЬ ОСТАТКИ ТОВАРОВ
+                Создать сообщение, что товара уже недостаточно
                 """
-                # Создать сообщение, что товара уже недостаточно
                 item.qty = item.product.quantity
-        order_to_pay.save(*args, **kwargs)
+                message = f'{item.product.image_thumb()} Количество товара <b>{item}</b> изменено на {item.qty} шт.' \
+                          f'<br>На складе больше нет, извините!'
+                messages.add_message(request, messages.INFO, message)
+                item.save()
+        order_to_pay.save()
+
+        if order_to_pay.gift and order_to_pay.gift.quantity == 0:
+            message = f'{order_to_pay.gift.image_thumb()} Подарок <b>{order_to_pay.gift}</b> удален из корзины' \
+                      f'<br>Этот товар уже раскупили, извините!'
+            messages.add_message(request, messages.INFO, message)
+            order_to_pay.gift = None
+
+        order_to_pay.save()
+        if messages:
+            return HttpResponseRedirect('/order_pay/' + str(order_to_pay.id) + '/')
 
         # Configuration.account_id = os.getenv('yoo_shop_id')
         # Configuration.secret_key = os.getenv('yoo_key')
