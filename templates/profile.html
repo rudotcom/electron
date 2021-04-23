@@ -114,7 +114,8 @@
 <div><div class="order-label">Статус:</div><div>{{ order.get_status_display }}</div></div>
 {% if order.tracking %}<div><div class="order-label">Трекинг:</div><div class="order-data">{{ order.tracking }}</div></div>{% endif %}
 </div>
-                {% if order.payment_status == 'none' or order.payment_status == 'pending' %}
+{{ order_to_pay.payment_status }}
+                 {% if order.payment_status == 'none' or order.payment_status == 'pending' %}
                               <form action="{% url 'bank_payment' %}" method="POST">
                                 <input type="hidden" name="order" value="{{ order.id }}">
                                 {% csrf_token %}
