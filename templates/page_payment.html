@@ -66,7 +66,9 @@
 {% if order_to_pay.address %}<div><div class="order-label">Адрес:</div><div class="order-data">{{ order_to_pay.address }}</div></div>{% endif %}
 {% if order_to_pay.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order_to_pay.comment }}</div></div>{% endif %}
 </div>
-
+          {% if order_to_pay.delivery_type == 'self' %}
+<div>Заказ может быть оплачен наличными в мастерской либо здесь онлайн.<hr></div>
+          {% endif %}
 {% if show_pay_button %}
               <form action="{% url 'bank_payment' %}" method="POST">
                 <input type="hidden" name="order" value="{{ order_to_pay.id }}">
