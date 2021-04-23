@@ -453,6 +453,7 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
         order_id = request.POST.get('order')
         order_to_pay = Order.orders.get(id=order_id)
+        ready_to_pay = True
 
         for item in order_to_pay.related_products.all():
             if item.qty > item.product.quantity:
@@ -460,6 +461,7 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
                 Проверить наличие товара из корзины на складе перед оплатой.
                 Создать сообщение, что товара уже недостаточно и вернуть на страницу товара
                 """
+                ready_to_pay = False
                 item.qty = item.product.quantity
                 message = f'{item.product.image_thumb()} Количество товара <b>{item}</b> изменено на {item.qty} шт.' \
                           f'<br>На складе больше нет, извините!'
@@ -468,13 +470,14 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
         order_to_pay.save()
 
         if order_to_pay.gift and order_to_pay.gift.quantity == 0:
+            ready_to_pay = False
             message = f'{order_to_pay.gift.image_thumb()} Подарок <b>{order_to_pay.gift}</b> удален из корзины' \
                       f'<br>Этот товар уже раскупили, извините!'
             messages.add_message(request, messages.INFO, message)
             order_to_pay.gift = None
 
         order_to_pay.save()
-        if messages:
+        if not ready_to_pay:
             return HttpResponseRedirect('/order_pay/' + str(order_to_pay.id) + '/')
 
         # Configuration.account_id = os.getenv('yoo_shop_id')
