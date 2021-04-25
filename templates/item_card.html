@@ -28,12 +28,12 @@
 
                     {% if product.new %}
                 <div class="tag-container new-tag" title="Новинка!">
-                    <i class="fa fa-star"></i>
+                    <img src="{% static "img/tag-new.png" %}" alt="Новинка!">
                 </div>
                     {% endif %}
                     {% if product.bestseller %}
                 <div class="tag-container hit-tag" title="Хит продаж!">
-                    <i class="fa fa-bomb"></i>
+                    <img src="{% static "img/tag-hit.png" %}" alt="Новинка!">
                 </div>
                     {% endif %}
               </div>

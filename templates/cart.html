@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load l10n %}
 
 {% load crispy_forms_tags %}
 
@@ -26,10 +27,10 @@
           <td><div class="tm-product-thumbnails">{{ item.product.image_thumb }}</div></td>
           <td>
           {%  if item.product.price_discount  %}
-              <strike>{{ item.product.price }}&#x20bd;</strike><br>
-              {{ item.product.price_discount }}&#x20bd;
+              <strike>{{ item.product.price|localize }}&#x20bd;</strike><br>
+              {{ item.product.price_discount|localize }}&#x20bd;
           {% else %}
-              {{ item.product.price }}&#x20bd;
+              {{ item.product.price|localize }}&#x20bd;
           {% endif %}
           </td>
           <td>
@@ -38,7 +39,7 @@
               <input type="number" class="form-control" name="qty" style="width: 70px;" min="0" value="{{ item.qty }}" onchange="this.form.submit()">
             </form>
           </td>
-            <td>{{ item.final_price }}&#x20bd;</td>
+            <td>{{ item.final_price|localize }}&#x20bd;</td>
           <td>
             <a href="{% url 'delete_from_cart' slug=item.product.slug %}" title="Удалить"><button class="btn btn-light"><i class="fa fa-trash-o" aria-hidden="true"></i></button></a>
           </td>
@@ -48,7 +49,7 @@
             {% if order.gift %}
             <td>{{ order.gift.title }} </td>
             <td class="tm-product-thumbnails">{{ order.gift.image_thumb }}</td>
-            <td>{{ order.gift.price }}</td>
+            <td>{{ order.gift.price|localize }}</td>
             <td>&nbsp;</td>
             <td>0,00&#x20bd;</td>
              <td>Подарок</td>
@@ -62,7 +63,7 @@
           <td colspan="2">&nbsp;</td>
           <td>Всего товаров:</td>
           <td>{{ order.total_products }}</td>
-          <td><strong>{{ order.total_price_net }} &#x20bd;</strong></td>
+          <td><strong>{{ order.total_price_net|localize }} &#x20bd;</strong></td>
           <td>&nbsp;</td>
         </tr>
     {% if order.delivery_type %}

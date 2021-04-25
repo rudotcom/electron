@@ -235,13 +235,13 @@ select {
 }
 .hit-tag {
     position: absolute;
-    bottom: 80px;
-    left: 36px;
+    bottom: 280px;
+    left: 76px;
     font-size: 24px;
 }
 .new-tag {
     position: absolute;
-    bottom: 80px;
+    bottom: 300px;
     left: 6px;
     font-size: 24px;
 }
