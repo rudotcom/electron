@@ -23,6 +23,7 @@ fi
 # Next we will migrate the changes
 python3 manage.py makemigrations
 python3 manage.py migrate
+touch /home/gitlab-runner/IntrovertProject/Introvert/settings.py
 
 
 # Next we will start the server

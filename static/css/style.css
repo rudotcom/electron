@@ -235,14 +235,14 @@ select {
 }
 .hit-tag {
     position: absolute;
-    bottom: 280px;
-    left: 76px;
+    bottom: 300px;
+    left: 96px;
     font-size: 24px;
 }
 .new-tag {
     position: absolute;
     bottom: 300px;
-    left: 6px;
+    left: -16px;
     font-size: 24px;
 }
 .tab-pane {background-color: #ffffff; padding: 20px;margin-bottom: 30px;border-radius: 6px 6px 0 0;}
