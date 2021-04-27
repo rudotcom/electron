@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
-
+from django.views.decorators.cache import cache_page
 from store.views import (
     BaseView,
     ProductDetailView,
@@ -33,12 +33,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', WelcomeView.as_view(), name='welcome'),
     path('store/', BaseView.as_view(), name='store'),
-    path('about/<str:slug>/', ArticleView.as_view(), name='article'),
+    path('about/<str:slug>/', cache_page(60 * 15)(ArticleView.as_view()), name='article'),
     path('search/', ProductSearchView.as_view(), name='search'),
-    path('product/<str:slug>/', ProductDetailView.as_view(), name='product_detail'),
-    path('gifts/', GiftListView.as_view(), name='gifts'),
-    path('subcategory/<str:slug>/', SubCategoryDetailView.as_view(), name='subcategory_detail'),
-    path('category/<str:slug>/', CategoryDetailView.as_view(), name='category_detail'),
+    path('product/<str:slug>/', cache_page(60 * 15)(ProductDetailView.as_view()), name='product_detail'),
+    path('gifts/', cache_page(60 * 15)(GiftListView.as_view()), name='gifts'),
+    path('subcategory/<str:slug>/', cache_page(60 * 15)(SubCategoryDetailView.as_view()), name='subcategory_detail'),
+    path('category/<str:slug>/', cache_page(60 * 15)(CategoryDetailView.as_view()), name='category_detail'),
     path('cart/', CartView.as_view(), name='cart'),
     path('add-to-cart/<str:slug>/', AddToCartView.as_view(), name='add_to_cart'),
     path('remove-from-cart/<str:slug>/', DeleteFromCartView.as_view(), name='delete_from_cart'),
