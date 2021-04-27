@@ -2,7 +2,8 @@
 {% load crispy_forms_tags %}
 
                   {% block breadcrumbs %}
-                <li class="breadcrumb-item active">Заказ</li>
+                <li class="breadcrumb-item"><a href="{% url 'profile' %}">Личный кабинет</a></li>
+                <li class="breadcrumb-item active">Заказ № {{ order_to_pay.id }}</li>
                   {% endblock %}
 {% block content %}
 

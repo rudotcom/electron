@@ -61,6 +61,7 @@
 .to_pay a {width:100%; display: block; border-radius: 4px; background-color: #55aa88; text-align: center; color: #fff; padding: 0;text-decoration:none;}
 .always {font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:14px;color:#484848;font-style:italic;text-align:center}
 .small {font-size:11px; color: #6c757d;}
+.social {text-align: center}
     </style>
 </head>
 <body bgcolor="#ffffff" style="margin:0; padding:0;">
@@ -137,7 +138,7 @@
     {% for item in order.products.all %}
         <tr>
           <td scope="row">{{ item.product.title }}</td>
-          <td><img src="http://{{ site_url }}/media/thumb/{{ item.product.image.name }}"></td>
+          <td><img src="https://{{ site_url }}/media/thumb/{{ item.product.image.name }}"></td>
           <td>{{ item.product.price }}&#x20bd;</td>
           <td>{{ item.qty }}</td>
           <td>{{ item.final_price }}&#x20bd;</td>
@@ -184,9 +185,9 @@
 </table>
 <div class="small"><p>Вы получили это письмо, потому что сделали заказ в магазине Интроверт
 <div class="social">
-<a href="https://www.instagram.com/introvert_store_/" class="fa fa-instagram">instagram</a>
-<a href="https://vk.com/introvert.store" class="fa fa-vk">vk</a>
-<a href="#" class="fa fa-tiktok">tiktok</a>
+<a href="https://www.instagram.com/introvert_store_/" class="tm-social-icon" target="_blank"><img src="https://{{ site_url }}/static/img/instagram-logo-w.svg"></a>
+<a href="https://vk.com/introvert.store" class="tm-social-icon" target="_blank"><img src="https://{{ site_url }}/static/img/vk-w.svg"></a>
+<a href="#" class="tm-social-icon"><img src="https://{{ site_url }}/static/img/tiktok-w.svg"></a>
 </div>
                                             </td>
                                         </tr>

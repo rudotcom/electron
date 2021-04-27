@@ -47,13 +47,12 @@ class WelcomeView(CartMixin, View):
 class BaseView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
         # random_products = Product.randoms.all()
         popular_products = Product.objects.all().order_by('-visits')
         # recently_viewed_products = Product.objects.all().order_by('-last_visit')[0:4]
 
         context = {
-            'categories': categories,
+            'categories': self.categories,
             'products': popular_products,
             'order': self.order,
             'page_role': 'products',
@@ -65,7 +64,6 @@ class BaseView(CartMixin, View):
 class GiftListView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
         gift_products = Product.objects.filter(gift=True)
         if self.order and self.order.gift:
             messages.add_message(request, messages.INFO,
@@ -73,7 +71,7 @@ class GiftListView(CartMixin, View):
 
         context = {
             'bonus_sum': parameter['FREE_GIFT'],
-            'categories': categories,
+            'categories': self.categories,
             'products': gift_products,
             'order': self.order,
             'page_role': 'gifts',
@@ -98,7 +96,7 @@ class ProductDetailView(CartMixin, DetailView):
         product_visits_value = cache.get_or_set(product_visits, product.visits, timeout=60)
 
         context = super().get_context_data(**kwargs)
-        context['categories'] = self.get_object().category.__class__.objects.all()
+        context['categories'] = self.categories
         context['order'] = self.order
         context['articles'] = self.articles
         context['product_views'] = product_visits_value
@@ -119,7 +117,7 @@ class SubCategoryDetailView(CartMixin, DetailView):
         category = Category.objects.get(subcategory=subcategory)
         context['order'] = self.order
         context['category'] = category
-        context['categories'] = Category.objects.all()
+        context['categories'] = self.categories
         context['category_name'] = category.name
         context['subcategories'] = self.model.objects.filter(category=category)
         context['subcategory_name'] = subcategory.name
@@ -139,7 +137,7 @@ class CategoryDetailView(CartMixin, DetailView):
         context = super().get_context_data(**kwargs)
         category = self.get_object()
         context['order'] = self.order
-        context['categories'] = self.model.objects.all()
+        context['categories'] = self.categories
         context['category_name'] = category.name
         context['subcategories'] = SubCategory.objects.filter(category=category)
         context['category_products'] = category.product_set.all()
@@ -154,7 +152,7 @@ class ProductSearchView(CartMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['order'] = self.order
-        context['categories'] = Category.objects.all()
+        context['categories'] = self.categories
         return context
 
     def get_queryset(self):
@@ -279,7 +277,6 @@ class ChangeQTYView(CartMixin, View):
 class CartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
         form = CartForm(request.POST or None)
         if self.order:
             self.order.save()
@@ -295,7 +292,7 @@ class CartView(CartMixin, View):
         context = {
             'bonus_sum': parameter['FREE_GIFT'],
             'order': self.order,
-            'categories': categories,
+            'categories': self.categories,
             'form': form,
             'page_role': 'cart',
             'articles': self.articles,
@@ -327,10 +324,9 @@ class CheckoutView(CartMixin, View):
         elif self.order.delivery_type == 'delivery_world':
             form = PostWorldOrderForm()
 
-        categories = Category.objects.all()
         context = {
             'order': self.order,
-            'categories': categories,
+            'categories': self.categories,
             'form': form,
             'articles': self.articles,
         }
@@ -339,6 +335,7 @@ class CheckoutView(CartMixin, View):
 
 
 class MakeOrderView(LoginRequiredMixin, CartMixin, View):
+    login_url = '/login/'
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -384,7 +381,7 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
 
             messages.add_message(request, messages.INFO,
                                  'Ваш заказ оформлен! \nСпасибо, что выбрали нас. Не забудьте оплатить заказ.')
-            html = render_to_string('order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
+            html = render_to_string('email_order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
 
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
                       'Интроверт<noreply@introvert.com.ru>', [user.email], fail_silently=False, html_message=html)
@@ -398,6 +395,7 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
 
 
 class OrderPayView(LoginRequiredMixin, CartMixin, View):
+    login_url = '/login/'
 
     def get(self, request, *args, **kwargs):
 
@@ -410,7 +408,6 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
             order_to_pay = Order.orders.get(id=order_id, owner__user=user)
             show_pay_button = False if order_to_pay.payment_status in ['succeeded', 'waiting_for_capture'] else True
 
-            categories = Category.objects.all()
             return render(
                 request,
                 'page_payment.html',
@@ -418,7 +415,7 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
                     'show_pay_button': show_pay_button,
                     'order': self.order,
                     'order_to_pay': order_to_pay,
-                    'categories': categories,
+                    'categories': self.categories,
                     'articles': self.articles,
                 }
             )
@@ -454,6 +451,7 @@ class YooStatusView(View):
 
 
 class BankPaymentView(LoginRequiredMixin, CartMixin, View):
+    login_url = '/login/'
 
     def post(self, request, *args, **kwargs):
 
@@ -518,10 +516,10 @@ class LoginView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         form = LoginForm(request.POST or None)
-        categories = Category.objects.all()
+
         context = {
             'form': form,
-            'categories': categories,
+            'categories': self.categories,
             'order': self.order,
             'page_role': 'login',
             'articles': self.articles,
@@ -529,6 +527,8 @@ class LoginView(CartMixin, View):
         return render(request, 'login.html', context)
 
     def post(self, request, *args, **kwargs):
+
+        next = request.GET['next'] if request.GET else '/profile/'
 
         form = LoginForm(request.POST or None)
         if form.is_valid():
@@ -545,12 +545,12 @@ class LoginView(CartMixin, View):
                 customer.save()
 
                 login(request, user)
-                return HttpResponseRedirect('/cart/')
-        categories = Category.objects.all()
+                return HttpResponseRedirect(next)
+
         context = {
             'form': form,
             'order': self.order,
-            'categories': categories,
+            'categories': self.categories,
             'articles': self.articles,
         }
         return render(request, 'login.html', context)
@@ -560,10 +560,10 @@ class RegistrationView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         form = RegistrationForm(request.POST or None)
-        categories = Category.objects.all()
+
         context = {
             'form': form,
-            'categories': categories,
+            'categories': self.categories,
             'order': self.order,
             'page_role': 'registration',
             'articles': self.articles,
@@ -590,33 +590,31 @@ class RegistrationView(CartMixin, View):
             customer.save()
 
             return HttpResponseRedirect('/cart/')
-        categories = Category.objects.all()
+
         context = {
             'form': form,
-            'categories': categories,
+            'categories': self.categories,
             'order': self.order,
             'articles': self.articles,
         }
         return render(request, 'registration.html', context)
 
 
-class ProfileView(CartMixin, View):
+class ProfileView(LoginRequiredMixin, CartMixin, View):
+    login_url = '/login/'
 
     def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect('/login/')
 
         owners = Customer.objects.filter(user=request.user)
         orders = Order.orders.filter(owner__in=owners).order_by('-created_at')
 
-        categories = Category.objects.all()
         return render(
             request,
             'profile.html',
             {
                 'orders': orders,
                 'order': self.order,
-                'categories': categories,
+                'categories': self.categories,
                 'page_role': 'profile',
                 'articles': self.articles,
             }
@@ -631,7 +629,7 @@ class ArticleView(CartMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
+        context['categories'] = self.categories
         context['order'] = self.order
         context['articles'] = self.articles
 
@@ -650,7 +648,7 @@ class EmailView(CartMixin, View):
 
         return render(
             request,
-            'order_placed.html',
+            'email_order_placed.html',
             {
                 'site_url': settings.SITE_URL,
                 'order': pay_order,
