@@ -25,7 +25,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
 from yookassa.domain.notification import WebhookNotification
-from django.views.decorators.cache import cache_control
 
 
 class MyQ(Q):
@@ -161,7 +160,6 @@ class ProductSearchView(CartMixin, ListView):
         return object_list
 
 
-@cache_control(private=True)
 class AddToCartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
@@ -237,7 +235,6 @@ class DeleteFromCartView(CartMixin, View):
         return HttpResponseRedirect('/cart/')
 
 
-@cache_control(private=True)
 class ChangeQTYView(CartMixin, View):
 
     def post(self, request, *args, **kwargs):
@@ -274,7 +271,6 @@ class ChangeQTYView(CartMixin, View):
         return HttpResponseRedirect('/cart/')
 
 
-@cache_control(private=True)
 class CartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
@@ -308,7 +304,6 @@ class CartView(CartMixin, View):
         return render(request, 'cart.html', context)
 
 
-@cache_control(private=True)
 class CheckoutView(CartMixin, View):
 
     def post(self, request, *args, **kwargs):
@@ -338,7 +333,6 @@ class CheckoutView(CartMixin, View):
         return render(request, 'checkout.html', context)
 
 
-@cache_control(private=True)
 class MakeOrderView(LoginRequiredMixin, CartMixin, View):
 
     @transaction.atomic
@@ -398,7 +392,6 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
         return HttpResponseRedirect('/checkout/')
 
 
-@cache_control(private=True)
 class OrderPayView(LoginRequiredMixin, CartMixin, View):
 
     def get(self, request, *args, **kwargs):
@@ -455,7 +448,6 @@ class YooStatusView(View):
             return HttpResponse(status=500)
 
 
-@cache_control(private=True)
 class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
     def post(self, request, *args, **kwargs):
@@ -603,7 +595,6 @@ class RegistrationView(CartMixin, View):
         return render(request, 'registration.html', context)
 
 
-@cache_control(private=True)
 class ProfileView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
