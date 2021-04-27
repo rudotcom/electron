@@ -31,8 +31,8 @@ from store.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', WelcomeView.as_view(), name='welcome'),
-    path('store/', BaseView.as_view(), name='store'),
+    path('', cache_page(60 * 15)(WelcomeView.as_view()), name='welcome'),
+    path('store/', cache_page(60 * 15)(BaseView.as_view()), name='store'),
     path('about/<str:slug>/', cache_page(60 * 15)(ArticleView.as_view()), name='article'),
     path('search/', ProductSearchView.as_view(), name='search'),
     path('product/<str:slug>/', cache_page(60 * 15)(ProductDetailView.as_view()), name='product_detail'),
