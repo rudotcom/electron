@@ -378,7 +378,7 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
                 order.send_telegram()  # Отправить заказ в телегу
 
             messages.add_message(request, messages.INFO,
-                                 'Ваш заказ оформлен! \nСпасибо, что выбрали нас.')
+                                 'Ваш заказ оформлен! \nСпасибо, что выбрали нас. Не забудьте оплатить заказ.')
             html = render_to_string('order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
 
             send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
@@ -400,22 +400,27 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
 
         order_id = kwargs.get('order')
 
-        # Отображать заказ только если он принадлежит клиенту - текущему пользователю
-        order_to_pay = Order.orders.get(id=order_id, owner__user=user)
-        show_pay_button = False if order_to_pay.payment_status in ['succeeded', 'waiting_for_capture'] else True
+        try:
+            # Отображать заказ только если он принадлежит клиенту - текущему пользователю
+            order_to_pay = Order.orders.get(id=order_id, owner__user=user)
+            show_pay_button = False if order_to_pay.payment_status in ['succeeded', 'waiting_for_capture'] else True
 
-        categories = Category.objects.all()
-        return render(
-            request,
-            'page_payment.html',
-            {
-                'show_pay_button': show_pay_button,
-                'order': self.order,
-                'order_to_pay': order_to_pay,
-                'categories': categories,
-                'articles': self.articles,
-            }
-        )
+            categories = Category.objects.all()
+            return render(
+                request,
+                'page_payment.html',
+                {
+                    'show_pay_button': show_pay_button,
+                    'order': self.order,
+                    'order_to_pay': order_to_pay,
+                    'categories': categories,
+                    'articles': self.articles,
+                }
+            )
+        except:
+            messages.add_message(request, messages.INFO,
+                                 f'Заказа № {order_id} у вас нет! \nВыберите свой заказ из списка.')
+            return HttpResponseRedirect('/profile/')
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -488,7 +493,7 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": f"http://{settings.SITE_URL}/order_pay/{order_to_pay.id}/"
+                "return_url": f"https://{settings.SITE_URL}/order_pay/{order_to_pay.id}/"
             },
             "capture": True,
             "description": f"Заказ №{order_to_pay.id}"
