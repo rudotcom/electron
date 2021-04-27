@@ -571,7 +571,7 @@ class RegistrationView(CartMixin, View):
         return render(request, 'registration.html', context)
 
     def post(self, request, *args, **kwargs):
-        session = request.COOKIES.get('customersession')
+
         form = RegistrationForm(request.POST or None)
         if form.is_valid():
             new_user = form.save(commit=False)
@@ -636,21 +636,22 @@ class ArticleView(CartMixin, DetailView):
         return context
 
 
-class EmailView(CartMixin, View):
+class EmailView(LoginRequiredMixin, CartMixin, View):
+    login_url = '/login/'
 
     def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect('/login/')
 
         order_id = kwargs.get('order')
+        try:
+            pay_order = Order.orders.get(id=order_id)
 
-        pay_order = Order.orders.get(id=order_id)
-
-        return render(
-            request,
-            'email_order_placed.html',
-            {
-                'site_url': settings.SITE_URL,
-                'order': pay_order,
-            }
-        )
+            return render(
+                request,
+                'email_order_placed.html',
+                {
+                    'site_url': settings.SITE_URL,
+                    'order': pay_order,
+                }
+            )
+        except Exception:
+            return HttpResponse(status=404)
