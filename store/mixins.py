@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.views.generic import View
 
 from .models import Order, Customer, Article
@@ -7,7 +8,7 @@ class CartMixin(View):
 
     def __init__(self):
         super().__init__()
-        self.articles = Article.objects.all()
+        self.articles = cache.get_or_set('article_menu', Article.objects.all(), timeout=600)
 
     def dispatch(self, request, *args, **kwargs):
 

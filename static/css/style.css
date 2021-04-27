@@ -224,24 +224,25 @@ select {
 }
 .price-tag {
     color: #6c757d;
-    font-size: 22px;
+    font-size: 26px;
     float: left;
-    font-weight: 400;
+    font-weight: 500;
+    padding-left: 8px;
 }
 .cart-tag img {
-    height: 26px;
+    height: 34px;
     position: absolute;
-    right: 10px;
+    right: 18px;
 }
 .hit-tag {
     position: absolute;
-    bottom: 300px;
+    top: -300px;
     left: 96px;
     font-size: 24px;
 }
 .new-tag {
     position: absolute;
-    bottom: 300px;
+    top: -300px;
     left: -16px;
     font-size: 24px;
 }
