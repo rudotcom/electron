@@ -54,7 +54,7 @@
   <form action="{% url 'make_order' %}" method="POST">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" class="btn btn-success btn-block" value="Оформить заказ">
+    <input type="submit" class="btn btn-generic btn-block" value="Оформить заказ">
   </form>
 </div>
 {% else %}

@@ -29,7 +29,7 @@
         {% for order in orders %}
             <tr>
                 <td scope="row">
-                    <button class="btn btn-info" data-toggle="modal" data-target="#Modal-{{ order.id }}">{{ order.id }}</button>
+                    <button class="btn btn-generic" data-toggle="modal" data-target="#Modal-{{ order.id }}">{{ order.id }}</button>
                 </td>
                 <td scope="row">{{ order.created_at }}</td>
                 <td scope="row">{{ order.get_delivery_type_display }}</td>
@@ -40,7 +40,7 @@
                               <form action="{% url 'bank_payment' %}" method="POST">
                                 <input type="hidden" name="order" value="{{ order.id }}">
                                 {% csrf_token %}
-                                <input type="submit" class="btn btn-success btn-block" value="Перейти к оплате">
+                                <input type="submit" class="btn btn-generic btn-block" value="Перейти к оплате">
                               </form>
                 {% elif order.is_paid %}
                         <div class="order-data">Оплачен</div>
@@ -119,7 +119,7 @@
                               <form action="{% url 'bank_payment' %}" method="POST">
                                 <input type="hidden" name="order" value="{{ order.id }}">
                                 {% csrf_token %}
-                                <input type="submit" class="btn btn-success btn-block" value="Перейти к оплате">
+                                <input type="submit" class="btn btn-generic btn-block" value="Перейти к оплате">
                               </form>
                 {% elif order.is_paid %}
                         <div class="order-data">Оплачен</div>

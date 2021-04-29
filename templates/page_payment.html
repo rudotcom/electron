@@ -74,7 +74,7 @@
               <form action="{% url 'bank_payment' %}" method="POST">
                 <input type="hidden" name="order" value="{{ order_to_pay.id }}">
                 {% csrf_token %}
-                <input type="submit" class="btn btn-success btn-block" value="Перейти к оплате">
+                <input type="submit" class="btn btn-generic btn-block" value="Перейти к оплате">
               </form>
 {% elif order_to_pay.is_paid %}
         <div class="order-data">Оплачен</div>
