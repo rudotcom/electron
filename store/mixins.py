@@ -8,8 +8,10 @@ class CartMixin(View):
 
     def __init__(self):
         super().__init__()
-        self.articles = cache.get_or_set('article_menu', Article.objects.all(), timeout=600)
-        self.categories = cache.get_or_set('categories', Category.objects.all(), timeout=600)
+        self.articles = cache.get_or_set('article_menu',
+                                         Article.objects.all(), timeout=600)
+        self.categories = cache.get_or_set('categories',
+                                           Category.objects.all(), timeout=600)
 
     def dispatch(self, request, *args, **kwargs):
 

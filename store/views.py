@@ -14,10 +14,11 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
 from Introvert import settings
-from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, CDEKOrderForm, \
-    PostRuOrderForm, PostWorldOrderForm, SelfOrderForm
+from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, \
+    CDEKOrderForm, PostRuOrderForm, PostWorldOrderForm, SelfOrderForm
 from .mixins import CartMixin
-from .models import Category, SubCategory, Customer, OrderProduct, Product, Order, Article, parameter
+from .models import Category, SubCategory, Customer, OrderProduct, \
+    Product, Order, Article, parameter
 from .utils import reconcile_verb_gender, get_random_session
 
 from yookassa import Configuration, Payment
@@ -35,7 +36,6 @@ class MyQ(Q):
 class WelcomeView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-
         context = {
             'order': self.order,
             'articles': self.articles,
@@ -49,7 +49,8 @@ class BaseView(CartMixin, View):
     def get(self, request, *args, **kwargs):
         # random_products = Product.randoms.all()
         popular_products = Product.objects.all().order_by('-visits')
-        # recently_viewed_products = Product.objects.all().order_by('-last_visit')[0:4]
+        # recently_viewed_products =
+        # Product.objects.all().order_by('-last_visit')[0:4]
 
         context = {
             'categories': self.categories,
@@ -66,8 +67,12 @@ class GiftListView(CartMixin, View):
     def get(self, request, *args, **kwargs):
         gift_products = Product.objects.filter(gift=True)
         if self.order and self.order.gift:
-            messages.add_message(request, messages.INFO,
-                                 f'К Вашему заказу уже был добавлен подарок: {self.order.gift.title}')
+            messages.add_message(
+                request,
+                messages.INFO,
+                f'К Вашему заказу уже был добавлен подарок: '
+                f'{self.order.gift.title}'
+            )
 
         context = {
             'bonus_sum': parameter['FREE_GIFT'],
@@ -93,7 +98,8 @@ class ProductDetailView(CartMixin, DetailView):
         product.save()
 
         product_visits = f'{product.id}_visits'
-        product_visits_value = cache.get_or_set(product_visits, product.visits, timeout=60)
+        product_visits_value = cache.get_or_set(product_visits,
+                                                product.visits, timeout=60)
 
         context = super().get_context_data(**kwargs)
         context['categories'] = self.categories
@@ -119,7 +125,9 @@ class SubCategoryDetailView(CartMixin, DetailView):
         context['category'] = category
         context['categories'] = self.categories
         context['category_name'] = category.name
-        context['subcategories'] = self.model.objects.filter(category=category)
+        context['subcategories'] = self.model.objects.filter(
+            category=category
+        )
         context['subcategory_name'] = subcategory.name
         context['subcategory_products'] = subcategory.product_set.all()
         context['articles'] = self.articles
@@ -139,7 +147,9 @@ class CategoryDetailView(CartMixin, DetailView):
         context['order'] = self.order
         context['categories'] = self.categories
         context['category_name'] = category.name
-        context['subcategories'] = SubCategory.objects.filter(category=category)
+        context['subcategories'] = SubCategory.objects.filter(
+            category=category
+        )
         context['category_products'] = category.product_set.all()
         context['articles'] = self.articles
         return context
@@ -166,7 +176,8 @@ class ProductSearchView(CartMixin, ListView):
 class AddToCartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        session = request.COOKIES.get('customersession') or get_random_session()
+        session = request.COOKIES.get('customersession') \
+                  or get_random_session()
 
         customer, created = Customer.objects.get_or_create(session=session)
         if request.user.is_authenticated:
@@ -177,16 +188,23 @@ class AddToCartView(CartMixin, View):
         self.order, created = Order.carts.get_or_create(owner=customer)
         if created:
             # Это создание новой корзины. Удалить корзины старше 2 дней
-            old_carts = Order.carts.filter(created_at__lte=datetime.now() - timedelta(days=2))
+            old_carts = Order.carts.filter(
+                created_at__lte=datetime.now() - timedelta(days=2)
+            )
             old_carts.delete()
 
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
-        if product.gift and not self.order.gift and self.order.total_price_net >= parameter['FREE_GIFT']:
+        if product.gift \
+                and not self.order.gift \
+                and self.order.total_price_net >= parameter['FREE_GIFT']:
             self.order.gift = product
             self.order.save()
-            messages.add_message(request, messages.INFO,
-                                 f'{product.image_thumb()} К Вашему заказу добавлен подарок: {product}')
+            messages.add_message(
+                request,
+                messages.INFO,
+                f'{product.image_thumb()} К Вашему заказу добавлен подарок: '
+                f'{product}')
         else:
             order_product, created = OrderProduct.objects.get_or_create(
                 order=self.order, product=product
@@ -194,17 +212,25 @@ class AddToCartView(CartMixin, View):
 
             if created:
                 self.order.products.add(order_product)
-                added_verb = reconcile_verb_gender('добавлен', order_product.product.title)
-                messages.add_message(request, messages.INFO, f'{order_product.product.image_thumb()} '
-                                                             f'<b>{order_product.product}</b> {added_verb} в корзину')
+                added_verb = reconcile_verb_gender('добавлен',
+                                                   order_product.product.title)
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    f'{order_product.product.image_thumb()}<b>'
+                    f'{order_product.product}</b> {added_verb} в корзину'
+                )
             else:
                 if order_product.product.quantity <= order_product.qty:
-                    message = f'{order_product.product.image_thumb()} Количество товара <b>{order_product}</b> ' \
-                              f'в корзине {order_product.qty} шт.<br> На складе больше нет, извините!'
+                    message = f'{order_product.product.image_thumb()}' \
+                              f' Количество товара <b>{order_product}</b> ' \
+                              f'в корзине {order_product.qty} шт.<br> ' \
+                              f'На складе больше нет, извините!'
                     order_product.qty = order_product.product.quantity
                 else:
                     order_product.qty += 1
-                    message = f'{order_product.product.image_thumb()} Количество товара <b>{order_product}</b> ' \
+                    message = f'{order_product.product.image_thumb()} ' \
+                              f'Количество товара <b>{order_product}</b> ' \
                               f'изменено на {order_product.qty} шт.'
 
                 order_product.save()
@@ -232,9 +258,11 @@ class DeleteFromCartView(CartMixin, View):
         self.order.products.remove(order_product)
         order_product.delete()
         self.order.save()
-        removed_verb = reconcile_verb_gender('удален', order_product.product.title)
+        removed_verb = reconcile_verb_gender('удален',
+                                             order_product.product.title)
         messages.add_message(request, messages.INFO,
-                             f'{order_product.product.image_thumb()} <b>{order_product}</b> {removed_verb} из корзины')
+                             f'{order_product.product.image_thumb()} <b>'
+                             f'{order_product}</b> {removed_verb} из корзины')
         return HttpResponseRedirect('/cart/')
 
 
@@ -254,7 +282,9 @@ class ChangeQTYView(CartMixin, View):
 
         if qty:
             order_product.qty = qty
-            message = f'{order_product.product.image_thumb()} Количество товара <b>{order_product}</b> изменено на {qty} шт.'
+            message = f'{order_product.product.image_thumb()} ' \
+                      f'Количество товара <b>{order_product}</b> ' \
+                      f'изменено на {qty} шт.'
             if over:
                 message += '<br>На складе больше нет, извините!'
             messages.add_message(
@@ -266,10 +296,14 @@ class ChangeQTYView(CartMixin, View):
         else:
             self.order.products.remove(order_product)
             order_product.delete()
-            removed_verb = reconcile_verb_gender('удален', order_product.product.title)
-            messages.add_message(request, messages.INFO,
-                                 f'{order_product.product.image_thumb()} '
-                                 f'Из корзины {removed_verb} <b>{order_product}</b>')
+            removed_verb = reconcile_verb_gender('удален',
+                                                 order_product.product.title)
+            messages.add_message(
+                request,
+                messages.INFO,
+                f'{order_product.product.image_thumb()} '
+                f'Из корзины {removed_verb} <b>{order_product}</b>'
+            )
         self.order.save()
         return HttpResponseRedirect('/cart/')
 
@@ -280,14 +314,23 @@ class CartView(CartMixin, View):
         form = CartForm(request.POST or None)
         if self.order:
             self.order.save()
-            if self.order.total_price_net >= parameter['FREE_GIFT'] and not self.order.gift:
-                messages.add_message(request, messages.INFO,
-                                     f'<a href=/gifts/><img src="/static/img/gift70.png"> Скорее выбери подарок!</a>\n '
-                                     f'Сумма товаров в корзине: {self.order.total_price_net}')
+            if self.order.total_price_net >= parameter['FREE_GIFT'] and not \
+                    self.order.gift:
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    f'<a href=/gifts/><img src="/static/img/gift70.png"> '
+                    f'Скорее выбери подарок!</a>\nСумма товаров в корзине: '
+                    f'{self.order.total_price_net}'
+                )
 
         if not self.order or not self.order.products.count():
-            messages.add_message(request, messages.INFO,
-                                 'Ваша корзина пуста!<br><a href=/store/>Посмотрите наши товары</a>')
+            messages.add_message(
+                request,
+                messages.INFO,
+                'Ваша корзина пуста!<br><a href=/store/>'
+                'Посмотрите наши товары</a>'
+            )
 
         context = {
             'bonus_sum': parameter['FREE_GIFT'],
@@ -379,12 +422,20 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
             if order.delivery_type == 'self':
                 order.send_telegram()  # Отправить заказ в телегу
 
-            messages.add_message(request, messages.INFO,
-                                 'Ваш заказ оформлен! \nСпасибо, что выбрали нас. Не забудьте оплатить заказ.')
-            html = render_to_string('email_order_placed.html', {'user': user, 'order': order, 'site_url': settings.SITE_URL})
+            messages.add_message(
+                request,
+                messages.INFO,
+                'Ваш заказ оформлен! \nСпасибо, что выбрали нас. '
+                'Не забудьте оплатить заказ.'
+            )
+            html = render_to_string('email_order_placed.html',
+                                    {'user': user, 'order': order,
+                                     'site_url': settings.SITE_URL})
 
-            send_mail('Заказ в магазине Интроверт', 'Спасибо за Ваш заказ в магазине Интроверт!',
-                      'Интроверт<noreply@introvert.com.ru>', [user.email], fail_silently=False, html_message=html)
+            send_mail('Заказ в магазине Интроверт',
+                      'Спасибо за Ваш заказ в магазине Интроверт!',
+                      'Интроверт<noreply@introvert.com.ru>', [user.email],
+                      fail_silently=False, html_message=html)
 
             response = HttpResponseRedirect(f'/order_pay/{order.id}/')
             new_session = get_random_session()
@@ -404,9 +455,13 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
         order_id = kwargs.get('order')
 
         try:
-            # Отображать заказ только если он принадлежит клиенту - текущему пользователю
+            # Отображать заказ только если он принадлежит клиенту -
+            # текущему пользователю
             order_to_pay = Order.orders.get(id=order_id, owner__user=user)
-            show_pay_button = False if order_to_pay.payment_status in ['succeeded', 'waiting_for_capture'] else True
+            show_pay_button = False \
+                if order_to_pay.payment_status \
+                in ['succeeded', 'waiting_for_capture'] \
+                else True
 
             return render(
                 request,
@@ -419,9 +474,12 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
                     'articles': self.articles,
                 }
             )
-        except:
-            messages.add_message(request, messages.INFO,
-                                 f'Заказа № {order_id} у вас нет! \nВыберите свой заказ из списка.')
+        except Exception:
+            messages.add_message(
+                request, messages.INFO,
+                f'Заказа № {order_id} у вас нет! \n'
+                f'Выберите свой заказ из списка.'
+            )
             return HttpResponseRedirect('/profile/')
 
 
@@ -433,6 +491,7 @@ class YooStatusView(View):
     Если статус "succeeded", отправляем телегу со статусом заказа и
     уменьшаем остатки товаров на количество в заказе
     """
+
     def post(self, request):
 
         event_json = json.loads(request.body)
@@ -442,7 +501,8 @@ class YooStatusView(View):
             # Получите объекта платежа
             payment = notification_object.object
             order = Order.orders.get(payment_id=payment.id)
-            # Установить статусы платежа и, если оплачен, изменить остатки и отправить состав заказа в телегу
+            # Установить статусы платежа и, если оплачен, изменить остатки и
+            # отправить состав заказа в телегу
             order.register_payment(payment)
 
             return HttpResponse(status=200)
@@ -463,11 +523,13 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             if item.qty > item.product.quantity:
                 """
                 Проверить наличие товара из корзины на складе перед оплатой.
-                Создать сообщение, что товара уже недостаточно и вернуть на страницу товара
+                Создать сообщение, что товара уже недостаточно и вернуть
+                на страницу товара
                 """
                 ready_to_pay = False
                 item.qty = item.product.quantity
-                message = f'{item.product.image_thumb()} Количество товара <b>{item}</b> изменено на {item.qty} шт.' \
+                message = f'{item.product.image_thumb()} Количество товара ' \
+                          f'<b>{item}</b> изменено на {item.qty} шт.' \
                           f'<br>На складе больше нет, извините!'
                 messages.add_message(request, messages.INFO, message)
                 item.save()
@@ -475,14 +537,16 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
 
         if order_to_pay.gift and order_to_pay.gift.quantity == 0:
             ready_to_pay = False
-            message = f'{order_to_pay.gift.image_thumb()} Подарок <b>{order_to_pay.gift}</b> удален из корзины' \
+            message = f'{order_to_pay.gift.image_thumb()} ' \
+                      f'Подарок <b>{order_to_pay.gift}</b> удален из корзины' \
                       f'<br>Этот товар уже раскупили, извините!'
             messages.add_message(request, messages.INFO, message)
             order_to_pay.gift = None
 
         order_to_pay.save()
         if not ready_to_pay:
-            return HttpResponseRedirect('/order_pay/' + str(order_to_pay.id) + '/')
+            return HttpResponseRedirect('/order_pay/'
+                                        + str(order_to_pay.id) + '/')
 
         # Configuration.account_id = os.getenv('yoo_shop_id')
         # Configuration.secret_key = os.getenv('yoo_key')
@@ -496,7 +560,8 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": f"https://{settings.SITE_URL}/order_pay/{order_to_pay.id}/"
+                "return_url":
+                    f"https://{settings.SITE_URL}/order_pay/{order_to_pay.id}/"
             },
             "capture": True,
             "description": f"Заказ №{order_to_pay.id}"
@@ -507,8 +572,9 @@ class BankPaymentView(LoginRequiredMixin, CartMixin, View):
             return HttpResponseRedirect(payment.confirmation.confirmation_url)
         else:
             # если заказ уже оплачен (False)
-            messages.add_message(request, messages.ERROR,
-                                 'Произошла странная ошибка! \nЭтот заказ уже оплачен!')
+            messages.add_message(
+                request, messages.ERROR,
+                'Произошла странная ошибка! \nЭтот заказ уже оплачен!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
@@ -538,8 +604,11 @@ class LoginView(CartMixin, View):
                 username=username, password=password
             )
             if user:
-                session = request.COOKIES.get('customersession') or get_random_session()
-                customer, created = Customer.objects.get_or_create(session=session)
+                session = request.COOKIES.get('customersession') \
+                          or get_random_session()
+                customer, created = Customer.objects.get_or_create(
+                    session=session
+                )
 
                 customer.user = user
                 customer.save()
@@ -580,10 +649,12 @@ class RegistrationView(CartMixin, View):
             new_user.set_password(form.cleaned_data['password'])
             new_user.save()
             user = authenticate(
-                username=new_user.username, password=form.cleaned_data['password']
+                username=new_user.username,
+                password=form.cleaned_data['password']
             )
             login(request, user)
-            session = request.COOKIES.get('customersession') or get_random_session()
+            session = request.COOKIES.get('customersession') \
+                or get_random_session()
             customer, created = Customer.objects.get_or_create(session=session)
             if user:
                 customer.user = user
@@ -604,7 +675,6 @@ class ProfileView(LoginRequiredMixin, CartMixin, View):
     login_url = '/login/'
 
     def get(self, request, *args, **kwargs):
-
         owners = Customer.objects.filter(user=request.user)
         orders = Order.orders.filter(owner__in=owners).order_by('-created_at')
 

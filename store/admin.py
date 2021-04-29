@@ -9,8 +9,8 @@ from django.template.loader import render_to_string
 from django.utils.html import mark_safe
 from ckeditor.widgets import CKEditorWidget
 
-from store.models import Category, SubCategory, Product, ProductImage, Order, OrderProduct, User, Customer, Article, \
-    Parameter
+from store.models import Category, SubCategory, Product, ProductImage, Order, \
+    OrderProduct, User, Article, Parameter
 
 
 class ProductAdminForm(ModelForm):
@@ -24,13 +24,6 @@ class ProductAdminForm(ModelForm):
                 *Product.PRODUCT_CARD
             )
         )
-        # instance = kwargs.get('instance')
-        #
-        # if not instance.quantity:
-        #     self.fields['display'].help_text = 'Изменять при количестве больше 0'
-        #     self.fields['display'].widget.attrs.update({
-        #         'style': 'background: #eee; color: #aaa', 'readonly': True,
-        #     })
 
     # def clean(self):  # Обращение ко всем полям
     # if self.cleaned_data['quantity'] == 0:
@@ -43,10 +36,14 @@ class ProductAdminForm(ModelForm):
         img = Image.open(image)
 
         if image.size > Product.MAX_IMAGE_SIZE:
-            raise ValidationError('Размер файла изображения превышает допустимые 4 Мб')
+            raise ValidationError(
+                'Размер файла изображения превышает допустимые 4 Мб'
+            )
         if img.height < min_height or img.width < min_width:
-            raise ValidationError('Размер загруженного изображения меньше допустимого {}x{}'.format(
-                *Product.PRODUCT_CARD))
+            raise ValidationError(
+                'Размер загруженного изображения меньше допустимого {}x{}'
+                .format(*Product.PRODUCT_CARD)
+            )
         return image
 
 
@@ -67,7 +64,8 @@ class ProductAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Товар',
-         {'fields': ['title', 'category', 'subcategory', 'price', 'price_discount', 'quantity',
+         {'fields': ['title', 'category', 'subcategory', 'price',
+                     'price_discount', 'quantity',
                      ('image', 'image_thumb',), 'description', 'display', ]}
          ),
         ('Параметры',
@@ -88,7 +86,8 @@ class ProductAdmin(admin.ModelAdmin):
          ),
     ]
     readonly_fields = ['image_thumb', 'visits', 'last_visit', 'date_added', ]
-    list_display = ('title', 'image_thumb', 'visits', 'category', 'price', 'price_discount', 'quantity',
+    list_display = ('title', 'image_thumb', 'visits', 'category', 'price',
+                    'price_discount', 'quantity',
                     'bestseller', 'new', 'display')
     list_filter = ['bestseller', 'new', 'display', ]
     search_fields = ['title', 'description']
@@ -119,7 +118,8 @@ def admin_order_shipped(modeladmin, request, queryset):
         order.save()
 
         html = render_to_string('order_sent.html', {'order': order})
-        send_mail('Order sent', 'Ваш заказ отправлен!', 'noreply@introvert.com.ru', [user.email],
+        send_mail('Order sent', 'Ваш заказ отправлен!',
+                  'noreply@introvert.com.ru', [user.email],
                   fail_silently=False, html_message=html)
     return
 
@@ -138,13 +138,19 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    fields = ('last_name', ('first_name', 'patronymic'), 'owner', 'created_at', 'phone', 'delivery_type', 'postal_code',
-              'settlement', 'address', 'comment', 'total_price_net', 'delivery_cost',
-              'total_price_gross', ('payment_id', 'payment_status', 'payment_time'), ('status', 'is_paid'),
+    fields = ('last_name', ('first_name', 'patronymic'), 'owner',
+              'created_at', 'phone', 'delivery_type', 'postal_code',
+              'settlement', 'address', 'comment', 'total_price_net',
+              'delivery_cost', 'total_price_gross',
+              ('payment_id', 'payment_status', 'payment_time'),
+              ('status', 'is_paid'),
               'tracking', 'remark', 'gift',)
-    readonly_fields = ['created_at', 'delivery_type', 'delivery_cost', 'comment', 'owner', 'gift', 'total_price_net',
-                       'total_price_gross', 'payment_id', 'payment_status', 'payment_time']
-    list_display = ('id', 'delivery_type', 'status', 'payment_status', 'is_paid', 'total_products', 'total_price_gross',
+    readonly_fields = ['created_at', 'delivery_type', 'delivery_cost',
+                       'comment', 'owner', 'gift', 'total_price_net',
+                       'total_price_gross', 'payment_id', 'payment_status',
+                       'payment_time']
+    list_display = ('id', 'delivery_type', 'status', 'payment_status',
+                    'is_paid', 'total_products', 'total_price_gross',
                     'get_fio', 'created_at')
     list_display_links = ('id', 'delivery_type', 'status')
     ordering = ('-created_at', 'owner', 'status', 'delivery_type',)
@@ -165,7 +171,9 @@ class OrderAdmin(admin.ModelAdmin):
     #             ('canceled', 'Отменен'),
     #         )
     #
-    #     return super().formfield_for_choice_field(db_field, request, **kwargs)
+    #     return super().formfield_for_choice_field(
+    #         db_field, request, **kwargs
+    #     )
 
 
 class ProductImageAdmin(admin.ModelAdmin):

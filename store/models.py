@@ -58,7 +58,8 @@ class SubCategoryManager(models.Manager):
         return super().get_queryset()
 
     def get_subcategory_list(self):
-        # models = get_model_counter('shopperbag', 'waistbag', 'backpack', 'accessory')
+        # models = get_model_counter('shopperbag', 'waistbag', 'backpack',
+        # 'accessory')
         # models = get_model_counter(category)
         q = self.get_queryset().annotate()
         data = [
@@ -74,7 +75,8 @@ class SubCategory(models.Model):
         ordering = ('category', 'name')
 
     name = models.CharField(max_length=255, verbose_name='Подгруппа')
-    category = models.ForeignKey(Category, verbose_name='Группа', null=False, blank=False, default=1,
+    category = models.ForeignKey(Category, verbose_name='Группа', null=False,
+                                 blank=False, default=1,
                                  on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     objects = SubCategoryManager()
@@ -109,35 +111,52 @@ class Product(models.Model):
         ('F', 'Для женщин'),
     )
 
-    category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
-    subcategory = models.ForeignKey(SubCategory, verbose_name='Подгруппа', null=False, blank=False, default=1,
+    category = models.ForeignKey(Category, verbose_name='Категория',
+                                 on_delete=models.CASCADE)
+    subcategory = models.ForeignKey(SubCategory, verbose_name='Подгруппа',
+                                    null=False, blank=False, default=1,
                                     on_delete=models.CASCADE)
     title = models.CharField(max_length=255, verbose_name='Наименование')
     slug = models.SlugField(unique=True)
-    image = models.ImageField(verbose_name='Изображение', upload_to=path_and_rename)
+    image = models.ImageField(verbose_name='Изображение',
+                              upload_to=path_and_rename)
     description = models.TextField(verbose_name='Описание', null=True)
-    care = models.TextField(verbose_name='Инструкция по уходу', null=True, blank=True)
-    price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Цена')
-    price_discount = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Цена со скидкой',
+    care = models.TextField(verbose_name='Инструкция по уходу', null=True,
+                            blank=True)
+    price = models.DecimalField(max_digits=9, decimal_places=2,
+                                verbose_name='Цена')
+    price_discount = models.DecimalField(max_digits=9, decimal_places=2,
+                                         verbose_name='Цена со скидкой',
                                          null=True, blank=True)
-    length = models.IntegerField(verbose_name='Длина, см', null=True, blank=True)
-    width = models.IntegerField(verbose_name='Ширина, см', null=True, blank=True)
-    height = models.IntegerField(verbose_name='Высота, см', null=True, blank=True)
+    length = models.IntegerField(verbose_name='Длина, см', null=True,
+                                 blank=True)
+    width = models.IntegerField(verbose_name='Ширина, см', null=True,
+                                blank=True)
+    height = models.IntegerField(verbose_name='Высота, см', null=True,
+                                 blank=True)
     weight = models.IntegerField(verbose_name='Вес, гр', null=True, blank=True)
-    material = models.CharField(verbose_name='Материал', max_length=20, null=True, blank=True)
-    color = models.CharField(verbose_name='Цвет', max_length=20, null=True, blank=True)
+    material = models.CharField(verbose_name='Материал', max_length=20,
+                                null=True, blank=True)
+    color = models.CharField(verbose_name='Цвет', max_length=20,
+                             null=True, blank=True)
     bestseller = models.BooleanField(verbose_name='Хит', default=False)
     new = models.BooleanField(verbose_name='Новинка', default=False)
-    gift = models.BooleanField(verbose_name='Подарок', blank=False, null=False, default=False)
-    gender = models.CharField(verbose_name='Пол', max_length=1, blank=False, null=False, default='G',
+    gift = models.BooleanField(verbose_name='Подарок', blank=False,
+                               null=False, default=False)
+    gender = models.CharField(verbose_name='Пол', max_length=1,
+                              blank=False, null=False, default='G',
                               choices=GENDER_CHOICES)
     quantity = models.PositiveIntegerField(verbose_name='Наличие', default=0)
     display = models.BooleanField(verbose_name='Выставлять', default=True,
                                   blank=False, null=False)
-    limited = models.BooleanField(verbose_name='Лимитированный выпуск', default=False, blank=False, null=False)
-    date_added = models.DateTimeField(auto_now_add=True, verbose_name='Добавлен')
-    visits = models.IntegerField(default=0, verbose_name='👁', help_text='Количество просмотров')
-    last_visit = models.DateTimeField(blank=True, null=True, verbose_name='Просмотрен')
+    limited = models.BooleanField(verbose_name='Лимитированный выпуск',
+                                  default=False, blank=False, null=False)
+    date_added = models.DateTimeField(auto_now_add=True,
+                                      verbose_name='Добавлен')
+    visits = models.IntegerField(default=0, verbose_name='👁',
+                                 help_text='Количество просмотров')
+    last_visit = models.DateTimeField(blank=True, null=True,
+                                      verbose_name='Просмотрен')
     objects = models.Manager()  # The default manager.
     randoms = RandomManager()  # The random-specific manager.
 
@@ -159,17 +178,21 @@ class Product(models.Model):
         min_width, min_height = self.PRODUCT_CARD
 
         if img.height < min_height or img.width < min_width:
-            raise MinDimentionErrorException('Загруженное изображение меньше допустимого {}x{}'.format(
-                *self.PRODUCT_CARD))
+            raise MinDimentionErrorException(
+                'Загруженное изображение меньше допустимого {}x{}'.format(
+                    *self.PRODUCT_CARD)
+            )
         else:
             ext = image.name.split('.')[-1]
             filename = f'{self.category.slug}_{self.slug}.{ext}'
 
             img.thumbnail(self.PRODUCT_BIG, Image.ANTIALIAS)
-            img.save(os.path.join(settings.MEDIA_ROOT, filename), 'JPEG', quality=95)
+            img.save(os.path.join(settings.MEDIA_ROOT, filename),
+                     'JPEG', quality=95)
 
             img.thumbnail(self.PRODUCT_CARD, Image.ANTIALIAS)
-            img.save(os.path.join(settings.MEDIA_ROOT, 'card', filename), 'JPEG', quality=85)
+            img.save(os.path.join(settings.MEDIA_ROOT, 'card', filename),
+                     'JPEG', quality=85)
 
             img.thumbnail(self.PRODUCT_THUMB)
             img.save(os.path.join(settings.MEDIA_ROOT, 'thumb', filename))
@@ -213,16 +236,21 @@ class ProductImage(models.Model):
         os.remove(os.path.join(settings.MEDIA_ROOT, filename))
 
         img.thumbnail(Product.PRODUCT_BIG, Image.ANTIALIAS)
-        img.save(os.path.join(settings.MEDIA_ROOT, filename), 'JPEG', quality=85)
+        img.save(os.path.join(settings.MEDIA_ROOT,
+                              filename), 'JPEG', quality=85)
 
         img.thumbnail(Product.PRODUCT_CARD, Image.ANTIALIAS)
-        img.save(os.path.join(settings.MEDIA_ROOT, 'card', filename), 'JPEG', quality=85)
+        img.save(os.path.join(settings.MEDIA_ROOT, 'card',
+                              filename), 'JPEG', quality=85)
 
         img.thumbnail(Product.PRODUCT_THUMB)
         img.save(os.path.join(settings.MEDIA_ROOT, 'thumb', filename))
 
     def image_thumb(self):
-        return mark_safe('<img src="/media/thumb/%s" height="50" />' % self.image)
+        return mark_safe(
+            '<img src="/media/thumb/%s" height="50" />'
+            % self.image
+        )
 
     image_thumb.short_description = 'Изображение'
 
@@ -232,10 +260,14 @@ class Customer(models.Model):
         verbose_name = 'Сессия'
         verbose_name_plural = '[ Сессии ]'
 
-    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
-    orders = models.ManyToManyField('Order', verbose_name='Заказы клиента', related_name='related_order')
-    session = models.CharField(max_length=200, null=True, blank=True, verbose_name='Сессия клиента')
-    created = models.DateTimeField(auto_now=True, verbose_name='Дата подключения клиента')
+    user = models.ForeignKey(User, null=True, blank=True,
+                             on_delete=models.CASCADE)
+    orders = models.ManyToManyField('Order', verbose_name='Заказы клиента',
+                                    related_name='related_order')
+    session = models.CharField(max_length=200, null=True,
+                               blank=True, verbose_name='Сессия клиента')
+    created = models.DateTimeField(auto_now=True,
+                                   verbose_name='Дата подключения клиента')
 
     def __str__(self):
         if self.user:
@@ -250,29 +282,38 @@ class OrderProduct(models.Model):
         verbose_name = 'Товар заказа'
         verbose_name_plural = 'Товары заказа'
 
-    order = models.ForeignKey('Order', verbose_name='Корзина', on_delete=models.CASCADE,
+    order = models.ForeignKey('Order', verbose_name='Корзина',
+                              on_delete=models.CASCADE,
                               related_name='related_products')
-    product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, verbose_name='Товар',
+                                on_delete=models.CASCADE)
     qty = models.PositiveIntegerField(default=1, verbose_name='шт')
-    final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Общая цена')
+    final_price = models.DecimalField(max_digits=9, decimal_places=2,
+                                      verbose_name='Общая цена')
 
     def __str__(self):
         return self.product.title
 
     def save(self, *args, **kwargs):
-        price = self.product.price_discount if self.product.price_discount else self.product.price
+        price = self.product.price_discount \
+            if self.product.price_discount \
+            else self.product.price
         self.final_price = self.qty * price
         super().save(*args, **kwargs)
 
     def image_thumb(self):
-        return mark_safe('<img src="/media/thumb/%s" width="50" height="50" />' % self.product.image)
+        return mark_safe(
+            '<img src="/media/thumb/%s" width="50" height="50" />'
+            % self.product.image
+        )
 
     image_thumb.short_description = 'Изображение'
 
 
 class ActiveOrderManager(models.Manager):
     def get_queryset(self):
-        return super(ActiveOrderManager, self).get_queryset().exclude(status='cart')
+        return super(ActiveOrderManager, self).get_queryset(). \
+            exclude(status='cart')
 
 
 class CartManager(models.Manager):
@@ -338,13 +379,28 @@ class Order(models.Model):
         ('canceled', 'Отменен'),
     )
 
-    owner = models.ForeignKey(Customer, null=True, verbose_name='Покупатель', on_delete=models.CASCADE)
-    products = models.ManyToManyField(OrderProduct, blank=True, related_name='related_cart')
-    total_products = models.PositiveIntegerField(verbose_name='Товары', default=0)
-    total_price_net = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Сумма товаров')
-    total_price_gross = models.DecimalField(max_digits=9, default=0, decimal_places=2, verbose_name='Общая сумма')
-    gift = models.ForeignKey(Product, null=True, verbose_name='Подарок', on_delete=models.DO_NOTHING,
-                             related_name='related_gift')
+    owner = models.ForeignKey(
+        Customer, null=True, verbose_name='Покупатель',
+        on_delete=models.CASCADE
+    )
+    products = models.ManyToManyField(OrderProduct, blank=True,
+                                      related_name='related_cart')
+    total_products = models.PositiveIntegerField(verbose_name='Товары',
+                                                 default=0)
+    total_price_net = models.DecimalField(
+        max_digits=9, default=0,
+        decimal_places=2, verbose_name='Сумма товаров'
+    )
+    total_price_gross = models.DecimalField(
+        max_digits=9, default=0,
+        decimal_places=2,
+        verbose_name='Общая сумма'
+    )
+    gift = models.ForeignKey(
+        Product, null=True, verbose_name='Подарок',
+        on_delete=models.DO_NOTHING,
+        related_name='related_gift'
+    )
     status = models.CharField(
         max_length=100,
         verbose_name='Статус заказа',
@@ -358,26 +414,47 @@ class Order(models.Model):
         null=True,
         default=None
     )
-    delivery_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Стоимость доставки')
-    payment_id = models.CharField(max_length=50, null=True, default=None, verbose_name='Юkassa: ID платежа')
-    payment_status = models.CharField(max_length=25, null=False, default='none', verbose_name='Статус платежа',
+    delivery_cost = models.DecimalField(max_digits=9, decimal_places=2,
+                                        default=0,
+                                        verbose_name='Стоимость доставки')
+    payment_id = models.CharField(max_length=50, null=True, default=None,
+                                  verbose_name='Юkassa: ID платежа')
+    payment_status = models.CharField(max_length=25, null=False,
+                                      default='none',
+                                      verbose_name='Статус платежа',
                                       choices=YOO_STATUS_CHOICES)
-    payment_time = models.DateTimeField(verbose_name='Дата платежа', null=True, default=None)
-    comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)
-    remark = models.CharField(max_length=255, verbose_name='Примечания от магазина',
-                              null=True, blank=True, help_text='Служебные примечания, клиенту недоступны')
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='Дата заказа')
-    is_paid = models.BooleanField(default=False, verbose_name='Оплачен')  # оплачен ли заказ
+    payment_time = models.DateTimeField(verbose_name='Дата платежа',
+                                        null=True, default=None)
+    comment = models.TextField(verbose_name='Комментарий к заказу',
+                               null=True, blank=True)
+    remark = models.CharField(
+        max_length=255, verbose_name='Примечания от магазина',
+        null=True, blank=True,
+        help_text='Служебные примечания, клиенту недоступны'
+    )
+    created_at = models.DateTimeField(default=timezone.now,
+                                      verbose_name='Дата заказа')
+    # оплачен ли заказ
+    is_paid = models.BooleanField(default=False, verbose_name='Оплачен')
     shipped_date = models.DateTimeField(blank=True, null=True)
-    tracking = models.CharField(max_length=50, verbose_name='Трекинг номер', null=True, blank=True)
+    tracking = models.CharField(max_length=50, verbose_name='Трекинг номер',
+                                null=True, blank=True)
 
-    first_name = models.CharField(max_length=50, verbose_name='Имя', blank=True)
-    last_name = models.CharField(max_length=50, verbose_name='Фамилия', blank=True)
-    patronymic = models.CharField(max_length=50, verbose_name='Отчество', blank=True)
-    phone = models.CharField(max_length=20, verbose_name='Телефон', blank=True)
-    settlement = models.CharField(max_length=100, verbose_name='Населенный пункт', blank=True)
-    address = models.CharField(max_length=1024, verbose_name='Адрес', blank=True)
-    postal_code = models.CharField(max_length=30, verbose_name='Индекс', blank=True)
+    first_name = models.CharField(max_length=50, verbose_name='Имя',
+                                  blank=True)
+    last_name = models.CharField(max_length=50, verbose_name='Фамилия',
+                                 blank=True)
+    patronymic = models.CharField(max_length=50, verbose_name='Отчество',
+                                  blank=True)
+    phone = models.CharField(max_length=20, verbose_name='Телефон',
+                             blank=True)
+    settlement = models.CharField(max_length=100,
+                                  verbose_name='Населенный пункт',
+                                  blank=True)
+    address = models.CharField(max_length=1024, verbose_name='Адрес',
+                               blank=True)
+    postal_code = models.CharField(max_length=30, verbose_name='Индекс',
+                                   blank=True)
     orders = ActiveOrderManager()
     carts = CartManager()
 
@@ -388,7 +465,8 @@ class Order(models.Model):
             )
 
     def get_fio(self):
-        return f'{self.last_name} {self.first_name[0:1]}.{self.patronymic[0:1]}'
+        return f'{self.last_name} {self.first_name[0:1]}.' \
+               f'{self.patronymic[0:1]}'
 
     get_fio.short_description = 'Ф.И.О.'
 
@@ -405,29 +483,39 @@ class Order(models.Model):
             self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_SPB:  # spb
             if self.total_price_net < free_delivery:
-                delivery_courier_cost = int(Parameter.objects.get(name='DELIVERY_COURIER_COST').value)
+                delivery_courier_cost = int(
+                    Parameter.objects.get(name='DELIVERY_COURIER_COST').value
+                )
                 self.delivery_cost = delivery_courier_cost
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_CDEKSPB:  # CDEK spb
             if self.total_price_net < free_delivery:
-                delivery_cdek_cost = int(Parameter.objects.get(name='DELIVERY_CDEK_COST').value)
+                delivery_cdek_cost = int(
+                    Parameter.objects.get(name='DELIVERY_CDEK_COST').value
+                )
                 self.delivery_cost = delivery_cdek_cost
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_RU:  # RU
             if self.total_price_net < free_delivery:
-                delivery_ru_cost = int(Parameter.objects.get(name='DELIVERY_RU_COST').value)
+                delivery_ru_cost = int(
+                    Parameter.objects.get(name='DELIVERY_RU_COST').value
+                )
                 self.delivery_cost = delivery_ru_cost
             else:
                 self.delivery_cost = 0
         elif self.delivery_type == self.DELIVERY_TYPE_WORLD:  # World
-            delivery_world_cost = int(Parameter.objects.get(name='DELIVERY_WORLD_COST').value)
+            delivery_world_cost = int(
+                Parameter.objects.get(name='DELIVERY_WORLD_COST'
+                                      ).value)
             self.delivery_cost = delivery_world_cost
 
         # Пересчитать сумму в корзине
         if self.id and self.products.count():
-            cart_data = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
+            cart_data = self.products.aggregate(
+                models.Sum('final_price'), models.Count('id')
+            )
             self.total_price_net = cart_data.get('final_price__sum')
             self.total_products = cart_data['id__count']
             self.total_price_gross = self.total_price_net + self.delivery_cost
@@ -461,18 +549,22 @@ class Order(models.Model):
             if self.gift:
                 Product.objects.get(id=self.gift_id).save_stock(1)
             for product in self.related_products.all():
-                Product.objects.get(id=product.product_id).save_stock(product.qty)
-        elif self.payment_status in ['canceled', 'expired_on_confirmation', 'expired_on_capture', ]:
+                Product.objects.get(id=product.product_id). \
+                    save_stock(product.qty)
+        elif self.payment_status in ['canceled', 'expired_on_confirmation',
+                                     'expired_on_capture', ]:
             self.status = self.STATUS_CANCELED
         self.save()
 
     def send_telegram(self):
         # Отправка сообщения в телеграм канал о составе заказа
         delivery = f"{dict(self.DELIVERY_TYPE_CHOICES)[self.delivery_type]}"
-        payment_status = f"{dict(self.YOO_STATUS_CHOICES)[self.payment_status]}"
+        payment_status = \
+            f"{dict(self.YOO_STATUS_CHOICES)[self.payment_status]}"
 
         if self.delivery_type.startswith('delivery'):
-            address = f"Адрес: {self.address}\n{self.settlement} {self.postal_code}"
+            address = f"Адрес: {self.address}\n" \
+                      f"{self.settlement} {self.postal_code}"
         else:
             address = ""
         html = render_to_string('order_telega.html', {
@@ -495,7 +587,8 @@ class Article(models.Model):
         ordering = ('id',)
 
     title = models.CharField(max_length=255, verbose_name='Заголовок')
-    name = models.CharField(max_length=50, verbose_name='Пункт меню', null=False, blank=False)
+    name = models.CharField(max_length=50, verbose_name='Пункт меню',
+                            null=False, blank=False)
     slug = models.SlugField(unique=True, null=False)
     content = models.TextField(verbose_name='Текст страницы', null=True)
 

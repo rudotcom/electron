@@ -9,3 +9,6 @@ pymorphy2~=0.9.1
 django-allauth~=0.44.0
 yookassa
 python-memcached~=1.59
+
+pytest~=6.2.3
+pytest-django~=4.2.0

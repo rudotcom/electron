@@ -15,4 +15,3 @@ def parameter(name):
     :return: str
     """
     return Parameter.objects.get(name=name).value
-

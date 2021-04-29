@@ -28,12 +28,16 @@ class Payment3RadioSelect(RadioSelect):
 
 
 class PaymentForm(forms.Form):
-    payment_type = forms.ChoiceField(label='Способ оплаты', widget=Payment3RadioSelect(), choices=Order.PAYMENT_CHOICES)
+    payment_type = forms.ChoiceField(label='Способ оплаты',
+                                     widget=Payment3RadioSelect(),
+                                     choices=Order.PAYMENT_CHOICES)
 
 
 class OnlinePaymentForm(forms.Form):
-    payment_type = forms.ChoiceField(label='Способ оплаты', widget=Payment2RadioSelect(),
-                                     choices=Order.PAYMENT_CHOICES[1:])
+    payment_type = forms.ChoiceField(
+        label='Способ оплаты', widget=Payment2RadioSelect(),
+        choices=Order.PAYMENT_CHOICES[1:]
+    )
 
 
 class CDEKOrderForm(RequiredFieldsMixin, forms.ModelForm):
@@ -42,7 +46,8 @@ class CDEKOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = [
-            'address', 'last_name', 'first_name', 'patronymic', 'phone', 'comment',
+            'address', 'last_name', 'first_name', 'patronymic', 'phone',
+            'comment',
         ]
         fields_required = ['address', 'last_name', 'first_name', 'phone']
         labels = {
@@ -55,7 +60,8 @@ class CourierOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = (
-            'address', 'last_name', 'first_name', 'patronymic', 'phone', 'comment',
+            'address', 'last_name', 'first_name', 'patronymic', 'phone',
+            'comment',
         )
         fields_required = ['address', 'last_name', 'first_name', 'phone', ]
         labels = {
@@ -70,9 +76,11 @@ class PostRuOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = (
-            'last_name', 'first_name', 'patronymic', 'phone', 'postal_code', 'settlement', 'address', 'comment',
+            'last_name', 'first_name', 'patronymic', 'phone', 'postal_code',
+            'settlement', 'address', 'comment',
         )
-        fields_required = ['address', 'last_name', 'first_name', 'patronymic', 'phone', 'postal_code',
+        fields_required = ['address', 'last_name', 'first_name', 'patronymic',
+                           'phone', 'postal_code',
                            'settlement', ]
         labels = {
             'address': 'Адрес получателя',
@@ -84,7 +92,8 @@ class PostWorldOrderForm(RequiredFieldsMixin, forms.ModelForm):
         model = Order
 
         fields = (
-            'first_name', 'last_name', 'patronymic', 'settlement', 'address', 'postal_code', 'phone', 'comment',
+            'first_name', 'last_name', 'patronymic', 'settlement', 'address',
+            'postal_code', 'phone', 'comment',
         )
         fields_required = ['last_name', 'first_name',
                            'settlement', 'address', ]
@@ -122,7 +131,9 @@ class LoginForm(forms.ModelForm):
         username = self.cleaned_data['username']
         password = self.cleaned_data['password']
         if not User.objects.filter(username=username).exists():
-            raise forms.ValidationError(f'Пользователь с логином "{username} не найден в системе')
+            raise forms.ValidationError(
+                f'Пользователь с логином "{username} не найден в системе'
+            )
         user = User.objects.filter(username=username).first()
         if user:
             if not user.check_password(password):
@@ -146,7 +157,7 @@ class RegistrationForm(forms.ModelForm):
         email = self.cleaned_data['email']
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
-                f'Данный email уже зарегистрирован в системе'
+                f'Данный email {email} уже зарегистрирован в системе'
             )
         return email
 

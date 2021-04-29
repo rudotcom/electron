@@ -15,7 +15,8 @@ def path_and_rename(instance, filename):
 
 
 def reconcile_verb_gender(verb, item):
-    """согласование рода глагола "добавлен", "удален" с наименованием товара """
+    """согласование рода глагола "добавлен", "удален" с наименованием товара
+    """
     phrase = item.split(' ')
     word = phrase[0]
     tag = str(morph.parse(word)[0].tag)

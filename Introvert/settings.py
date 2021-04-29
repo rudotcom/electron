@@ -41,13 +41,13 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django.contrib.sites',
 
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.instagram',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.yandex',
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.instagram',
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.yandex',
 ]
 
 SITE_ID = 1
@@ -133,7 +133,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -163,3 +163,11 @@ CKEDITOR_FORCE_JPEG_COMPRESSION = True
 CKEDITOR_IMAGE_QUALITY = 70
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CACHES = {
+    'default': {
+        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
