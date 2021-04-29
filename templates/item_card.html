@@ -8,9 +8,9 @@
                  <div class="tag-container price-tag">
                    {% if product.quantity %}
                     <div>{% if product.price_discount %}
-                         {{ product.price_discount|floatformat:"0" }}&#x20bd;
+                         {{ product.price_discount|floatformat:"0" }} &#x20bd;
                        {% else %}
-                         {{ product.price|floatformat:"0" }}&#x20bd;
+                         {{ product.price|floatformat:"0" }} &#x20bd;
                      {% endif %}
                     </div>
 				   {% else %}

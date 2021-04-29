@@ -39,7 +39,7 @@
               <input type="number" class="form-control" name="qty" style="width: 70px;" min="0" value="{{ item.qty }}" onchange="this.form.submit()">
             </form>
           </td>
-            <td>{{ item.final_price|localize }}&#x20bd;</td>
+            <td>{{ item.final_price|localize }} &#x20bd;</td>
           <td>
             <a href="{% url 'delete_from_cart' slug=item.product.slug %}" title="Удалить"><button class="btn btn-light"><i class="fa fa-trash-o" aria-hidden="true"></i></button></a>
           </td>
