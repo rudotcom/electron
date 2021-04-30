@@ -96,13 +96,10 @@ class ProductDetailView(CartMixin, DetailView):
         product.last_visit = datetime.now()
         product.save()
 
-        product_visits = f'{product.id}_visits'
-
         context = super().get_context_data(**kwargs)
         context['categories'] = self.categories
         context['order'] = self.order
         context['articles'] = self.articles
-        context['product_views'] = product_visits
 
         return context
 
