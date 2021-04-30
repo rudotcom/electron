@@ -26,7 +26,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
 from yookassa.domain.notification import WebhookNotification
-from django.core.cache import cache
 
 
 class MyQ(Q):
@@ -98,14 +97,12 @@ class ProductDetailView(CartMixin, DetailView):
         product.save()
 
         product_visits = f'{product.id}_visits'
-        product_visits_value = cache.get_or_set(product_visits,
-                                                product.visits, timeout=60)
 
         context = super().get_context_data(**kwargs)
         context['categories'] = self.categories
         context['order'] = self.order
         context['articles'] = self.articles
-        context['product_views'] = product_visits_value
+        context['product_views'] = product_visits
 
         return context
 
