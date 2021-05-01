@@ -128,7 +128,7 @@ ul {
     border: 1px solid rgba(100,50,50,.125);
 }
 .light-gray-bg { background-color: #ededed; }
-.tm-main-section { padding-top: 20px; overflow: hidden; max-width: 1180px;}
+.tm-main-section { padding-top: 20px; overflow: hidden; padding-bottom: 100px;}
 .img-thumbnail { padding: 8px; width:400px; border: 0; cursor: pointer;}
 .inline-block { display: inline-block; }
 .shadow-img {
@@ -376,30 +376,19 @@ select {
 
 @media screen and (max-width: 991px) {
   .group-farm {margin-left: 400px;}
-  .tm-welcome-content { margin-bottom: 250px; }
   .tm-main-section { padding-top: 200px; }
-  .light { 
-    width: 240px; 
+  .light {
+    width: 240px;
     height: auto;
   }
   .tm-footer-div { margin-bottom: 40px; }
-  .tm-special-container { display: block; }
-  .tm-special-container-left { margin-bottom: 15px; }
-  .tm-special-container-lower {
-    -webkit-box-pack: start;
-    -webkit-justify-content: flex-start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
-    margin-top: 15px;
-  }
-  .tm-special-container-lower .tm-special-item { margin-right: 10px; }
-  .tm-special-container-lower .tm-special-item:last-child { margin-right: 0; }
+  .tm-special-container { display: block; width: 100%;}
   .tm-product { margin-left: 0; }
   .tm-daily-menu-img { margin-bottom: 30px; }
   #google-map { margin-top: 50px; }
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 900px) {
   .group-farm {margin-left: 400px;}
   .tm-nav { display: none; }
   .tm-nav li a { padding-left: 35px; }
@@ -455,7 +444,6 @@ select {
 
 @media screen and (max-width: 650px) {
   .group-farm {margin-left: 200px;}
-  .tm-welcome-content {  margin-bottom: 190px; }
   .tm-product {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
@@ -474,15 +462,12 @@ select {
 
 @media screen and (max-width: 550px) {
   .group-farm {margin-left: 100px;}
-  .tm-welcome-content { margin-bottom: 130px; }
 }
 
 @media screen and (max-width: 450px) {
   .group-farm {margin-left: 100px;}
-  .tm-welcome-content { margin-bottom: 90px; }
 }
 
 @media screen and (max-width: 370px) {
   .group-farm {margin-left: 0;}
-  .tm-welcome-content { margin-bottom: 60px; }
 }
