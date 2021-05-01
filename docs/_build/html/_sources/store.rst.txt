@@ -1,0 +1,88 @@
+store package
+=============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   store.migrations
+   store.templates
+   store.templatetags
+   store.tests
+
+Submodules
+----------
+
+store.admin module
+------------------
+
+.. automodule:: store.admin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+store.apps module
+-----------------
+
+.. automodule:: store.apps
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+store.forms module
+------------------
+
+.. automodule:: store.forms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+store.mixins module
+-------------------
+
+.. automodule:: store.mixins
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+store.models module
+-------------------
+
+.. automodule:: store.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+store.signals module
+--------------------
+
+.. automodule:: store.signals
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+store.utils module
+------------------
+
+.. automodule:: store.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+store.views module
+------------------
+
+.. automodule:: store.views
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: store
+   :members:
+   :undoc-members:
+   :show-inheritance:

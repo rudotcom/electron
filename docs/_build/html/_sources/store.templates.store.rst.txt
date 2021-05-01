@@ -1,0 +1,10 @@
+store.templates.store package
+=============================
+
+Module contents
+---------------
+
+.. automodule:: store.templates.store
+   :members:
+   :undoc-members:
+   :show-inheritance:

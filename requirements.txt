@@ -12,3 +12,4 @@ python-memcached~=1.59
 
 pytest~=6.2.3
 pytest-django~=4.2.0
+installed sphinx-rtd-theme~=0.5.2
