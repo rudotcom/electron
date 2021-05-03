@@ -100,7 +100,6 @@ class ProductDetailView(CartMixin, DetailView):
         context['categories'] = self.categories
         context['order'] = self.order
         context['articles'] = self.articles
-        context['remote'] = self.request.META['REMOTE_ADDR']
 
         return context
 
@@ -191,6 +190,7 @@ class AddToCartView(CartMixin, View):
         product_slug = kwargs.get('slug')
         product = Product.objects.get(slug=product_slug)
         if product.gift \
+                and product.quantity \
                 and not self.order.gift \
                 and self.order.total_price_net >= parameter['FREE_GIFT']:
             self.order.gift = product
@@ -200,7 +200,7 @@ class AddToCartView(CartMixin, View):
                 messages.INFO,
                 f'{product.image_thumb()} К Вашему заказу добавлен подарок: '
                 f'{product}')
-        else:
+        elif product.quantity:
             order_product, created = OrderProduct.objects.get_or_create(
                 order=self.order, product=product
             )
