@@ -77,6 +77,6 @@ urlpatterns = [
     path('robots.txt', TemplateView.as_view(template_name="store/robots.txt", content_type="text/plain"),),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# nginx сам пересылает /static и /media, эти директивы нужны для tor hidden services
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
