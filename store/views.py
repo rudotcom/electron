@@ -100,6 +100,7 @@ class ProductDetailView(CartMixin, DetailView):
         context['categories'] = self.categories
         context['order'] = self.order
         context['articles'] = self.articles
+        context['remote'] = self.request.META['REMOTE_ADDR']
 
         return context
 
