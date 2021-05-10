@@ -31,9 +31,9 @@ class TgView(View):
         object_list = Product.objects.filter(
             Q(title__icontains=query) | Q(description__icontains=query)
         )
-        found = object_list.count()
-        found_text = f'Найдено товаров {found} ({query}):' if found else f'Таких товаров не найдено: {query}'
-        self.send_message(t_chat['id'], found_text)
+        count = object_list.count()
+        found = f'Найдено товаров {count} ({query}):' if count else f'Таких товаров не найдено: {query}'
+        self.send_message(t_chat['id'], found)
 
         i = 0
         for item in object_list:
