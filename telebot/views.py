@@ -5,7 +5,6 @@ import json
 import requests
 
 
-# https://api.telegram.org/bot<token>/setWebhook?url=<url>/tg/
 class TgView(View):
     """
     Telegram web hook view

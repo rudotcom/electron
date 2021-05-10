@@ -22,13 +22,12 @@ from store.views import (
     ProductSearchView,
     SubCategoryDetailView,
     OrderPayView,
-    BankPaymentView,
     GiftListView,
     ArticleView,
 
-    EmailView, WelcomeView, YooStatusView
+    EmailView, WelcomeView,
 )
-import telebot
+from yoo.views import BankPaymentView
 
 
 urlpatterns = [
@@ -50,12 +49,13 @@ urlpatterns = [
     path('order_pay/<int:order>/', OrderPayView.as_view(), name='order_pay'),
     path('order_email/<int:order>/', EmailView.as_view(), name='order_email'),
     path('bank_payment/', BankPaymentView.as_view(), name='bank_payment'),
-    path('.yoo_status/', YooStatusView.as_view(), name='yoo_status'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('tg/', include('telebot.urls')),
+    path('.tg1645429866/', include('telebot.urls')),
+    # https://api.telegram.org/bot<token>/setWebhook?url=https://introvert.com.ru/.tg1645429866/
+    path('.yoo_status/', include('yoo.urls')),
 
     path(
         'admin/password_reset/',
