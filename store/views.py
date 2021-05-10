@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.views.generic import DetailView, View, ListView
 from django.core.mail import send_mail
@@ -26,7 +26,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
 from yookassa.domain.notification import WebhookNotification
-import requests
 
 
 class MyQ(Q):
@@ -721,34 +720,3 @@ class EmailView(LoginRequiredMixin, CartMixin, View):
             )
         except Exception:
             return HttpResponse(status=404)
-
-
-# https://api.telegram.org/bot<token>/setWebhook?url=<url>/tg/
-class TgView(View):
-    TELEGRAM_URL = "https://api.telegram.org/bot"
-    TELEGRAM_TOKEN = os.getenv("telegram_token", "error_token")
-
-    def post(self, request, *args, **kwargs):
-        t_data = json.loads(request.body)
-        t_message = t_data["message"]
-        t_chat = t_message["chat"]
-
-        try:
-            text = t_message["text"].strip().lower()
-        except Exception as e:
-            return JsonResponse({"ok": "POST request processed"})
-
-        msg = text
-        self.send_message(msg, t_chat["id"])
-
-        return JsonResponse({"ok": "POST request processed"})
-
-    def send_message(self, message, chat_id):
-        data = {
-            "chat_id": chat_id,
-            "text": message,
-            "parse_mode": "Markdown",
-        }
-        response = requests.post(
-            f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendMessage", data=data
-        )

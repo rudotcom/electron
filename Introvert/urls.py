@@ -5,7 +5,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
-from django.views.decorators.csrf import csrf_exempt
 
 from store.views import (
     BaseView,
@@ -27,8 +26,10 @@ from store.views import (
     GiftListView,
     ArticleView,
 
-    EmailView, WelcomeView, YooStatusView, TgView,
+    EmailView, WelcomeView, YooStatusView
 )
+import telebot
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -54,7 +55,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('tg/', csrf_exempt(TgView.as_view()), name='tg'),
+    path('tg/', include('telebot.urls')),
 
     path(
         'admin/password_reset/',
