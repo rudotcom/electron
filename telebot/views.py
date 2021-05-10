@@ -1,14 +1,21 @@
 import os
+
+from django.db.models import Q
 from django.http import JsonResponse
+from django.template.loader import render_to_string
 from django.views.generic import View
 import json
 import requests
+
+from Introvert import settings
+from store.models import Product
 
 
 class TgView(View):
     """
     Telegram web hook view
     """
+    model = Product
     TELEGRAM_URL = "https://api.telegram.org/bot"
     TELEGRAM_TOKEN = os.getenv("telegram_token", "error_token")
 
@@ -18,12 +25,21 @@ class TgView(View):
         t_chat = t_message["chat"]
 
         try:
-            text = t_message["text"].strip().lower()
+            query = t_message["text"].strip().lower()
         except Exception as e:
             return JsonResponse({"ok": "POST request processed"})
 
-        msg = text
-        self.send_message(msg, t_chat["id"])
+        object_list = Product.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
+        for item in object_list:
+            msg = render_to_string('telebot/product_card.html', {
+                'price': item.price,
+                'title': item.title,
+                'slug': item.slug,
+            })
+            print(item.title)
+            self.send_photo(chat_id=t_chat["id"], photo=item.image.name, caption=msg)
 
         return JsonResponse({"ok": "POST request processed"})
 
@@ -31,8 +47,20 @@ class TgView(View):
         data = {
             "chat_id": chat_id,
             "text": message,
-            "parse_mode": "Markdown",
+            "parse_mode": "MarkdownV2",
         }
         response = requests.post(
             f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendMessage", data=data
+        )
+
+    def send_photo(self, photo, caption, chat_id):
+        url = 'introvert.com.ru'
+        data = {
+            'photo': f'https://{url}/media/card/{photo}',
+            "chat_id": chat_id,
+            "caption": caption.replace('.', '\.').replace('-', '\-').replace('&quot;', '"'),
+            "parse_mode": "MarkdownV2",
+        }
+        response = requests.post(
+            f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendPhoto", data=data
         )
