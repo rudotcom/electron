@@ -6,9 +6,6 @@ from django.template.loader import render_to_string
 from django.views.generic import View
 import json
 import requests
-from django.core.files import File
-
-from Introvert import settings
 from store.models import Product
 
 
@@ -21,6 +18,7 @@ class TgView(View):
     TELEGRAM_TOKEN = os.getenv("telegram_token", "error_token")
 
     def post(self, request, *args, **kwargs):
+        print(request.body)
         t_data = json.loads(request.body)
         t_message = t_data["message"]
         t_chat = t_message["chat"]
@@ -34,10 +32,8 @@ class TgView(View):
             Q(title__icontains=query) | Q(description__icontains=query)
         )
         found = object_list.count()
-        found_text = f'Найдено товаров {found}:' if found else 'Таких товаров не найдено'
+        found_text = f'Найдено товаров {found} ({query}):' if found else f'Таких товаров не найдено: {query}'
         self.send_message(t_chat['id'], found_text)
-        if found > 5:
-            self.send_message(t_chat['id'], 'Будут показаны только 5:')
 
         i = 0
         for item in object_list:
@@ -66,7 +62,7 @@ class TgView(View):
 
     def send_photo(self, photo, caption, chat_id):
         url = 'introvert.com.ru'
-        # url = 'fc9bc0a2c30d.ngrok.io'
+
         data = {
             'photo': f'https://{url}/media/card/{photo}',
             "chat_id": chat_id,
@@ -78,7 +74,3 @@ class TgView(View):
             f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendPhoto",
             data=data
         )
-
-        with open('response.txt', 'w') as f:
-            myfile = File(f)
-            myfile.write(response.text + "\n")
