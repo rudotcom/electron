@@ -1,3 +1,2 @@
-[{{ title }}](https://introvert.com.ru/product/{{ slug }}) _{{ price }}руб_
-
-{{ description|striptags }}
+{{ i }}. [{{ title }}](https://introvert.com.ru/product/{{ slug }}) _{{ price }}руб_
+{% if qty == 0 %}Нет в наличии{% endif %}

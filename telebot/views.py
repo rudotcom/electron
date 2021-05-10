@@ -32,8 +32,15 @@ class TgView(View):
         object_list = Product.objects.filter(
             Q(title__icontains=query) | Q(description__icontains=query)
         )
+        found = object_list.count()
+        found_text = f'Найдено товров {found}:' if found else 'Таких товаров не найдено'
+        self.send_message(t_chat['id'], found_text)
+        i = 0
         for item in object_list:
+            i += 1
             msg = render_to_string('telebot/product_card.html', {
+                'i': i,
+                'qty': item.quantity,
                 'price': item.price,
                 'title': item.title,
                 'slug': item.slug,
@@ -43,7 +50,7 @@ class TgView(View):
 
         return JsonResponse({"ok": "POST request processed"})
 
-    def send_message(self, message, chat_id):
+    def send_message(self, chat_id, message):
         data = {
             "chat_id": chat_id,
             "text": message,
@@ -55,6 +62,7 @@ class TgView(View):
 
     def send_photo(self, photo, caption, chat_id):
         url = 'introvert.com.ru'
+        # url = 'fc9bc0a2c30d.ngrok.io'
         data = {
             'photo': f'https://{url}/media/card/{photo}',
             "chat_id": chat_id,
@@ -64,3 +72,5 @@ class TgView(View):
         response = requests.post(
             f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendPhoto", data=data
         )
+        if response.status_code != 200:
+            self.send_message(chat_id, response.text)
