@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django.views.generic import View
 import json
 import requests
+from django.core.files import File
 
 from Introvert import settings
 from store.models import Product
@@ -33,8 +34,11 @@ class TgView(View):
             Q(title__icontains=query) | Q(description__icontains=query)
         )
         found = object_list.count()
-        found_text = f'Найдено товров {found}:' if found else 'Таких товаров не найдено'
+        found_text = f'Найдено товаров {found}:' if found else 'Таких товаров не найдено'
         self.send_message(t_chat['id'], found_text)
+        if found > 5:
+            self.send_message(t_chat['id'], 'Будут показаны только 5:')
+
         i = 0
         for item in object_list:
             i += 1
@@ -45,7 +49,6 @@ class TgView(View):
                 'title': item.title,
                 'slug': item.slug,
             })
-            print(item.title)
             self.send_photo(chat_id=t_chat["id"], photo=item.image.name, caption=msg)
 
         return JsonResponse({"ok": "POST request processed"})
@@ -57,7 +60,8 @@ class TgView(View):
             "parse_mode": "MarkdownV2",
         }
         response = requests.post(
-            f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendMessage", data=data
+            f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendMessage",
+            data=data
         )
 
     def send_photo(self, photo, caption, chat_id):
@@ -69,8 +73,12 @@ class TgView(View):
             "caption": caption.replace('.', '\.').replace('-', '\-').replace('&quot;', '"'),
             "parse_mode": "MarkdownV2",
         }
+
         response = requests.post(
-            f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendPhoto", data=data
+            f"{self.TELEGRAM_URL}{self.TELEGRAM_TOKEN}/sendPhoto",
+            data=data
         )
-        if response.status_code != 200:
-            self.send_message(chat_id, response.text)
+
+        with open('response.txt', 'w') as f:
+            myfile = File(f)
+            myfile.write(response.text + "\n")
