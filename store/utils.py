@@ -36,4 +36,4 @@ def reconcile_verb_gender(verb, item):
 
 
 def get_random_session():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=36))
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=56))

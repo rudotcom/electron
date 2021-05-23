@@ -268,6 +268,9 @@ class Customer(models.Model):
                                blank=True, verbose_name='Сессия клиента')
     created = models.DateTimeField(auto_now=True,
                                    verbose_name='Дата подключения клиента')
+    code = models.CharField(max_length=200, null=True, blank=True,
+                            verbose_name='Код подтверждения email')
+    confirmed = models.BooleanField(default=False, verbose_name='email подтвержден')
 
     def __str__(self):
         if self.user:

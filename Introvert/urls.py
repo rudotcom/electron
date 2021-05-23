@@ -25,7 +25,7 @@ from store.views import (
     GiftListView,
     ArticleView,
 
-    EmailView, WelcomeView,
+    EmailView, WelcomeView, EmailConfirmationView,
 )
 from yoo.views import BankPaymentView
 
@@ -52,6 +52,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page="/"), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),
+    path('confirm/<str:code>', EmailConfirmationView.as_view(), name='email_confirmation'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('.tg1645429866/', include('telebot.urls')),
     # https://api.telegram.org/bot<token>/setWebhook?url=https://introvert.com.ru/.tg1645429866/

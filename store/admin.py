@@ -105,8 +105,8 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    fields = ['session', 'user', 'phone', 'address']
-    list_display = ('session', 'user', 'created')
+    fields = ['session', 'user', 'phone', 'address', 'confirmed']
+    list_display = ('session', 'user', 'created', 'confirmed')
     ordering = ('-created',)
 
 

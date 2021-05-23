@@ -385,6 +385,14 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
         session = request.COOKIES.get('customersession')
 
         customer = Customer.objects.get(user=user.id, session=session)
+        if not customer.confirmed:
+            context = {
+                'categories': self.categories,
+                'order': self.order,
+                'articles': self.articles,
+            }
+            return render(request, 'registration_confirmation_required.html', context=context)
+
         order = Order.carts.get(owner=customer)
 
         if form.is_valid():
@@ -549,11 +557,28 @@ class RegistrationView(CartMixin, View):
             session = request.COOKIES.get('customersession') \
                 or get_random_session()
             customer, created = Customer.objects.get_or_create(session=session)
+            customer.code = get_random_session()
             if user:
                 customer.user = user
             customer.save()
 
-            return HttpResponseRedirect('/cart/')
+            # Отправить письмо с кодом подтверждения
+            html = render_to_string('email_confirm.html',
+                                    {'user': user, 'code': customer.code,
+                                     'site_url': settings.SITE_URL})
+
+            send_mail('Подтвердите адрес email',
+                      'Подтвердите адрес своей электронной почты!',
+                      'Интроверт<noreply@introvert.com.ru>', [user.email],
+                      fail_silently=False, html_message=html)
+            context = {
+                'categories': self.categories,
+                'order': self.order,
+                'articles': self.articles,
+            }
+
+            return render(request, 'registration_confirmation_required.html', context=context)
+            # return HttpResponseRedirect('/cart/')
 
         context = {
             'form': form,
@@ -562,6 +587,27 @@ class RegistrationView(CartMixin, View):
             'articles': self.articles,
         }
         return render(request, 'registration.html', context)
+
+
+class EmailConfirmationView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'categories': self.categories,
+            'order': self.order,
+            'page_role': 'registration',
+            'articles': self.articles,
+        }
+        code = kwargs.get('code')
+        try:
+            customer = Customer.objects.get(code=code)
+            customer.code = None
+            customer.confirmed = True
+            customer.save()
+            return render(request, 'registration_confirmed.html', context)
+        except:
+            return render(request, 'registration_confirmation_failed.html', context)
+
 
 
 class ProfileView(LoginRequiredMixin, CartMixin, View):
@@ -610,7 +656,8 @@ class EmailView(LoginRequiredMixin, CartMixin, View):
 
             return render(
                 request,
-                'email_order_placed.html',
+                # 'email_order_placed.html',
+                'email_confirm.html',
                 {
                     'site_url': settings.SITE_URL,
                     'order': pay_order,
