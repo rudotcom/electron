@@ -315,7 +315,11 @@ select {
 .tm-social-icon {padding: 0 9px;}
 .toast {position: absolute; right: 30px;}
 
-
+.alert {
+    border: #ba2121 solid 1px;
+    padding: 20px;
+    background-color: #fff7cd;
+}
 
 
 
