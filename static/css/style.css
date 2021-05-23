@@ -316,11 +316,15 @@ select {
 .toast {position: absolute; right: 30px;}
 
 .alert {
-    border: #ba2121 solid 1px;
-    padding: 20px;
+    border: #e0e0e0 solid 1px;
+    padding: 10px;
     background-color: #fff7cd;
 }
-
+.help-block {
+    padding: 8px;
+    border: #e0e0e0 solid 1px;
+    background-color: #fff7cd;
+}
 
 
 
