@@ -123,9 +123,12 @@
                                         <tr>
                                             <td align="left" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;line-height:24px;color:#484848;">
                                                 <p>Вы указали свой email при регистрации в интернет магазине Интроверт </p>
-                                                <p>Пожалуйста, подтвердите свой email. Для этого перейдите по ссылке
-                                                    <a href="https://{{ site_url }}{% url 'email_confirmation' code=code %}">{{ code }}</a>
+                                                <p>Пожалуйста, подтвердите свой email. Для этого перейдите
+                                                    <a href="https://{{ site_url }}{% url 'email_confirmation' code=code %}">по ссылке</a>
+                                                    {{ code }}
                                                 </p>
+                                                <p>Если ссылка не отображается, скопируйте этот код и вставьте его в адресную строку браузера:</p>
+                                                <p>https://{{ site_url }}{% url 'email_confirmation' code=code %}</p>
                                                 <p>Если Вы не регистрировались в магазине Интроверт, просто
                                                     проигнорируйте это письмо. Видимо, кто-то по ошибке указал ваш email.</p>
 
