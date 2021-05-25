@@ -41,7 +41,6 @@
                 </form>
               </li>
                 <li><a href="{% url 'store' %}"{% if page_role == 'products' %} class="active"{% endif %}>Товары</a></li>
-                <li><a href="{% url 'gifts' %}"{% if page_role == 'gifts' %} class="active"{% endif %}>Подарки</a></li>
             {% if not request.user.is_authenticated %}
                 <li><a href="{% url 'login' %}"{% if page_role == 'login' %} class="active"{% endif %}>Войти <img src="{% static "img/profile.svg" %}" title="Войти в свой профиль"></a></li>
                 <li><a href="{% url 'registration' %}"{% if page_role == 'registration' %} class="active"{% endif %}>Регистрация</a></li>

@@ -1,6 +1,6 @@
  {% load static %}
            <div class="tm-popular-item">
-                <div class="tm-item-image" style="background-image: url(/media/card/{{ product.image.name }})">
+                <div class="tm-item-image" style="background-image: url('/media/card/{{ product.image.name }}')">
               <a href="{{ product.get_absolute_url }}"><div>&nbsp;</div></a>
                 </div>
               <div class="tm-popular-item-description">
@@ -19,7 +19,7 @@
                  </div>
                    {% if product.quantity %}
                 <div class="tag-container cart-tag">
-                    <a href="{% url 'add_to_cart' slug=product.slug %}" title="Положить в корзину"><img src="{% static "img/vector_cart.svg" %}" height="50"></a>
+                    <a href="{% url 'add_to_cart' pk=product.pk %}" title="Положить в корзину"><img src="{% static "img/vector_cart.svg" %}" height="50"></a>
                 </div>
                     {% endif %}
 

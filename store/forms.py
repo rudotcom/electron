@@ -1,118 +1,14 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.forms import RadioSelect
-
-from .mixins import RequiredFieldsMixin
-from .models import Order
 
 User = get_user_model()
 
-
-class SelfOrderForm(RequiredFieldsMixin, forms.ModelForm):
-
-    class Meta:
-        model = Order
-
-        fields = [
-            'last_name', 'first_name', 'phone', 'comment',
-        ]
-        fields_required = ['last_name', 'first_name', 'phone']
-
-
-class Payment2RadioSelect(RadioSelect):
-    template_name = 'store/payment_type2.html'
-
-
-class Payment3RadioSelect(RadioSelect):
-    template_name = 'store/payment_type3.html'
-
-
-class PaymentForm(forms.Form):
-    payment_type = forms.ChoiceField(label='Способ оплаты',
-                                     widget=Payment3RadioSelect(),
-                                     choices=Order.PAYMENT_CHOICES)
-
-
-class OnlinePaymentForm(forms.Form):
-    payment_type = forms.ChoiceField(
-        label='Способ оплаты', widget=Payment2RadioSelect(),
-        choices=Order.PAYMENT_CHOICES[1:]
-    )
-
-
-class CDEKOrderForm(RequiredFieldsMixin, forms.ModelForm):
-
-    class Meta:
-        model = Order
-
-        fields = [
-            'address', 'last_name', 'first_name', 'patronymic', 'phone',
-            'comment',
-        ]
-        fields_required = ['address', 'last_name', 'first_name', 'phone']
-        labels = {
-            'address': 'Адрес пункта выдачи заказов CDEK',
-        }
-
-
-class CourierOrderForm(RequiredFieldsMixin, forms.ModelForm):
-    class Meta:
-        model = Order
-
-        fields = (
-            'address', 'last_name', 'first_name', 'patronymic', 'phone',
-            'comment',
-        )
-        fields_required = ['address', 'last_name', 'first_name', 'phone', ]
-        labels = {
-            'address': 'Адрес в Санкт-Петербурге',
-            'phone': 'Телефон получателя',
-        }
-        widgets = ()
-
-
-class PostRuOrderForm(RequiredFieldsMixin, forms.ModelForm):
-    class Meta:
-        model = Order
-
-        fields = (
-            'last_name', 'first_name', 'patronymic', 'phone', 'postal_code',
-            'settlement', 'address', 'comment',
-        )
-        fields_required = ['address', 'last_name', 'first_name', 'patronymic',
-                           'phone', 'postal_code',
-                           'settlement', ]
-        labels = {
-            'address': 'Адрес получателя',
-        }
-
-
-class PostWorldOrderForm(RequiredFieldsMixin, forms.ModelForm):
-    class Meta:
-        model = Order
-
-        fields = (
-            'first_name', 'last_name', 'patronymic', 'settlement', 'address',
-            'postal_code', 'phone', 'comment',
-        )
-        fields_required = ['last_name', 'first_name',
-                           'settlement', 'address', ]
-        labels = {
-            'last_name': 'Фамилия (латинскими буквами)',
-            'first_name': 'Имя (латинскими буквами)',
-            'patronymic': 'Отчество (латинскими буквами)',
-            'phone': 'Телефон',
-            'postal_code': 'Индекс',
-            'settlement': 'Страна, Город (латинскими буквами)',
-            'address': 'Адрес получателя (латинскими буквами)',
-            'comment': 'Комментарий',
-        }
-
-
-class CartForm(forms.ModelForm):
-    class Meta:
-        model = Order
-        fields = ('delivery_type',)
+# class CartForm(forms.ModelForm):
+#     class Meta:
+#         model = Order
+#         fields = ('delivery_type',)
+#
+#
 
 
 class LoginForm(forms.ModelForm):
@@ -178,4 +74,4 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'confirm_password', 'email']
+        fields = ['username', 'email', 'password', 'confirm_password']

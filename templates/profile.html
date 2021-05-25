@@ -9,7 +9,7 @@
 {% if not orders.count %}
  <div class="control-form">
    <div class="col-md-12" style="margin-top: 50px; margin-bottom: 150px">
-        <h5>У вас еще нет оформленных заказов. <a href="{% url 'store' %}">Посмотрите наши товары</a></h5>
+        <h5>У вас еще нет оформленных заказов. <a href="{% url 'group_list' %}">Посмотрите наши товары</a></h5>
     </div>
  </div>
 {% else %}
@@ -19,8 +19,8 @@
             <tr>
                 <th>Номер</th>
                 <th>Дата</th>
-                <th>Доставка</th>
                 <th>Статус</th>
+                <th>Товаров</th>
                 <th>Сумма</th>
                 <th></th>
             </tr>
@@ -29,26 +29,13 @@
         {% for order in orders %}
             <tr>
                 <td scope="row">
-                    <button class="btn btn-generic" data-toggle="modal" data-target="#Modal-{{ order.id }}">{{ order.id }}</button>
+                    {{ order.id }}
                 </td>
                 <td scope="row">{{ order.created_at }}</td>
-                <td scope="row">{{ order.get_delivery_type_display }}</td>
                 <td>{{ order.get_status_display }}</td>
-                <td>{{ order.total_price_gross }}</td>
-                <td>
-                {% if order.payment_status != 'succeeded' and order.payment_status != 'waiting_for_capture' %}
-                              <form action="{% url 'bank_payment' %}" method="POST">
-                                <input type="hidden" name="order" value="{{ order.id }}">
-                                {% csrf_token %}
-                                <input type="submit" class="btn btn-generic btn-block" value="Перейти к оплате">
-                              </form>
-                {% elif order.is_paid %}
-                        <div class="order-data">Оплачен</div>
-                {% elif order.status == 'canceled' %}
-                        <div class="order-data">Отменён</div>
-                {% else %}
-                        <div class="order-data">В процессе платежа</div>
-                 {% endif %}
+                <td>{{ order.total_products }}</td>
+                <td>{{ order.total_price_net }}</td>
+                <td><a href="#" data-toggle="modal" data-target="#Modal-{{ order.id }}">Подробнее</a>
                     <!-- Modal -->
                     <div class="modal fade" id="Modal-{{ order.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
@@ -76,18 +63,6 @@
                                         <td>{{ item.final_price }} &#x20bd;</td>
                                     </tr>
                                   {% endfor %}
-                                    <tr>
-                                        {% if order.gift %}
-                                        <td>{{ order.gift }} </td>
-                                        <td>{{ order.gift.image_thumb }}</td>
-                                        <td colspan="5">Подарок</td>
-                                         {% endif %}
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">{{ order.get_delivery_type_display }}</td>
-                                        <td colspan="2"></td>
-                                        <td>{{ order.delivery_cost }} &#x20bd;</td>
-                                    </tr>
                                    </tbody>
                                   <tfoot>
                                    <tr>
@@ -96,38 +71,19 @@
                                         </td>
                                         <td>Итого:</td>
                                         <td>{{ order.total_products }}</td>
-                                        <td><strong>{{ order.total_price_gross }} &#x20bd;</strong></td>
+                                        <td><strong>{{ order.total_price_net }} &#x20bd;</strong></td>
                                     </tr>
                                   </tfoot>
                               </table>
                               <hr>
 <div class="order_body">
-{% if order.delivery_type %}<div><div class="order-label">&nbsp;</div><div class="order-data">{{ order.get_delivery_type_display }}</div></div>{% endif %}
 {% if order.first_name or order.last_name %}<div><div class="order-label">Получатель:</div><div class="order-data">{{ order.first_name }}&nbsp;{{ order.last_name }}&nbsp;{{ order.patronymic }}</div></div>{% endif %}
-{% if order.payment_type %}<div><div class="order-label">Способ отплаты:</div><div class="order-data">{{ order.get_payment_type_display }}</div></div>{% endif %}
 {% if order.tracking %}<div><div class="order-label">Трекинг номер:</div><div class="order-data"><a href="https://www.cdek.ru/ru/tracking">{{ order.tracking }}</a></div></div>{% endif %}
 {% if order.phone %}<div><div class="order-label">Телефон:</div><div class="order-data">{{ order.phone }}</div></div>{% endif %}
-{% if order.postal_code %}<div><div class="order-label">Индекс:</div><div class="order-data">{{ order.postal_code }}</div></div>{% endif %}
-{% if order.settlement %}<div><div class="order-label">Населенный пункт:</div><div class="order-data">{{ order.settlement }}</div></div>{% endif %}
-{% if order.address %}<div><div class="order-label">Адрес:</div><div class="order-data">{{ order.address }}</div></div>{% endif %}
 {% if order.comment %}<div><div class="order-label">Комментарий:</div><div class="order-data">{{ order.comment }}</div></div>{% endif %}
 <div><div class="order-label">Статус:</div><div>{{ order.get_status_display }}</div></div>
-{% if order.tracking %}<div><div class="order-label">Трекинг:</div><div class="order-data">{{ order.tracking }}</div></div>{% endif %}
 </div>
 
-                 {% if order.payment_status != 'succeeded' and order.payment_status != 'waiting_for_capture' %}
-                              <form action="{% url 'bank_payment' %}" method="POST">
-                                <input type="hidden" name="order" value="{{ order.id }}">
-                                {% csrf_token %}
-                                <input type="submit" class="btn btn-generic btn-block" value="Перейти к оплате">
-                              </form>
-                {% elif order.is_paid %}
-                        <div class="order-data">Оплачен</div>
-                {% elif order.status == 'canceled' %}
-                        <div class="order-data">Отменён</div>
-                {% else %}
-                        <div class="order-data">В процессе платежа</div>
-                 {% endif %}
                          </div>
                         </div>
                       </div>

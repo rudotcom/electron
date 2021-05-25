@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}{{ group.name }}{% endblock %}
+
+                  {% block breadcrumbs %}
+                <li class="breadcrumb-item active">{{ group.name }}</li>
+                  {% endblock %}
+
+{% block content %}
+        <ul>
+      {% for category in categories %}
+          <li><a href="{% url 'category_detail' pk=category.pk %}">{{ category.name }}</a></li>
+      {% endfor %}
+        </ul>
+
+{% endblock content %}

@@ -1,32 +1,54 @@
  {% load static %}
-    <footer class="footer">
+ <footer class="footer">
       <div class="tm-black-bg">
         <div class="container">
           <div class="row margin-bottom-60">
-            <nav class="col-lg-3 col-md-3 tm-footer-nav tm-footer-div">
-                <ul>
+                <div class="col-md-3 col-sm-6">
+                    <div class="footer-menu">
+                        <h2 class="footer-wid-title">Покупателю </h2>
+                        <nav class="tm-footer-nav tm-footer-div">
+                        <ul>
 {% include 'article_menu.html' %}
-                </ul>
-            </nav>
-            <div class="col-lg-5 col-md-5 tm-footer-div">
-              <h3 class="tm-footer-div-title">О нас</h3>
-              <p class="margin-top-15">Наша мастерская находится в Санк-Петербурге, все изделия изготавливаются нами вручную. </p>
-              <p class="margin-top-15">Сборка, упаковка и отправка заказов &#x1F48C; - все это осуществляется нами в городе на Неве, с любовью к своему делу.</p>
-              <p class="col-lg-12 small copyright-text text-center">Copyright &copy; 2021 INTROVERT</p>
+                            <li><a href="{% url 'profile' %}#orders">Мои заказы</a></li>
+                            <li><a href="{% url 'cart' %}">Моя корзина</a></li>
+                        </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="footer-about-us">
+                        <h2>Электр<span>{они/ка}</span></h2>
+                        <p>Крупнейший магазин электротоваров и радиоэлектронных компонентов нашего города.</p>
+                        <a href="http://as-electrica.ru/">AS-Electrica.ru</a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="footer-about-us">
+                        <h2>Магазины</h2>
+                        <p>"Электрика"</p>
+                        <p>"Электрон"</p>
+                        <p>Время работы:</p>
+                        <p>Пн.-Пт.: 08:00-18:00</p>
+                        <p>Сб.-Вс.: 09:00-17:00</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="footer-about-us">
+                        <h2>Телефоны</h2>
+                        <p>(8-384-53) 6-31-70</p>
+                        <p>(8-384-53) 6-34-19</p>
+                        <p>(8-384-53) 6-42-69</p>
+                        <p>(8-384-53) 6-18-94</p>
+                    </div>
+                </div>
+
             </div>
-            <div class="col-lg-4 col-md-4 tm-footer-div">
-              <h3 class="tm-footer-div-title">Соцсети</h3>
-              <p>Публикации наших товаров в соцсетях.</p>
-              <div class="tm-social-icons-container">
-                <a href="https://www.instagram.com/introvert_store_/" class="tm-social-icon" target="_blank"><img src="{% static "img/instagram-logo-w.svg" %}"></a>
-                <a href="https://vk.com/introvert.store" class="tm-social-icon" target="_blank"><img src="{% static "img/vk-w.svg" %}"></a>
-                <a href="#" class="tm-social-icon"><img src="{% static "img/tiktok-w.svg" %}"></a>
-             </div>
-            </div>
-          </div>
         </div>
-      </div>
-   </footer> <!-- Footer content-->
+    </div> <!-- End footer top area -->
+ </footer>
 
 </body>
 </html>

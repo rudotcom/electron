@@ -12,13 +12,12 @@ from django.views.generic import DetailView, View, ListView
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-from Introvert import settings
-from .forms import LoginForm, RegistrationForm, CartForm, CourierOrderForm, \
-    CDEKOrderForm, PostRuOrderForm, PostWorldOrderForm, SelfOrderForm
+from electron import settings
+from .forms import LoginForm, RegistrationForm
 from .mixins import CartMixin
-from .models import Category, SubCategory, Customer, OrderProduct, \
-    Product, Order, Article, parameter
-from .utils import reconcile_verb_gender, get_random_session
+from .models import Group, Category, Customer, OrderProduct, \
+    Product, Order, Article
+from .utils import get_random_session
 
 
 class MyQ(Q):
@@ -36,88 +35,31 @@ class WelcomeView(CartMixin, View):
         return render(request, 'welcome.html', context)
 
 
-class BaseView(CartMixin, View):
+class GroupListView(CartMixin, View):
+    model = Group
 
     def get(self, request, *args, **kwargs):
-        # random_products = Product.randoms.all()
-        popular_products = Product.objects.all().order_by('-visits')
-        # recently_viewed_products =
-        # Product.objects.all().order_by('-last_visit')[0:4]
+        groups = Group.objects.all()
 
         context = {
-            'categories': self.categories,
-            'products': popular_products,
+            'groups': groups,
             'order': self.order,
-            'page_role': 'products',
             'articles': self.articles,
         }
-        return render(request, 'base.html', context)
-
-
-class GiftListView(CartMixin, View):
-
-    def get(self, request, *args, **kwargs):
-        gift_products = Product.objects.filter(gift=True)
-        if self.order and self.order.gift:
-            messages.add_message(
-                request,
-                messages.INFO,
-                f'К Вашему заказу уже был добавлен подарок: '
-                f'{self.order.gift.title}'
-            )
-
-        context = {
-            'bonus_sum': parameter['FREE_GIFT'],
-            'categories': self.categories,
-            'products': gift_products,
-            'order': self.order,
-            'page_role': 'gifts',
-            'articles': self.articles,
-        }
-        return render(request, 'gift_list.html', context)
+        return render(request, 'group_list.html', context)
 
 
 class ProductDetailView(CartMixin, DetailView):
     model = Product
-    context_object_name = 'product'
     template_name = 'item_detail.html'
-    slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):
-        product = self.get_object()
-        product.visits += 1
-        product.last_visit = datetime.now()
-        product.save()
 
         context = super().get_context_data(**kwargs)
-        context['categories'] = self.categories
+
         context['order'] = self.order
         context['articles'] = self.articles
 
-        return context
-
-
-class SubCategoryDetailView(CartMixin, DetailView):
-    model = SubCategory
-    queryset = SubCategory.objects.all()
-    context_object_name = 'subcategory'
-    template_name = 'subcategory_detail.html'
-    slug_url_kwarg = 'slug'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        subcategory = self.get_object()
-        category = Category.objects.get(subcategory=subcategory)
-        context['order'] = self.order
-        context['category'] = category
-        context['categories'] = self.categories
-        context['category_name'] = category.name
-        context['subcategories'] = self.model.objects.filter(
-            category=category
-        )
-        context['subcategory_name'] = subcategory.name
-        context['subcategory_products'] = subcategory.product_set.all()
-        context['articles'] = self.articles
         return context
 
 
@@ -126,18 +68,31 @@ class CategoryDetailView(CartMixin, DetailView):
     queryset = Category.objects.all()
     context_object_name = 'category'
     template_name = 'category_detail.html'
-    slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category = self.get_object()
+        category = kwargs['object']
         context['order'] = self.order
-        context['categories'] = self.categories
         context['category_name'] = category.name
-        context['subcategories'] = SubCategory.objects.filter(
-            category=category
-        )
         context['category_products'] = category.product_set.all()
+        context['articles'] = self.articles
+        return context
+
+
+class GroupDetailView(CartMixin, DetailView):
+    model = Group
+    queryset = Group.objects.all()
+    context_object_name = 'group'
+    template_name = 'category_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        group = self.get_object()
+        context['order'] = self.order
+        context['group_name'] = group.name
+        context['categories'] = Category.objects.filter(
+            parent=group
+        )
         context['articles'] = self.articles
         return context
 
@@ -155,7 +110,7 @@ class ProductSearchView(CartMixin, ListView):
     def get_queryset(self):
         query = self.request.GET.get('p')
         object_list = Product.objects.filter(
-            Q(title__icontains=query) | Q(description__icontains=query)
+            Q(title__icontains=query) | Q(article__icontains=query)
         )
         return object_list
 
@@ -180,33 +135,19 @@ class AddToCartView(CartMixin, View):
             )
             old_carts.delete()
 
-        product_slug = kwargs.get('slug')
-        product = Product.objects.get(slug=product_slug)
-        if product.gift \
-                and product.quantity \
-                and not self.order.gift \
-                and self.order.total_price_net >= parameter['FREE_GIFT']:
-            self.order.gift = product
-            self.order.save()
-            messages.add_message(
-                request,
-                messages.INFO,
-                f'{product.image_thumb()} К Вашему заказу добавлен подарок: '
-                f'{product}')
-        elif product.quantity:
+        product = Product.objects.get(pk=kwargs['pk'])
+        if product.quantity:
             order_product, created = OrderProduct.objects.get_or_create(
                 order=self.order, product=product
             )
 
             if created:
                 self.order.products.add(order_product)
-                added_verb = reconcile_verb_gender('добавлен',
-                                                   order_product.product.title)
                 messages.add_message(
                     request,
                     messages.INFO,
-                    f'{order_product.product.image_thumb()}<b>'
-                    f'{order_product.product}</b> {added_verb} в корзину'
+                    f'{order_product.product.image_thumb()}'
+                    f'Добавлено в корзину: <b>{order_product.product}</b> '
                 )
             else:
                 if order_product.product.quantity <= order_product.qty:
@@ -229,7 +170,7 @@ class AddToCartView(CartMixin, View):
                 )
             self.order.save()
 
-        response = HttpResponseRedirect(f"/product/{product_slug}/")
+        response = HttpResponseRedirect(f"/store/product/{product.pk}/")
         response.set_cookie(key='customersession', value=session)
         return response
 
@@ -237,8 +178,7 @@ class AddToCartView(CartMixin, View):
 class DeleteFromCartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        product_slug = kwargs.get('slug')
-        product = Product.objects.get(slug=product_slug)
+        product = Product.objects.get(pk=kwargs['pk'])
         order_product = OrderProduct.objects.get(
             order=self.order, product=product
         )
@@ -246,19 +186,16 @@ class DeleteFromCartView(CartMixin, View):
         self.order.products.remove(order_product)
         order_product.delete()
         self.order.save()
-        removed_verb = reconcile_verb_gender('удален',
-                                             order_product.product.title)
         messages.add_message(request, messages.INFO,
-                             f'{order_product.product.image_thumb()} <b>'
-                             f'{order_product}</b> {removed_verb} из корзины')
-        return HttpResponseRedirect('/cart/')
+                             f'{order_product.product.image_thumb()} '
+                             f' Удалено из корзины: <b>{order_product}</b>')
+        return HttpResponseRedirect('/store/cart/')
 
 
 class ChangeQTYView(CartMixin, View):
 
     def post(self, request, *args, **kwargs):
-        product_slug = kwargs.get('slug')
-        product = Product.objects.get(slug=product_slug)
+        product = Product.objects.get(pk=kwargs['pk'])
         order_product = OrderProduct.objects.get(
             order=self.order, product=product
         )
@@ -284,33 +221,19 @@ class ChangeQTYView(CartMixin, View):
         else:
             self.order.products.remove(order_product)
             order_product.delete()
-            removed_verb = reconcile_verb_gender('удален',
-                                                 order_product.product.title)
             messages.add_message(
                 request,
                 messages.INFO,
                 f'{order_product.product.image_thumb()} '
-                f'Из корзины {removed_verb} <b>{order_product}</b>'
+                f'Удалено из корзины: <b>{order_product}</b>'
             )
         self.order.save()
-        return HttpResponseRedirect('/cart/')
+        return HttpResponseRedirect('/store/cart/')
 
 
 class CartView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
-        form = CartForm(request.POST or None)
-        if self.order:
-            self.order.save()
-            if self.order.total_price_net >= parameter['FREE_GIFT'] and not \
-                    self.order.gift:
-                messages.add_message(
-                    request,
-                    messages.INFO,
-                    f'<a href=/gifts/><img src="/static/img/gift70.png"> '
-                    f'Скорее выбери подарок!</a>\nСумма товаров в корзине: '
-                    f'{self.order.total_price_net}'
-                )
 
         if not self.order or not self.order.products.count():
             messages.add_message(
@@ -321,18 +244,9 @@ class CartView(CartMixin, View):
             )
 
         context = {
-            'bonus_sum': parameter['FREE_GIFT'],
             'order': self.order,
             'categories': self.categories,
-            'form': form,
-            'page_role': 'cart',
             'articles': self.articles,
-            'free_delivery': parameter['FREE_DELIVERY'],
-            'delivery_cdek_cost': parameter['DELIVERY_CDEK_COST'],
-            'delivery_courier_cost': parameter['DELIVERY_COURIER_COST'],
-            'delivery_ru_cost': parameter['DELIVERY_RU_COST'],
-            'delivery_world_cost': parameter['DELIVERY_WORLD_COST'],
-
         }
         return render(request, 'cart.html', context)
 
@@ -344,21 +258,9 @@ class CheckoutView(CartMixin, View):
         self.order.delivery_type = request.POST.get('delivery_type')
         self.order.save()
 
-        if self.order.delivery_type == 'self':
-            form = SelfOrderForm()
-        elif self.order.delivery_type == 'delivery_spb':
-            form = CourierOrderForm()
-        elif self.order.delivery_type == 'delivery_cdekspb':
-            form = CDEKOrderForm()
-        elif self.order.delivery_type == 'delivery_ru':
-            form = PostRuOrderForm()
-        elif self.order.delivery_type == 'delivery_world':
-            form = PostWorldOrderForm()
-
         context = {
             'order': self.order,
             'categories': self.categories,
-            'form': form,
             'articles': self.articles,
         }
 
@@ -370,16 +272,6 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        if self.order.delivery_type == 'self':
-            form = SelfOrderForm(request.POST or None)
-        elif self.order.delivery_type == 'delivery_spb':
-            form = CourierOrderForm(request.POST or None)
-        elif self.order.delivery_type == 'delivery_cdekspb':
-            form = CDEKOrderForm(request.POST or None)
-        elif self.order.delivery_type == 'delivery_ru':
-            form = PostRuOrderForm(request.POST or None)
-        elif self.order.delivery_type == 'delivery_world':
-            form = PostWorldOrderForm(request.POST or None)
 
         user = User.objects.get(username=request.user)
         session = request.COOKIES.get('customersession')
@@ -395,50 +287,28 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
 
         order = Order.carts.get(owner=customer)
 
-        if form.is_valid():
-            if 'first_name' in form.cleaned_data.keys():
-                order.first_name = form.cleaned_data['first_name']
-            if 'last_name' in form.cleaned_data.keys():
-                order.last_name = form.cleaned_data['last_name']
-            if 'patronymic' in form.cleaned_data.keys():
-                order.patronymic = form.cleaned_data['patronymic']
-            if 'phone' in form.cleaned_data.keys():
-                order.phone = form.cleaned_data['phone']
-            if 'postal_code' in form.cleaned_data.keys():
-                order.postal_code = form.cleaned_data['postal_code']
-            if 'settlement' in form.cleaned_data.keys():
-                order.settlement = form.cleaned_data['settlement']
-            if 'address' in form.cleaned_data.keys():
-                order.address = form.cleaned_data['address']
-            if 'comment' in form.cleaned_data.keys():
-                order.comment = form.cleaned_data['comment']
+        order.status = 'new'
+        order.save()
 
-            order.status = 'new'
-            order.save()
-            if order.delivery_type == 'self':
-                order.send_telegram()  # Отправить заказ в телегу
+        messages.add_message(
+            request,
+            messages.INFO,
+            'Ваш заказ оформлен! \nСпасибо, что выбрали нас. '
+            'Как получить заказ......'
+        )
+        html = render_to_string('email_order_placed.html',
+                                {'user': user, 'order': order,
+                                 'site_url': settings.SITE_URL})
 
-            messages.add_message(
-                request,
-                messages.INFO,
-                'Ваш заказ оформлен! \nСпасибо, что выбрали нас. '
-                'Не забудьте оплатить заказ.'
-            )
-            html = render_to_string('email_order_placed.html',
-                                    {'user': user, 'order': order,
-                                     'site_url': settings.SITE_URL})
+        send_mail('Заказ в магазине Электр{он/ика}',
+                  'Спасибо за Ваш заказ в магазине Электр{он/ика}"!',
+                  'Интроверт<noreply@as-electrica.ru>', [user.email],
+                  fail_silently=False, html_message=html)
 
-            send_mail('Заказ в магазине Интроверт',
-                      'Спасибо за Ваш заказ в магазине Интроверт!',
-                      'Интроверт<noreply@introvert.com.ru>', [user.email],
-                      fail_silently=False, html_message=html)
-
-            response = HttpResponseRedirect(f'/order_pay/{order.id}/')
-            new_session = get_random_session()
-            response.set_cookie(key='customersession', value=new_session)
-            return response
-
-        return HttpResponseRedirect('/checkout/')
+        response = HttpResponseRedirect(f'/order_pay/{order.id}/')
+        new_session = get_random_session()
+        response.set_cookie(key='customersession', value=new_session)
+        return response
 
 
 class OrderPayView(LoginRequiredMixin, CartMixin, View):
@@ -569,7 +439,7 @@ class RegistrationView(CartMixin, View):
 
             send_mail('Подтвердите адрес email',
                       'Подтвердите адрес своей электронной почты!',
-                      'Интроверт<noreply@introvert.com.ru>', [user.email],
+                      'Интроверт<noreply@as-electron.ru>', [user.email],
                       fail_silently=False, html_message=html)
             context = {
                 'categories': self.categories,
@@ -578,7 +448,6 @@ class RegistrationView(CartMixin, View):
             }
 
             return render(request, 'registration_confirmation_required.html', context=context)
-            # return HttpResponseRedirect('/cart/')
 
         context = {
             'form': form,

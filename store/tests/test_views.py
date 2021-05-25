@@ -2,7 +2,7 @@ import pytest
 from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
-from store.models import Category, SubCategory, \
+from store.models import Group, Category, \
     Product, Article, Parameter, Customer, Order
 
 
@@ -21,8 +21,8 @@ class TestViews:
         Parameter.objects.create(name='FREE_DELIVERY', value='2500')
         Parameter.objects.create(name='DELIVERY_COURIER_COST', value='450')
 
-        category = Category.objects.create(name='Category1', slug='cat1')
-        subcategory = SubCategory.objects.create(
+        category = Group.objects.create(name='Category1', slug='cat1')
+        subcategory = Category.objects.create(
             name='Subcategory1',
             category=category, slug='subcat1'
         )

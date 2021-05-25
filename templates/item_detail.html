@@ -3,8 +3,8 @@
 {% block title %}{{ product.title }}{% endblock %}
 
                   {% block breadcrumbs %}
+                <li class="breadcrumb-item"><a href="{{ product.category.parent.get_absolute_url }}">{{ product.category.parent.name }}</a></li>
                 <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
-                <li class="breadcrumb-item"><a href="{{ product.subcategory.get_absolute_url }}">{{ product.subcategory.name }}</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
                   {% endblock %}
 {% block content %}
@@ -12,103 +12,18 @@
 
 <div class="tm-product-details">
         <div class="tm-product-image-container">
-            <img src="/media/card/{{ product.image.name }}" class="img-thumbnail shadow-img" id="main-image" data-toggle="modal" data-target="#imageModal">
-            <div class="tm-product-thumbnails">
-            {% if product.productimage_set.count %}
-                <img src="/media/thumb/{{ product.image.name }}" onclick="populate_image('{{ product.image.name }}')">
-            {% for product_image in product.productimage_set.all %}
-                <img src="/media/thumb/{{ product_image.image.name }}" onclick="populate_image('{{ product_image.image.name }}')">
-            {% endfor %}
-            {% endif %}
-            </div>
+            <img src="{{ product.image_name }}" class="img-thumbnail shadow-img">
         </div>
         <h3 class="tm-product-title">{{ product.title }}</h3>
-        {% if product.new %}
-        <span class="badge badge-danger">Новинка</span>
-        {% endif %}
-        {% if product.bestseller %}
-        <span class="badge badge-warning">Хит</span>
-        {% endif %}
-        {% if product.limited %}
-        <span class="badge badge-info">Лимитированный выпуск</span>
-        {% endif %}
         <div class="tm-product-price">
-            {% if product.price_discount %}
-             <div class="tm-old-price">{{ product.price }} &#x20bd;</div>
-             {{ product.price_discount }} &#x20bd;
-           {% else %}
-             {{ product.price }} &#x20bd;
-           {% endif %}
-
+         {{ product.price }} &#x20bd;
         </div>
        {% if product.quantity %}
-       <a href="{% url 'add_to_cart' slug=product.slug %}"><button class="btn btn-warning">В корзину <img src="{% static "img/vector_cart.svg" %}" height="18"></button></a>
+       <a href="{% url 'add_to_cart' pk=product.pk %}"><button class="btn btn-warning">В корзину <img src="{% static "img/vector_cart.svg" %}" height="18"></button></a>
        {% else %}
          <p>Нет в наличии</p>
        {% endif %}
-        <hr>
-       <div class="tm-product-description">{{ product.description|safe }}</div>
-     <table class="table">
-      <tbody>
-      {% if product.color %}
-        <tr>
-          <td>Цвет</td>
-          <td>{{ product.color }}</td>
-        </tr>
-      {% endif %}
-      {% if product.material %}
-        <tr>
-          <td>Материал</td>
-          <td>{{ product.material }}</td>
-        </tr>
-      {% endif %}
-      {% if product.height %}
-        <tr>
-          <td>Высота</td>
-          <td>{{ product.height }} см</td>
-        </tr>
-      {% endif %}
-      {% if product.width %}
-        <tr>
-          <td>Ширина</td>
-          <td>{{ product.width }} см</td>
-        </tr>
-      {% endif %}
-      {% if product.length %}
-        <tr>
-          <td>Длина</td>
-          <td>{{ product.length }} см</td>
-        </tr>
-      {% endif %}
-      </tbody>
-    </table>
-    {% if product.care %}
-   <h5>Инструкции по уходу:</h5>
-    <p class="tm-product-description">{{ product.care }}</p>
-    {% endif %}
-    <!-- Modal -->
-    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">{{ product.title }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-              <img src="{{ product.image.url }}" alt="{{ product.title }}" id="modal-image">
-          </div>
-        </div>
-      </div>
-    </div>
-</div>
-    <script>
-    function populate_image(image) {
-        document.getElementById('main-image').src='/media/card/' + image
-        document.getElementById('modal-image').src='/media/' + image
 
-    }
-    </script>
+</div>
 
 {% endblock content %}

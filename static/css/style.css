@@ -30,7 +30,7 @@ ul {
   padding: 0;
 }
 .container { overflow: hidden; max-width: 1160px;}
-
+.page {padding: 4px 40px 80px 40px;}
 .tm-top-header {
   color: #eeeeee;
 }
@@ -129,7 +129,7 @@ ul {
 }
 .light-gray-bg { background-color: #ededed; }
 .tm-main-section { padding-top: 20px; overflow: hidden; padding-bottom: 100px;}
-.img-thumbnail { padding: 8px; width:400px; border: 0; cursor: pointer;}
+.img-thumbnail { padding: 8px; width:400px; border: 0;}
 .inline-block { display: inline-block; }
 .shadow-img {
   background: url(/static/img/shadow.png) no-repeat center bottom;
@@ -268,7 +268,7 @@ select {
 .tm-product-image-container { float: left; }
 .tm-product-image-container img { border-radius: 4px;}
 .tm-product-thumbnails { padding: 4px; align-content: center; }
-.tm-product-thumbnails img { cursor: pointer; border: #ededed 1px solid; padding: 4px;}
+.tm-product-thumbnails img { border: #ededed 1px solid; padding: 4px;}
 .form-control {
   border-color: #aeaeaf;
   border-radius: 10px;
@@ -333,6 +333,9 @@ select {
   background-color: #302f2f;
   color: white;
   padding-top: 50px;
+}
+.tm-black-bg a {
+    color: white;
 }
 .tm-footer-div-title {
   color: white;
