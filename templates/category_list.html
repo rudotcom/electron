@@ -6,10 +6,10 @@
                   {% endblock %}
 
 {% block content %}
-        <ul>
+        <ol>
       {% for category in categories %}
           <li><a href="{% url 'category_detail' pk=category.pk %}">{{ category.name }}</a></li>
       {% endfor %}
-        </ul>
+        </ol>
 
 {% endblock content %}

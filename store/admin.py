@@ -28,15 +28,35 @@ class ProductAdmin(admin.ModelAdmin):
     ordering = ('title', 'category', 'price')
 
 
+class CategoryProductInline(admin.TabularInline):
+    model = Product
+    fields = ['article', 'title', 'image_thumb', 'price', 'warehouse1', 'warehouse2', ]
+    readonly_fields = ['article', 'title', 'image_thumb', 'price', 'warehouse1', 'warehouse2', ]
+    can_delete = False
+    extra = 0
+
+
 class CategoryAdmin(admin.ModelAdmin):
     fields = ['id', 'parent', 'name', ]
     list_display = ('name', 'parent',)
     list_filter = ['parent']
+    inlines = [CategoryProductInline]
+    CategoryProductInline.verbose_name = 'Товар'
+
+
+class GroupCategoryInline(admin.TabularInline):
+    model = Category
+    fields = ['id', 'name', ]
+    readonly_fields = ['id', 'name', ]
+    can_delete = False
+    extra = 0
 
 
 class GroupAdmin(admin.ModelAdmin):
     fields = ['id', 'name', ]
     list_display = ('name',)
+    inlines = [GroupCategoryInline]
+    GroupCategoryInline.verbose_name = 'Категория'
 
 
 class CustomerAdmin(admin.ModelAdmin):

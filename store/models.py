@@ -76,7 +76,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name='Категория',
                                  null=False, blank=False, default=1,
                                  on_delete=models.CASCADE)
-    article = models.CharField(max_length=50, verbose_name='Артикул', unique=True)
+    article = models.CharField(max_length=50, verbose_name='Артикул')
     title = models.CharField(max_length=255, verbose_name='Наименование')
     image = models.ImageField(verbose_name='Изображение', blank=True,
                               null=True, upload_to=path_and_rename)

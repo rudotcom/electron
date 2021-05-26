@@ -6,9 +6,9 @@
                   {% endblock %}
 
 {% block content %}
-
+        <ol>
       {% for group in groups %}
           <li><a href="{% url 'group_detail' pk=group.pk %}">{{ group.name }}</a></li>
       {% endfor %}
-
+        </ol>
 {% endblock content %}

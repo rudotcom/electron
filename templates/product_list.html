@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+                  {% block breadcrumbs %}
+                <li class="breadcrumb-item"><a href="{{ category.parent.get_absolute_url }}">{{ category.parent.name }}</a></li>
+                <li class="breadcrumb-item active">{{ category.name }}</li>
+                  {% endblock %}
+{% block content %}
+
+
+                <div class="container">
+                <div class="row">
+                    <div class="product-pagination text-center">
+                        <nav>
+                          <ul class="pagination">
+
+                    {% if page_obj.has_previous %}
+                        <li>
+                        <a href="?page=1" aria-label="Previous"><span aria-hidden="true">&laquo; 1</span> </a>
+                        <a href="?page={{ page_obj.previous_page_number }}">назад</a>
+                        </li>
+                    {% endif %}
+
+                            <li class="active">
+                                <span>
+                                    стр. {{ page_obj.number }}
+                                </span>
+                            </li>
+
+                        {% if page_obj.has_next %}
+                            <li>
+                            <a href="?page={{ page_obj.next_page_number }}">вперед</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}"><span aria-hidden="true">{{ page_obj.paginator.num_pages }} &raquo;</span></a>
+                            </li>
+                        {% endif %}
+                          <li><span class="span">&nbsp;</span></li>
+
+                           <li>
+                            <a href="?page={{ page_obj.number }}&view=list"><span>список</span></a>
+                          </li>
+                          <li>
+                            <a href="?page={{ page_obj.number }}&view=tiles">карточки</a>
+                          </li>
+                          <li><span class="span">&nbsp;</span></li>
+
+                          <li{% if pager == '20' %} class="active"{% endif %}>
+                            <a href="?page={{ page_obj.number }}&pager=20"><span>20</span></a>
+                          </li>
+                          <li{% if pager == '50' %} class="active"{% endif %}>
+                            <a href="?page={{ page_obj.number }}&pager=50"><span>50</span></a>
+                          </li>
+                          <li{% if pager == '200' %} class="active"{% endif %}>
+                            <a href="?page={{ page_obj.number }}&pager=200"><span>200</span></a>
+                          </li>
+                          <li{% if pager == '500' %} class="active"{% endif %}>
+                            <a href="?page={{ page_obj.number }}&pager=500"><span>500</span></a>
+                          </li>
+
+                         </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+    {% if view == 'tiles' %}
+      {% for product in page_obj %}
+        {% include 'item_card.html' %}
+      {% endfor %}
+    {% else %}
+        <table class="table-product-list">
+        <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>&nbsp;</th>
+            <th>Наименование</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+      {% for product in page_obj %}
+          <tr>
+        {% include 'item_row.html' %}
+          </tr>
+      {% endfor %}
+         <tfoot>
+        <tr>
+            <td>Артикул</td>
+            <td>&nbsp;</td>
+            <td>Наименование</td>
+            <td>&nbsp;</td>
+        </tr>
+        </tfoot>
+       </table>
+    {% endif %}
+
+
+                <div class="container">
+                <div class="row">
+                    <div class="product-pagination text-center">
+                        <nav>
+                          <ul class="pagination">
+
+                    {% if page_obj.has_previous %}
+                        <li>
+                        <a href="?page=1" aria-label="Previous"><span aria-hidden="true">&laquo; 1</span> </a>
+                        <a href="?page={{ page_obj.previous_page_number }}">назад</a>
+                        </li>
+                    {% endif %}
+
+                            <li class="active">
+                                <span>
+                                    стр. {{ page_obj.number }}
+                                </span>
+                            </li>
+
+                        {% if page_obj.has_next %}
+                            <li>
+                            <a href="?page={{ page_obj.next_page_number }}">вперед</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}"><span aria-hidden="true">{{ page_obj.paginator.num_pages }} &raquo;</span></a>
+                            </li>
+                        {% endif %}
+
+                          </li>
+                         </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+
+{% endblock content %}

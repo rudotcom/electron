@@ -1,0 +1,18 @@
+ {% load static %}
+            <td>
+                <a href="{{ product.get_absolute_url }}">{{ product.article }}</a>
+            </td>
+            <td>
+                <a href="{{ product.get_absolute_url }}">{{ product.image_thumb }}</a>
+            </td>
+            <td>
+                <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+            </td>
+            <td>
+                   {% if product.quantity %}
+                    {{ product.price }} &#x20bd;
+                       <a href="{% url 'add_to_cart' pk=product.pk %}" title="Положить в корзину"><img src="{% static "img/vector_cart.svg" %}" height="25"></a>
+				   {% else %}
+					 Нет в наличии
+				   {% endif %}
+            </td>

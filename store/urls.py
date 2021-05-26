@@ -10,7 +10,7 @@ from store.views import (
     ChangeQTYView,
     MakeOrderView,
     ProductSearchView,
-    CategoryDetailView,
+    ProductListView,
     EmailView,
 )
 
@@ -19,7 +19,7 @@ urlpatterns = [
     path('search/', ProductSearchView.as_view(), name='search'),
     path('product/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
     path('group/<int:pk>/', GroupDetailView.as_view(), name='group_detail'),
-    path('category/<int:pk>/', CategoryDetailView.as_view(), name='category_detail'),
+    path('category/<int:pk>/', ProductListView.as_view(), name='category_detail'),
     path('cart/', CartView.as_view(), name='cart'),
     path('add-to-cart/<int:pk>/', AddToCartView.as_view(), name='add_to_cart'),
     path('remove-from-cart/<int:pk>/', DeleteFromCartView.as_view(), name='delete_from_cart'),

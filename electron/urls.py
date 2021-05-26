@@ -20,8 +20,8 @@ from store.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', WelcomeView.as_view(), name='welcome'),
-    path('store/', include('store.urls')),
+    # path('', WelcomeView.as_view(), name='welcome'),
+    path('', include('store.urls')),
     path('about/<str:slug>/', ArticleView.as_view(), name='article'),
     path('order_pay/<int:order>/', OrderPayView.as_view(), name='order_pay'),
     path('login/', LoginView.as_view(), name='login'),

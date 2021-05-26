@@ -16,51 +16,44 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(crontab(minute=0, hour=5), impex())
 
 
-def atol_import(file_name='imported/export_atol.txt', encoding="windows-1251", start_line=3):
+def atol_import(file_name='imported/export_atol.txt'):
 
     file = os.path.join(BASE_DIR, file_name)
 
     with open(file, 'r') as f:
         reader = csv.reader(f, delimiter=';')
 
-        # ignore_starting_with = ('#', '@')  # Игнорируем строки начинающиеся с
         for row in reader:
-            if len(row) < 25:
+            if len(row) < 25:  # строка содержит меньше 25  полей - игнорируем
                 continue
             try:
-                # row = row.split(sep=";")
-                # logger.info(f'Row is {row}')
                 key = row[0]
                 article = row[25]
                 price = row[4]
                 name = row[2]
-                name = re.sub(r'^\([^)]+\)\s*', '', name)
                 parent = row[15]
-                if len(name) < 3:
+
+                # Удаляем круглые скобки в начале Наименования
+                name = re.sub(r'^\([^)]+\)\s*', '', name)
+
+                if len(name) < 2:  # Длина наименования меньше 2 - игнорируем
                     continue
                 if len(article) == 0 and len(price) == 0 and len(row) > 55:
-                    try:
-                        category = Category.objects.get(id=key)
-                    except:
-                        category = Category.objects.create(id=key)
+                    category, created = Category.objects.get_or_create(id=key)
                     category.name = name
                     category.save()
                 else:
-                    try:
-                        product = Product.objects.get(id=key)
-                    except:
-                        category = Category.objects.get(id=parent)
-                        product = Product.objects.create(id=key, category=category)
+                    category = Category.objects.get(id=parent)
+                    product, created = Product.objects.get_or_create(id=key, category=category)
                     product.title = name
                     product.article = article
                     product.price = float(price)
                     product.save()
-                    print(key, name)
+                    # print(product.key, product.title)
 
             except Exception as e:
                 print(f'{e}\n\t{row}')
                 # logger.error(f'Bad row is {row}\n\t {e}')
-                pass
 
 
 def xml_import(file_name='imported/export.xml'):
@@ -82,8 +75,6 @@ def xml_import(file_name='imported/export.xml'):
         </items>
     """
     root = ET.parse(file).getroot()
-
-    print(root)
     denied = 0
 
     for node in root.findall('nom'):
@@ -93,6 +84,7 @@ def xml_import(file_name='imported/export.xml'):
         whs = []
         for sub in node.findall('whs/scl'):
             whs.append(sub.get("count"))
+        # print('\tid:', id, 'name:', name, 'whs:', whs)
 
         try:
             product = Product.objects.get(id=id)
@@ -102,13 +94,12 @@ def xml_import(file_name='imported/export.xml'):
         except Exception as e:
             denied += 1
             # Товары, которых не оказалось в alol файле (без категорий) отбрасываются
-            print(f'{e}\n\t{node}')
-            print('\tid:', id, 'name:', name)
+            print('{e}\n\tid:', id, 'name:', name, 'whs:', whs)
 
-    print('Отброшено:', denied)
+    print('Не найдено по ID:', denied)
 
 
 def impex():
-    atol_import()
-    # xml_import()
+    # atol_import()
+    xml_import()
     print('import finished')

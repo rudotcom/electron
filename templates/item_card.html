@@ -1,17 +1,14 @@
  {% load static %}
            <div class="tm-popular-item">
-                <div class="tm-item-image" style="background-image: url('/media/card/{{ product.image.name }}')">
+                <div class="tm-item-image" style="background-image: url('{{ product.image_name }}')">
               <a href="{{ product.get_absolute_url }}"><div>&nbsp;</div></a>
                 </div>
               <div class="tm-popular-item-description">
 
                  <div class="tag-container price-tag">
                    {% if product.quantity %}
-                    <div>{% if product.price_discount %}
-                         {{ product.price_discount|floatformat:"0" }} &#x20bd;
-                       {% else %}
-                         {{ product.price|floatformat:"0" }} &#x20bd;
-                     {% endif %}
+                    <div>
+                    {{ product.price }} &#x20bd;
                     </div>
 				   {% else %}
 					 <p>Нет в наличии</p>
@@ -28,15 +25,5 @@
                     <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
                 </div>
 
-                    {% if product.new %}
-                <div class="tag-container new-tag" title="Новинка!">
-                    <img src="{% static "img/tag-new.png" %}" alt="Новинка!">
-                </div>
-                    {% endif %}
-                    {% if product.bestseller %}
-                <div class="tag-container hit-tag" title="Хит продаж!">
-                    <img src="{% static "img/tag-hit.png" %}" alt="Новинка!">
-                </div>
-                    {% endif %}
               </div>
             </div>

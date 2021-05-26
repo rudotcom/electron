@@ -39,7 +39,7 @@ class GroupListView(CartMixin, View):
     model = Group
 
     def get(self, request, *args, **kwargs):
-        groups = Group.objects.all()
+        groups = Group.objects.all().order_by('name')
 
         context = {
             'groups': groups,
@@ -63,20 +63,41 @@ class ProductDetailView(CartMixin, DetailView):
         return context
 
 
-class CategoryDetailView(CartMixin, DetailView):
-    model = Category
-    queryset = Category.objects.all()
-    context_object_name = 'category'
-    template_name = 'category_detail.html'
+class ProductListView(CartMixin, ListView):
+    model = Product
+    template_name = 'product_list.html'
+    paginate_by = 50
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        object_list = Product.objects.filter(category_id=pk)
+
+        return object_list
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category = kwargs['object']
         context['order'] = self.order
-        context['category_name'] = category.name
-        context['category_products'] = category.product_set.all()
         context['articles'] = self.articles
+        context['category'] = Category.objects.get(pk=self.kwargs.get('pk'))
+
+        view = self.request.GET.get('view') or self.request.session.get('view')
+        if view:
+            self.request.session['view'] = view
+        context['view'] = view
+
+        pager = self.paginate_by or self.request.session.get('pager')
+        context['pager'] = pager
+        if pager:
+            self.request.session['pager'] = pager
+
         return context
+
+    def get_paginate_by(self, queryset):
+        pager = self.request.GET.get('pager') or self.request.session.get('pager')
+        if pager:
+            self.request.session['pager'] = pager
+            self.paginate_by = pager
+        return pager
 
 
 class GroupDetailView(CartMixin, DetailView):
@@ -92,7 +113,7 @@ class GroupDetailView(CartMixin, DetailView):
         context['group_name'] = group.name
         context['categories'] = Category.objects.filter(
             parent=group
-        )
+        ).order_by('name')
         context['articles'] = self.articles
         return context
 
@@ -104,7 +125,7 @@ class ProductSearchView(CartMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['order'] = self.order
-        context['categories'] = self.categories
+        context['articles'] = self.articles
         return context
 
     def get_queryset(self):
@@ -170,7 +191,7 @@ class AddToCartView(CartMixin, View):
                 )
             self.order.save()
 
-        response = HttpResponseRedirect(f"/store/product/{product.pk}/")
+        response = HttpResponseRedirect(f"/store/cart/")
         response.set_cookie(key='customersession', value=session)
         return response
 
@@ -245,7 +266,6 @@ class CartView(CartMixin, View):
 
         context = {
             'order': self.order,
-            'categories': self.categories,
             'articles': self.articles,
         }
         return render(request, 'cart.html', context)
@@ -260,7 +280,6 @@ class CheckoutView(CartMixin, View):
 
         context = {
             'order': self.order,
-            'categories': self.categories,
             'articles': self.articles,
         }
 
@@ -279,7 +298,6 @@ class MakeOrderView(LoginRequiredMixin, CartMixin, View):
         customer = Customer.objects.get(user=user.id, session=session)
         if not customer.confirmed:
             context = {
-                'categories': self.categories,
                 'order': self.order,
                 'articles': self.articles,
             }
@@ -336,7 +354,6 @@ class OrderPayView(LoginRequiredMixin, CartMixin, View):
                     'show_pay_button': show_pay_button,
                     'order': self.order,
                     'order_to_pay': order_to_pay,
-                    'categories': self.categories,
                     'articles': self.articles,
                 }
             )
@@ -356,7 +373,6 @@ class LoginView(CartMixin, View):
 
         context = {
             'form': form,
-            'categories': self.categories,
             'order': self.order,
             'page_role': 'login',
             'articles': self.articles,
@@ -390,7 +406,6 @@ class LoginView(CartMixin, View):
         context = {
             'form': form,
             'order': self.order,
-            'categories': self.categories,
             'articles': self.articles,
         }
         return render(request, 'login.html', context)
@@ -403,7 +418,6 @@ class RegistrationView(CartMixin, View):
 
         context = {
             'form': form,
-            'categories': self.categories,
             'order': self.order,
             'page_role': 'registration',
             'articles': self.articles,
@@ -442,7 +456,6 @@ class RegistrationView(CartMixin, View):
                       'Интроверт<noreply@as-electron.ru>', [user.email],
                       fail_silently=False, html_message=html)
             context = {
-                'categories': self.categories,
                 'order': self.order,
                 'articles': self.articles,
             }
@@ -451,7 +464,6 @@ class RegistrationView(CartMixin, View):
 
         context = {
             'form': form,
-            'categories': self.categories,
             'order': self.order,
             'articles': self.articles,
         }
@@ -462,7 +474,6 @@ class EmailConfirmationView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = {
-            'categories': self.categories,
             'order': self.order,
             'page_role': 'registration',
             'articles': self.articles,
@@ -492,7 +503,6 @@ class ProfileView(LoginRequiredMixin, CartMixin, View):
             {
                 'orders': orders,
                 'order': self.order,
-                'categories': self.categories,
                 'page_role': 'profile',
                 'articles': self.articles,
             }
@@ -507,7 +517,6 @@ class ArticleView(CartMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = self.categories
         context['order'] = self.order
         context['articles'] = self.articles
 

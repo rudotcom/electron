@@ -16,10 +16,11 @@
         </div>
         <h3 class="tm-product-title">{{ product.title }}</h3>
         <div class="tm-product-price">
-         {{ product.price }} &#x20bd;
+         Артикул: {{ product.article }}
         </div>
+
        {% if product.quantity %}
-       <a href="{% url 'add_to_cart' pk=product.pk %}"><button class="btn btn-warning">В корзину <img src="{% static "img/vector_cart.svg" %}" height="18"></button></a>
+       <a href="{% url 'add_to_cart' pk=product.pk %}"><button class="btn btn-warning"> <h1>{{ product.price }} &#x20bd; <img src="{% static "img/vector_cart.svg" %}" height="30"></h1></button></a>
        {% else %}
          <p>Нет в наличии</p>
        {% endif %}
