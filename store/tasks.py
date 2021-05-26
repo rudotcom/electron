@@ -84,6 +84,7 @@ def xml_import(file_name='imported/export.xml'):
     root = ET.parse(file).getroot()
 
     print(root)
+    denied = 0
 
     for node in root.findall('nom'):
         name = node.get('name')
@@ -93,7 +94,6 @@ def xml_import(file_name='imported/export.xml'):
         for sub in node.findall('whs/scl'):
             whs.append(sub.get("count"))
 
-        denied = 0
         try:
             product = Product.objects.get(id=id)
             product.warehouse1 = whs[0]
